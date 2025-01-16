@@ -8,14 +8,15 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Login from "./components/login";
-import SignUp from "./components/register";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Profile from "./components/profile";
 import { useState } from "react";
 import { auth } from "./components/firebase";
+
+import Login from "./components/Login/Login";
+import SignUp from "./components/Login/Register";
+import Profile from "./components/Profile/Profile";
+import Home from "./components/Home/Home";
 
 function App() {
   const [user, setUser] = useState();
@@ -30,13 +31,14 @@ function App() {
         <div className="auth-wrapper">
           <div className="auth-inner">
             <Routes>
-              <Route
+              {/* <Route
                 path="/"
                 element={user ? <Navigate to="/profile" /> : <Login />}
-              />
+              /> */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<SignUp />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/home" element={<Home />} />
             </Routes>
             <ToastContainer />
           </div>

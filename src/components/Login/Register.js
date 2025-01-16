@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { auth, db } from "./firebase";
+import { auth, db } from "../firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
 
@@ -9,7 +9,17 @@ function Register() {
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
+  const [error, setError] = useState("");
+  const handleEmailChange = (e) => {
+    const inputEmail = e.target.value;
+    setEmail(inputEmail);
 
+    if (inputEmail && !inputEmail.endsWith('g.ucla.edu')) {
+      setError('Email must end with g.ucla.edu');
+    } else {
+      setError('');
+    }
+  };
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -24,6 +34,7 @@ function Register() {
           photo:""
         });
       }
+      window.location.href = "/login";
       console.log("User Registered Successfully!!");
       toast.success("User Registered Successfully!!", {
         position: "top-center",
@@ -31,7 +42,7 @@ function Register() {
     } catch (error) {
       console.log(error.message);
       toast.error(error.message, {
-        position: "bottom-center",
+        position: "top-center",
       });
     }
   };
@@ -67,10 +78,12 @@ function Register() {
           type="email"
           className="form-control"
           placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          onChange={handleEmailChange}
           required
         />
-      </div>
+        {error && <div className="text-danger">{error}</div>}
+    </div>
 
       <div className="mb-3">
         <label>Password</label>

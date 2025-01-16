@@ -1,8 +1,8 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "./signInWIthGoogle";
+import SignInwithGoogle from "../signInWIthGoogle";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -18,13 +18,14 @@ function Login() {
         position: "top-center",
       });
     } catch (error) {
-      console.log(error.message);
-
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
+      console.log(error.code);
+  
+      toast.error("An error occurred. Please check your email and password.", {
+          position: "top-center",
+        });
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -60,7 +61,7 @@ function Login() {
       <p className="forgot-password text-right">
         New user <a href="/register">Register Here</a>
       </p>
-      <SignInwithGoogle/>
+      {/* <SignInwithGoogle/> */}
     </form>
   );
 }
