@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { FaHome } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
+  const navigate = useNavigate();
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
       console.log(user);
@@ -22,6 +26,10 @@ function Profile() {
     fetchUserData();
   }, []);
 
+  const handleHomeClick = () => {
+    navigate("/Home");
+  };
+
   async function handleLogout() {
     try {
       await auth.signOut();
@@ -35,22 +43,14 @@ function Profile() {
     <div>
       {userDetails ? (
         <>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <img
-              src={userDetails.photo}
-              width={"40%"}
-              style={{ borderRadius: "50%" }}
-            />
-          </div>
+          <button onClick={handleHomeClick}> <FaHome/></button>
           <h3>Profile</h3>
           <div>
             <p>Email: {userDetails.email}</p>
             <p>Name: {userDetails.firstName} {userDetails.lastName}</p>
-            {/* <p>Last Name: {userDetails.lastName}</p> */}
           </div>
-          <button className="btn btn-primary" onClick={handleLogout}>
-            Logout
-          </button>
+          <button className="btn btn-primary" onClick={handleLogout}> Logout </button>
+
         </>
       ) : (
         <p>Loading...</p>
