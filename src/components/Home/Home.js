@@ -18,6 +18,7 @@ function Home() {
           console.log(docSnap.data());
         }
       } else {
+        navigate("/login");
         console.log("User is not logged in");
         setUserDetails(null);
       }
