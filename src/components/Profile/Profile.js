@@ -22,12 +22,20 @@ function Profile() {
       }
     });
   };
+
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate("/login");
+      } else {
+        fetchUserData(user);
+      }
+    });
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleHomeClick = () => {
-    navigate("/Home");
+    navigate("/home");
   };
 
   async function handleLogout() {
