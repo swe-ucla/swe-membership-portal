@@ -17,11 +17,18 @@ import Home from "./components/Home/Home";
 import AddEvent from "./components/AddEvent/AddEvent";
 import UpcomingEvents from "./components/UpcomingEvents/UpcomingEvents";
 import EventSignin from "./components/EventSignin/EventSignin";
+import NavBar from "./components/NavBar/NavBar";
+import Leaderboard from "./components/Leaderboard/Leaderboard";
 
 function App() {
+  // TODO: Fetch this from user authentication logic! Need to implement admin checking logic 
+  // this is for admin-only Event Creatioon page
+  const isAdmin = true;
+
   return (
     <Router>
       <div className="App">
+        <NavBar isAdmin={isAdmin} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -31,6 +38,7 @@ function App() {
           <Route path="/add" element={<AddEvent />} />
           <Route path="/upcoming" element={<UpcomingEvents />} />
           <Route path="/eventsignin/:eventId" element={<EventSignin />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
         {/* <ToastContainer /> */}
       </div>
