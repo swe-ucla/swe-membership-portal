@@ -16,10 +16,10 @@ const NavBar = ({ isAdmin }) => {
             Home
           </NavLink>
           <NavLink
-            to="/eventsignin/:eventId"
+            to="/upcoming"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            Event Sign-in
+            Upcoming Events
           </NavLink>
           <NavLink
             to="/leaderboard"
