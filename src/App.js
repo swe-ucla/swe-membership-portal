@@ -37,7 +37,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/add" element={<AddEvent />} />
           <Route path="/upcoming" element={<UpcomingEvents />} />
-          <Route path="/eventsignin/:eventId" element={<EventSignin />} />
+          <Route path="/eventsignin/:eventID" element={<EventSignin />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
         {/* <ToastContainer /> */}

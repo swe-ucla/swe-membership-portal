@@ -3,7 +3,7 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { FaHome } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
-
+import emailjs from 'emailjs-com'
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -47,6 +47,38 @@ function Profile() {
       console.error("Error logging out:", error.message);
     }
   }
+
+  const requestAdminAccess = () => {
+    if (!userDetails) return;
+    
+    const templateParams = {
+      user_email: userDetails.email,
+      user_name: `${userDetails.firstName} ${userDetails.lastName}`,
+      message: `
+        I would like to request admin access.
+        User Name: ${userDetails.firstName} ${userDetails.lastName}
+        User Email: ${userDetails.email}
+      `
+    };
+    
+
+    emailjs.send(
+      "service_oa92hy9",
+      "template_xschbvb",
+      templateParams,
+      "Z7j812LuDjlbsCsMe"
+    )
+    .then((response) => {
+      console.log("Email sent successfully!", response.status, response.text);
+      alert("Admin access request sent successfully!");
+    })
+    .catch((error) => {
+      console.error("Error sending email:", error);
+      alert("Failed to send request. Please try again later.");
+    });
+  };
+
+
   return (
     <div>
       {userDetails ? (
@@ -58,6 +90,7 @@ function Profile() {
             <p>Name: {userDetails.firstName} {userDetails.lastName}</p>
           </div>
           <button className="btn btn-primary" onClick={handleLogout}> Logout </button>
+          <button className="btn btn-secondary" onClick={requestAdminAccess}>Request Admin Access (board members only)</button>
 
         </>
       ) : (
