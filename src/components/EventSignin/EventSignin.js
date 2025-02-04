@@ -1,39 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-function EventSignin() {
-  const { eventId } = useParams(); // Get the eventId from URL params
-  const [eventDetails, setEventDetails] = useState(null);
+const EventSignin = () => {
+  const { eventID } = useParams();
+  const [event, setEvent] = useState(null);
 
   useEffect(() => {
     const fetchEventDetails = async () => {
-      const eventRef = doc(db, "events", eventId);
-      const docSnap = await getDoc(eventRef);
-      if (docSnap.exists()) {
-        setEventDetails(docSnap.data());
-      } else {
-        console.log("Event not found");
+      if (!eventID) return; // Prevent fetching if eventID is missing
+
+      try {
+        const docRef = doc(db, "events", eventID); // Ensure eventID is valid
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setEvent(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching event details:", error);
       }
     };
 
     fetchEventDetails();
-  }, [eventId]);
+  }, [eventID]);
 
   return (
     <div>
-      <h2>Event Signin</h2>
-      {eventDetails ? (
+      <h1>Event Signin</h1>
+      {event ? (
         <div>
-          <h3>{eventDetails.name}</h3>
-          <p>{eventDetails.description}</p>
+          <p><strong>Title:</strong> {event.name}</p> 
+          <p><strong>Location:</strong> {event.location}</p>
+          <p><strong>Created By:</strong> {event.createdBy} Committee</p>
         </div>
       ) : (
-        <p>Loading event details...</p>
+        <p>Loading event...</p>
       )}
     </div>
   );
-}
+};
 
 export default EventSignin;

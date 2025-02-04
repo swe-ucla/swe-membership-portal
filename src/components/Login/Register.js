@@ -20,33 +20,46 @@ function Register() {
 
     if (inputEmail && !inputEmail.endsWith('g.ucla.edu')) {
       setError('Email must end with g.ucla.edu');
+      return;
     } else {
       setError('');
     }
   };
   const handleRegister = async (e) => {
     e.preventDefault();
+  
+    // Check if email ends with 'g.ucla.edu'
+    if (!email.endsWith('g.ucla.edu')) {
+      setError('Email must end with g.ucla.edu');
+      return; // Exit early if email is not valid
+    }
+  
     try {
+      // Attempt to create user with Firebase authentication
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
-      console.log(user);
+  
       if (user) {
+        // If user created successfully, store additional information in Firestore
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           firstName: fname,
           lastName: lname,
-          photo:""
+          photo: ""
         });
       }
+  
+      // Navigate to profile page on successful registration
       navigate("/profile");
       console.log("User Registered Successfully!!");
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error.message, {
         position: "top-center",
       });
     }
   };
+  
 
   return (
     <div className="auth-wrapper">

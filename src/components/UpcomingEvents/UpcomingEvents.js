@@ -9,12 +9,10 @@ function UpcomingEvents() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const checkUserStatus = () => {
-    auth.onAuthStateChanged((user) => {
+  const fetchUserData = async () => {
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
-        navigate("/login"); // Redirect to login if user is not logged in
-      } else {
-        setUser(user); // Set the user if logged in
+        navigate("/login");
       }
     });
   };
@@ -74,7 +72,7 @@ function UpcomingEvents() {
   };
 
   useEffect(() => {
-    checkUserStatus();
+    fetchUserData();
     fetchEvents();
   }, []);
 
