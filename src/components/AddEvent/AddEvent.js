@@ -12,6 +12,7 @@ function AddEvent() {
     location: "",
     committee: "",
     description: "",
+    attendanceCode: "", // new
   });
 
   const [committees, setCommittees] = useState([
@@ -54,6 +55,16 @@ function AddEvent() {
     }));
   };
 
+  // Add this function to generate random 6-letter code
+  const generateAttendanceCode = () => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    return code;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (
@@ -74,11 +85,16 @@ function AddEvent() {
 
       const eventId = `${Date.now()}`; // Unique ID for the event
       const eventRef = doc(db, "events", eventId);
+      
+      // Generate attendance code before saving
+      const attendanceCode = generateAttendanceCode();
+      
       await setDoc(eventRef, {
         ...eventData,
         date: timestamp, // Store the date as a Timestamp
         createdBy: eventData.committee,
         createdAt: new Date().toISOString(),
+        attendanceCode: attendanceCode, // Save the generated code
       });
 
       alert("Event created successfully!");
@@ -88,6 +104,7 @@ function AddEvent() {
         location: "",
         committee: "",
         description: "",
+        attendanceCode: "",
       });
       navigate("/upcoming");
     } catch (error) {

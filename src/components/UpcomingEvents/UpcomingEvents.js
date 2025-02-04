@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   const fetchUserData = async () => {
@@ -86,10 +87,16 @@ function UpcomingEvents() {
           {events.map((event) => (
             <div key={event.id} className="event-card">
               <h4>{event.name}</h4>
-              <strong>Date:</strong> {formatDate(event.date)} {/* Format event date */}
+              <strong>Date:</strong> {formatDate(event.date)}
               <strong>Location:</strong> {event.location}
               <strong>Created By:</strong> {event.createdBy} Committee
               <p>{event.description}</p>
+              {/* Only show attendance code to admins */}
+              {isAdmin && event.attendanceCode && (
+                <div className="attendance-code">
+                  <strong>Attendance Code:</strong> {event.attendanceCode}
+                </div>
+              )}
               {isToday(event.date) && (
                 <button
                   onClick={() => handleSignUpClick(event.id)}
