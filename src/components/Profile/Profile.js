@@ -3,10 +3,12 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { FaHome } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
+import EditProfileForm from "./EditProfileForm";
 import emailjs from 'emailjs-com'
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -48,6 +50,12 @@ function Profile() {
     }
   }
 
+  const handleProfileUpdate = (updatedData) => {
+    setUserDetails(updatedData);
+    setIsEditing(false); // Hide edit form after saving
+  };
+
+
   const requestAdminAccess = () => {
     if (!userDetails) return;
     
@@ -85,18 +93,26 @@ function Profile() {
         <>
           <button onClick={handleHomeClick}> <FaHome/></button>
           <h3>Profile</h3>
+          
+          {isEditing ? (
+          <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />
+        ) : (
+          <>
           <div>
             <p>Email: {userDetails.email}</p>
             <p>Name: {userDetails.firstName} {userDetails.lastName}</p>
           </div>
+          <button onClick={() => setIsEditing(true)}>Edit Profile</button>
           <button className="btn btn-primary" onClick={handleLogout}> Logout </button>
           <button className="btn btn-secondary" onClick={requestAdminAccess}>Request Admin Access (board members only)</button>
 
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
-  );
-}
+          </>
+        )}
+      </>
+    ) : (
+      <p>Loading...</p>
+    )}
+  </div>
+);
+};
 export default Profile;
