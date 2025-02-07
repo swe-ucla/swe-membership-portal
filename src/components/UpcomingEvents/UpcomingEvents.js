@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 function UpcomingEvents() {
@@ -8,11 +8,20 @@ function UpcomingEvents() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [isSignedIn, setIsSignedIn] = useState([]);
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login");
+      }
+
+      const userRef = doc(db, "Users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        setIsSignedIn(userData.signedInEvents || []); // store user's signed-in events
       }
     });
   };
@@ -94,8 +103,11 @@ function UpcomingEvents() {
                 <button
                   onClick={() => handleSignUpClick(event.id)}
                   className="btn btn-primary"
+                  disabled={isSignedIn.includes(event.id)} // disable if already signed in
                 >
-                  Sign In
+                  {isSignedIn.includes(event.id)
+                    ? "Already Signed In"
+                    : `Sign In (Earn ${event.points || 0} points)`}
                 </button>
               )}
             </div>

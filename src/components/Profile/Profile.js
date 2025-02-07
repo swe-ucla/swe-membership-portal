@@ -7,6 +7,7 @@ import emailjs from 'emailjs-com'
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
+
   const navigate = useNavigate();
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -88,6 +89,7 @@ function Profile() {
           <div>
             <p>Email: {userDetails.email}</p>
             <p>Name: {userDetails.firstName} {userDetails.lastName}</p>
+            <p>Points: {userDetails.totalPoints}</p>
           </div>
           <button className="btn btn-primary" onClick={handleLogout}> Logout </button>
           <button className="btn btn-secondary" onClick={requestAdminAccess}>Request Admin Access (board members only)</button>
