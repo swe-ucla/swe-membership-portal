@@ -13,6 +13,7 @@ function AddEvent() {
     committee: "",
     description: "",
     attendanceCode: "", // new
+    points: 1, //default points to 1
   });
 
   const [committees, setCommittees] = useState([
@@ -95,6 +96,7 @@ function AddEvent() {
         createdBy: eventData.committee,
         createdAt: new Date().toISOString(),
         attendanceCode: attendanceCode, // Save the generated code
+        points: Number(eventData.points),
       });
 
       alert("Event created successfully!");
@@ -105,6 +107,7 @@ function AddEvent() {
         committee: "",
         description: "",
         attendanceCode: "",
+        points: 1,
       });
       navigate("/upcoming");
     } catch (error) {
@@ -165,6 +168,18 @@ function AddEvent() {
               </option>
             ))}
           </select>
+        </div>
+        <div>
+          <label>Points:</label>
+          <input
+            type="range"
+            name="points"
+            min="1"
+            max="5"
+            value={eventData.points}
+            onChange={handleInputChange}
+          />
+          <span>{eventData.points} points</span>
         </div>
         <div>
           <label>Description:</label>

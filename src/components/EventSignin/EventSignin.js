@@ -31,7 +31,7 @@ const EventSignin = () => {
     };
 
     fetchEventDetails();
-  }, [eventID]);
+  }, [eventID, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,22 +45,41 @@ const EventSignin = () => {
           return;
         }
 
-        // Update event attendance in Firebase
         const eventRef = doc(db, "events", eventID);
         await updateDoc(eventRef, {
           attendees: arrayUnion(user.uid)
         });
 
-        // Also update user's attended events
         const userRef = doc(db, "Users", user.uid);
-        await updateDoc(userRef, {
-          attendedEvents: arrayUnion(eventID)
-        });
+        const userSnap = await getDoc(userRef);
 
-        setSuccess(true);
-        setTimeout(() => {
-          navigate("/upcoming");
-        }, 2000);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const currentPoints = userData.totalPoints || 0;
+          const attendedEvents = userData.attendedEvents || [];
+
+          if (!userData.name || !userData.year || !userData.major) {
+            alert("Please complete your profile before signing in.");
+            navigate("/profile");
+            return;
+          }
+
+          if (attendedEvents.includes(eventID)) {
+            setError("You have already signed into this event.");
+            return;
+          }
+
+          await updateDoc(userRef, {
+            attendedEvents: arrayUnion(eventID),
+            totalPoints: currentPoints + (event.points || 0),
+            // lastEventSignIn: new Date().toISOString(),
+          });
+
+          setSuccess(true);
+          setTimeout(() => {
+            navigate("/upcoming");
+          }, 2000);
+        }
       } catch (error) {
         console.error("Error recording attendance:", error);
         setError("Failed to record attendance");
@@ -96,9 +115,8 @@ const EventSignin = () => {
                   maxLength={6}
                 />
               </div>
-              {error && <div className="alert alert-danger">{error}</div>}
               <button type="submit" className="btn btn-primary mt-3">
-                Submit
+                Sign In
               </button>
             </form>
           )}

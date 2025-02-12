@@ -9,6 +9,7 @@ import emailjs from 'emailjs-com'
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
   const navigate = useNavigate();
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -101,6 +102,7 @@ function Profile() {
           <div>
             <p>Email: {userDetails.email}</p>
             <p>Name: {userDetails.firstName} {userDetails.lastName}</p>
+            <p>Points: {userDetails.totalPoints}</p>
           </div>
           <button onClick={() => setIsEditing(true)}>Edit Profile</button>
           <button className="btn btn-primary" onClick={handleLogout}> Logout </button>
