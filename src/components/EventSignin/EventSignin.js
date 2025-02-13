@@ -9,6 +9,7 @@ const EventSignin = () => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [responses, setResponses] = useState({}); // Store question responses
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,10 +34,27 @@ const EventSignin = () => {
     fetchEventDetails();
   }, [eventID, navigate]);
 
+  const handleResponseChange = (questionIndex, value) => {
+    setResponses(prev => ({
+      ...prev,
+      [questionIndex]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     
+    // Validate required questions
+    const missingRequired = event.questions?.some((q, index) => 
+      q.required && !responses[index]?.trim()
+    );
+
+    if (missingRequired) {
+      setError("Please answer all required questions");
+      return;
+    }
+
     if (code.toUpperCase() === event.attendanceCode) {
       try {
         const user = auth.currentUser;
@@ -45,11 +63,14 @@ const EventSignin = () => {
           return;
         }
 
+        // Update event attendance in Firebase
         const eventRef = doc(db, "events", eventID);
         await updateDoc(eventRef, {
-          attendees: arrayUnion(user.uid)
+          attendees: arrayUnion(user.uid),
+          [`responses.${user.uid}`]: responses
         });
 
+        // Also update user's attended events
         const userRef = doc(db, "Users", user.uid);
         const userSnap = await getDoc(userRef);
 
@@ -71,13 +92,14 @@ const EventSignin = () => {
 
           await updateDoc(userRef, {
             attendedEvents: arrayUnion(eventID),
+          [`eventResponses.${eventID}`]: responses,
             totalPoints: currentPoints + (event.points || 0),
             // lastEventSignIn: new Date().toISOString(),
           });
 
           setSuccess(true);
           setTimeout(() => {
-            navigate("/upcoming");
+            navigate("/home");
           }, 2000);
         }
       } catch (error) {
@@ -104,6 +126,29 @@ const EventSignin = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              {/* Questions Section */}
+              {event.questions && event.questions.length > 0 && (
+                <div className="mb-4">
+                  <h3>Event Questions</h3>
+                  {event.questions.map((question, index) => (
+                    <div key={index} className="mb-3">
+                      <label className="form-label">
+                        {question.text}
+                        {question.required && <span className="text-danger">*</span>}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={responses[index] || ""}
+                        onChange={(e) => handleResponseChange(index, e.target.value)}
+                        required={question.required}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Attendance Code Section */}
               <div className="form-group">
                 <label>Enter Attendance Code:</label>
                 <input
@@ -113,8 +158,10 @@ const EventSignin = () => {
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="Enter 6-letter code"
                   maxLength={6}
+                  required
                 />
               </div>
+              {error && <div className="alert alert-danger">{error}</div>}
               <button type="submit" className="btn btn-primary mt-3">
                 Sign In
               </button>
