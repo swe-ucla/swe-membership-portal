@@ -87,11 +87,11 @@ const NavBar = ({ isAdmin }) => {
           </NavLink>
           {isAdmin && (
             <NavLink
-              to="/add"
+              to="/pastevents"
               className={({ isActive }) => (isActive ? "active" : "")}
               onClick={() => setIsMenuOpen(false)}
             >
-              Event Creation (admin only)
+              Admin Only
             </NavLink>
           )}
         </div>
