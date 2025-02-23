@@ -79,7 +79,7 @@ const EventSignin = () => {
           const currentPoints = userData.totalPoints || 0;
           const attendedEvents = userData.attendedEvents || [];
 
-          if (!userData.name || !userData.year || !userData.major) {
+          if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
             alert("Please complete your profile before signing in.");
             navigate("/profile");
             return;

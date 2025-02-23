@@ -51,8 +51,15 @@ function Profile() {
     }
   }
 
-  const handleProfileUpdate = (updatedData) => {
-    setUserDetails(updatedData);
+  const handleProfileUpdate = async (updatedData) => {
+    const user = auth.currentUser;
+    if (user) {
+      const docRef = doc(db, "Users", user.uid);
+      const docSnap = await getDoc(docRef);  // Fetch updated data from Firestore
+      if (docSnap.exists()) {
+        setUserDetails(docSnap.data()); // Set updated data
+      }
+    }
     setIsEditing(false); // Hide edit form after saving
   };
 
