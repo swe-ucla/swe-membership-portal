@@ -15,6 +15,7 @@ function UpcomingEvents() {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login");
+        return;
       }
 
       const userRef = doc(db, "Users", user.uid);
@@ -26,6 +27,7 @@ function UpcomingEvents() {
       }
     });
   };
+  
 
   const fetchEvents = async () => {
     setLoading(true);

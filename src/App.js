@@ -11,7 +11,7 @@ import {
 // import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./components/Login/Login";
-import SignUp from "./components/Login/Register";
+import Register from "./components/Login/Register";
 import Profile from "./components/Profile/Profile";
 import Home from "./components/Home/Home";
 import AddEvent from "./components/AddEvent/AddEvent";
@@ -33,7 +33,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<SignUp />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/home" element={<Home />} />
           <Route path="/addevent" element={<AddEvent />} />

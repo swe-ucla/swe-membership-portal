@@ -41,9 +41,9 @@ const NavBar = ({ isAdmin }) => {
     return null;
   }
   // if no user is logged in, redirect to login page
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
+  // if (!user) {
+  //   return <Navigate to="/login" />;
+  // }
 
   return (
     <nav className="navbar">

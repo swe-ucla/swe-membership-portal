@@ -3,13 +3,29 @@ import { db } from "../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const PastEvents = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const auth = getAuth();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        navigate("/login");
+        return;
+      }
+    });
+  
+    return () => unsubscribe();
+  }, [auth, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
     const fetchPastEvents = async () => {
       try {
         const eventsRef = collection(db, "events");
