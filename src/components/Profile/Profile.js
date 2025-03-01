@@ -15,14 +15,22 @@ function Profile() {
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
-      console.log(user);
-      const docRef = doc(db, "Users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setUserDetails(docSnap.data());
-        console.log(docSnap.data());
-      } else {
-        console.log("User is not logged in");
+      if (!user) {
+        console.warn("No user found. Skipping fetch.");
+        return;
+      }
+
+      if (user && user.uid) {
+
+        console.log(user);
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserDetails(docSnap.data());
+          console.log(docSnap.data());
+        } else {
+          console.log("User is not logged in");
+        }
       }
     });
   };
@@ -30,32 +38,53 @@ function Profile() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
+        console.warn("User is null, redirecting to login.");
         navigate("/login");
-      } else {
-        fetchUserData(user);
+        return; // ✅ Prevents fetchUserData() from running
       }
+  
+      console.log("User exists, fetching data...");
+      fetchUserData(); // ✅ Only call when user is valid
     });
+  
     return () => unsubscribe();
   }, [navigate]);
-
+  
   const handleHomeClick = () => {
     navigate("/home");
   };
-
+  
   async function handleLogout() {
     try {
-      setIsEditing(true)
+      setIsEditing(true);
+  
+      if (auth.currentUser) {
+        console.log("Logging out user:", auth.currentUser.uid); // ✅ Debugging log
+      } else {
+        console.warn("User already logged out.");
+      }
+  
       await auth.signOut();
-      window.location.href = "/login";
       console.log("User logged out successfully!");
+  
+      // Small delay to ensure the auth state is fully updated before navigation
+      setTimeout(() => {
+        setIsEditing(false);
+        navigate("/login");
+      }, 500); 
+  
     } catch (error) {
       console.error("Error logging out:", error.message);
+      setIsEditing(false);
     }
   }
+  
+  
+  
 
   const handleProfileUpdate = async (updatedData) => {
     const user = auth.currentUser;
-    if (user) {
+    if (user && user.uid) {
       const docRef = doc(db, "Users", user.uid);
       const docSnap = await getDoc(docRef);  // Fetch updated data from Firestore
       if (docSnap.exists()) {
@@ -95,7 +124,6 @@ function Profile() {
       {userDetails ? (
         <>
           <button onClick={handleHomeClick}> <FaHome/></button>
-          <h3>Profile</h3>
           
           {isEditing ? (
             <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />

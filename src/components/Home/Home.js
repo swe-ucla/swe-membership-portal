@@ -9,7 +9,7 @@ function Home() {
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
-      if (user) {
+      if (user && user.uid) {
         console.log(user);
         const docRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(docRef);

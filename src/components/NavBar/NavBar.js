@@ -57,13 +57,13 @@ const NavBar = ({ isAdmin }) => {
         </button>
 
         <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>
-          <NavLink
+          {/* <NavLink
             to="/home"
             className={({ isActive }) => (isActive ? "active" : "")}
             onClick={() => setIsMenuOpen(false)}
           >
             Home
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/upcoming"
             className={({ isActive }) => (isActive ? "active" : "")}

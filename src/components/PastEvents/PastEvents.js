@@ -25,30 +25,32 @@ const PastEvents = () => {
   }, [auth, navigate]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) return; // Ensures we fetch past events only when user is defined
+  
     const fetchPastEvents = async () => {
       try {
         const eventsRef = collection(db, "events");
         const snapshot = await getDocs(eventsRef);
         const today = new Date();
-
+  
         const pastEventsData = snapshot.docs
           .map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }))
-          .filter((event) => event.date.toDate() < today); // Filter past events
-
+          .filter((event) => event.date && event.date.toDate() < today); // Ensure event.date exists
+  
         setPastEvents(pastEventsData);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching past events:", error);
-        setLoading(false);
+      } finally {
+        setLoading(false); // Ensure loading is set to false in case of error
       }
     };
-
+  
     fetchPastEvents();
-  }, []);
+  }, [user]); // Only run when `user` is available
+  
 
   // Fetch detailed user info for given attendee IDs
   const fetchUserDetails = async (attendeeIds) => {

@@ -38,7 +38,7 @@ function AddEvent() {
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
-      if (user) {
+      if (user && user.uid) {
         const docRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {

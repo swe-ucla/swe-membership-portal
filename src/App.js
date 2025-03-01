@@ -31,7 +31,7 @@ function App() {
       <div className="App">
         <NavBar isAdmin={isAdmin} />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<UpcomingEvents />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
