@@ -1,0 +1,147 @@
+.leaderboard-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.leaderboard-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.leaderboard-table-container {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-header {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #6b7280;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* align each header with its content */
+.table-header:first-child {
+    text-align: center;
+    width: 100px;
+}
+
+.table-header:nth-child(2) {
+    text-align: left;
+}
+
+.table-header:last-child {
+    text-align: right;
+    padding-right: 30px;
+}
+
+.table-cell {
+    padding: 16px;
+    white-space: nowrap;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.current-user-row {
+    background-color: #ebf5ff;
+}
+
+.rank-cell {
+    text-align: center;
+}
+
+.top-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: bold;
+}
+
+.rank-1 {
+    background-color: #fef3c7;
+    /* Gold */
+    color: #92400e;
+}
+
+.rank-2 {
+    background-color: #f1f5f9;
+    /* Silver */
+    color: #475569;
+}
+
+.rank-3 {
+    background-color: #fff7ed;
+    /* Bronze */
+    color: #9a3412;
+}
+
+.normal-rank {
+    padding: 0 8px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.default-avatar {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+}
+
+.current-user-label {
+    font-size: 12px;
+    color: #2563eb;
+}
+
+.points-cell {
+    font-weight: 500;
+    font-size: 14px;
+    text-align: right;
+    padding-right: 30px;
+}
