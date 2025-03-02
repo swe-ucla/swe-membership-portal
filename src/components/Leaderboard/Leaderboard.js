@@ -20,10 +20,10 @@ function Leaderboard() {
 
   const fetchLeaderboardData = async () => {
     try {
-      // get the top 10 users ordered by swePoints in descending order
+      // get the top 10 users ordered by totalPoints in descending order
       const leaderboardQuery = query(
         collection(db, "Users"),
-        orderBy("swePoints", "desc"),
+        orderBy("totalPoints", "desc"),
         limit(10)
       );
 
@@ -50,7 +50,7 @@ function Leaderboard() {
           id: doc.id,
           rank: index + 1,
           fullName: fullName,
-          points: userData.swePoints || 0,
+          points: userData.totalPoints || 0,
           ...userData,
         };
       });

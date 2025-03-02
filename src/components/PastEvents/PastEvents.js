@@ -8,49 +8,71 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const PastEvents = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth();
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const fetchUserData = async (currentUser) => {
       if (!currentUser) {
         navigate("/login");
         return;
       }
+
+      const userRef = doc(db, "Users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        setIsAdmin(userData.isAdmin || false);
+      }
+
+      setUser(currentUser);
+      setLoading(false);
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      fetchUserData(currentUser);
     });
-  
+
     return () => unsubscribe();
   }, [auth, navigate]);
 
   useEffect(() => {
-    if (!user) return; // Ensures we fetch past events only when user is defined
-  
+    if (!user || !isAdmin) return; // Ensure only admins fetch events
+
     const fetchPastEvents = async () => {
       try {
         const eventsRef = collection(db, "events");
         const snapshot = await getDocs(eventsRef);
         const today = new Date();
-  
+
         const pastEventsData = snapshot.docs
           .map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }))
           .filter((event) => event.date && event.date.toDate() < today); // Ensure event.date exists
-  
+
         setPastEvents(pastEventsData);
       } catch (error) {
         console.error("Error fetching past events:", error);
       } finally {
-        setLoading(false); // Ensure loading is set to false in case of error
+        setLoading(false);
       }
     };
-  
+
     fetchPastEvents();
-  }, [user]); // Only run when `user` is available
-  
+  }, [user, isAdmin]);
+
+  if (loading) {
+    return <p>Loading past events...</p>;
+  }
+
+  if (!isAdmin) {
+    return <p>You do not have permission to view this page.</p>; // Hide page for non-admins
+  }
 
   // Fetch detailed user info for given attendee IDs
   const fetchUserDetails = async (attendeeIds) => {

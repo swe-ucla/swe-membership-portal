@@ -165,11 +165,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         <textarea name="bio" value={formData.bio} onChange={handleChange} />
       </div>
 
-      <div className="form-group">
-        <label>#SWE Points:</label>
-        <input type="text" name="swePoints" value={formData.swePoints} onChange={handleChange} />
-      </div>
-
       <div className="button-group">
         <button type="submit" className="btn btn-primary">Save Changes</button>
       </div>

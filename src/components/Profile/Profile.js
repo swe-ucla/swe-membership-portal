@@ -129,7 +129,6 @@ function Profile() {
             <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />
           ) : (
             <>
-              <button className="home-button" onClick={handleHomeClick}><FaHome /></button>
               <h3 className="profile-header">Profile</h3>
   
               <div className="profile-picture-container">

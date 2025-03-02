@@ -24,12 +24,11 @@ import PastEvents from "./components/PastEvents/PastEvents";
 function App() {
   // TODO: Fetch this from user authentication logic! Need to implement admin checking logic 
   // this is for admin-only Event Creatioon page
-  const isAdmin = true;
 
   return (
     <Router>
       <div className="App">
-        <NavBar isAdmin={isAdmin} />
+        <NavBar />
         <Routes>
           <Route path="/" element={<UpcomingEvents />} />
           <Route path="/login" element={<Login />} />

@@ -1,22 +1,42 @@
-import { NavLink, Navigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-const NavBar = ({ isAdmin }) => {
+
+const NavBar = () => {
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const auth = getAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const fetchUserData = async (currentUser) => {
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
+      const userRef = doc(db, "Users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        setIsAdmin(userData.isAdmin || false);
+      }
+
       setUser(currentUser);
       setLoading(false);
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      fetchUserData(currentUser);
     });
 
-    // cleanup, stop listening for authentication state changes
     return () => unsubscribe();
   }, [auth]);
 
@@ -37,9 +57,7 @@ const NavBar = ({ isAdmin }) => {
   }, []);
 
   // checking authentication state
-  if (loading) {
-    return null;
-  }
+  if (loading || !user) return null;
   // if no user is logged in, redirect to login page
   // if (!user) {
   //   return <Navigate to="/login" />;
@@ -48,7 +66,7 @@ const NavBar = ({ isAdmin }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="logo">Logo</div>
+        <div className="logo">swe logo</div>
 
         <button className="hamburger" onClick={toggleMenu}>
           <span></span>
