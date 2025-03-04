@@ -39,7 +39,7 @@ function Register() {
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
   
-      if (user) {
+      if (user && user.uid) {
         // If user created successfully, store additional information in Firestore
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,

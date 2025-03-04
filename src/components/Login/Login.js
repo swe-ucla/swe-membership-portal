@@ -22,7 +22,7 @@ function Login() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in Successfully");
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.log(error.code);
       toast.error("An error occurred. Please check your email and password.", {

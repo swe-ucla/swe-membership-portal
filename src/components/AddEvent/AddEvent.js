@@ -6,6 +6,7 @@ import { Timestamp } from "firebase/firestore"; // Import Timestamp
 
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
@@ -38,11 +39,13 @@ function AddEvent() {
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
-      if (user) {
+      if (user && user.uid) {
         const docRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserDetails(docSnap.data());
+          const userData = docSnap.data();
+          setIsAdmin(userData.isAdmin || false);
         }
       } else {
         navigate("/login");
@@ -54,6 +57,9 @@ function AddEvent() {
   useEffect(() => {
     fetchUserData();
   }, []);
+  if (!isAdmin) {
+    return <p>You do not have permission to view this page.</p>; // Hide page for non-admins
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

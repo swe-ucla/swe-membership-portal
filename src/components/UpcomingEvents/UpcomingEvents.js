@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, orderBy, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
 
@@ -24,6 +24,13 @@ function UpcomingEvents() {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         setIsSignedIn(userData.attendedEvents || []); // store user's signed-in events
+
+        if (userData.hasOwnProperty("isAdmin")) {
+          setIsAdmin(userData.isAdmin);
+        } else {
+          await setDoc(userRef, { isAdmin: false }, { merge: true });
+          setIsAdmin(false);
+        }
       }
     });
   };
