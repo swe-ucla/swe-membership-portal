@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { auth, db } from "../firebase"; 
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { deleteUser, signOut } from "firebase/auth";
 import "./Profile.css";
+
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
@@ -114,6 +116,26 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No authenticated user found.");
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "Users", user.uid));
+      await deleteUser(user);
+      await signOut(auth);
+      console.log("User account deleted successfully and logged out.");
+      alert("Your account has been deleted. You will be redirected to the homepage.");
+      window.location.href = "/"; // Redirect to homepage after logout
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Failed to delete account. Please try again.");
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="edit-profile-form">
       <div className="form-group">
@@ -167,6 +189,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
       <div className="button-group">
         <button type="submit" className="btn btn-primary">Save Changes</button>
+        <button type="button" className="btn btn-danger" onClick={handleDeleteAccount}>Delete Account</button>
       </div>
     </form>
   );
