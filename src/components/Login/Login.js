@@ -15,17 +15,39 @@ function Login() {
   const [resetEmail, setResetEmail] = useState("");
   const [showResetForm, setShowResetForm] = useState(false);
   const [resetLinkSent, setResetLinkSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in Successfully");
       navigate("/");
     } catch (error) {
       console.log(error.code);
-      toast.error("An error occurred. Please check your email and password.", {
+
+      // Set specific error message for wrong password
+      if (error.code === "auth/wrong-password") {
+        setErrorMessage("Incorrect password. Please try again.");
+      } else if (error.code === "auth/user-not-found") {
+        setErrorMessage("No account exists with this email address.");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMessage("Please enter a valid email address.");
+      } else if (error.code === "auth/too-many-requests") {
+        setErrorMessage(
+          "Too many failed login attempts. Please try again later."
+        );
+      } else {
+        setErrorMessage(
+          "An error occurred. Please check your email and password."
+        );
+      }
+
+      // Can keep toast notifications if desired
+      toast.error("Login failed", {
         position: "top-center",
       });
     }
@@ -33,7 +55,10 @@ function Login() {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
+    setErrorMessage("")
+
     if (!resetEmail) {
+      setErrorMessage("Please enter your email address");
       toast.error("Please enter your email address", {
         position: "top-center",
       });
@@ -49,14 +74,15 @@ function Login() {
     } catch (error) {
       console.log(error.code);
 
-      let errorMessage = "Failed to send password reset email.";
+      let message = "Failed to send password reset email.";
       if (error.code === "auth/user-not-found") {
-        errorMessage = "No account exists with this email address.";
+        message = "No account exists with this email address.";
       } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Please enter a valid email address.";
+        message = "Please enter a valid email address.";
       }
 
-      toast.error(errorMessage, {
+      setErrorMessage(message);
+      toast.error(message, {
         position: "top-center",
       });
     }
@@ -65,6 +91,7 @@ function Login() {
   const toggleResetForm = () => {
     setShowResetForm(!showResetForm);
     setResetLinkSent(false);
+    setErrorMessage(""); 
     setResetEmail(email); // Pre-fill with the login email if available
   };
 
@@ -74,6 +101,12 @@ function Login() {
         {!showResetForm ? (
           <form onSubmit={handleSubmit}>
             <h3>Login</h3>
+
+            {errorMessage && (
+              <div className="alert alert-danger" role="alert">
+                {errorMessage}
+              </div>
+            )}
 
             <div className="mb-3">
               <label>Email address</label>
@@ -117,6 +150,13 @@ function Login() {
             {!resetLinkSent ? (
               <form onSubmit={handleForgotPassword}>
                 <h3>Reset Password</h3>
+
+                {errorMessage && (
+                  <div className="alert alert-danger" role="alert">
+                    {errorMessage}
+                  </div>
+                )}
+
                 <div className="mb-3">
                   <label>Email address</label>
                   <input
