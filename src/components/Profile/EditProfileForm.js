@@ -21,17 +21,17 @@ const majorOptions = [
 ];
 
 const yearOptions = [
-  "Undergraduate Students:",
-  "Freshman",
-  "Sophomore",
-  "Junior",
-  "Senior",
-  "Graduate Students:",
-  "First-year graduate student",
-  "Second-year graduate student",
-  "Third-year graduate student",
-  "Fourth-year graduate student and beyond",
-  "Other"
+  { label: "Undergraduate Students:", value: "", disabled: true },
+  { label: "Freshman", value: "Freshman", disabled: false },
+  { label: "Sophomore", value: "Sophomore", disabled: false },
+  { label: "Junior", value: "Junior", disabled: false },
+  { label: "Senior", value: "Senior", disabled: false },
+  { label: "Graduate Students:", value: "", disabled: true },
+  { label: "First-year graduate student", value: "First-year graduate student", disabled: false },
+  { label: "Second-year graduate student", value: "Second-year graduate student", disabled: false },
+  { label: "Third-year graduate student", value: "Third-year graduate student", disabled: false },
+  { label: "Fourth-year graduate student and beyond", value: "Fourth-year graduate student and beyond", disabled: false },
+  { label: "Other", value: "Other", disabled: false }
 ];
 
 const EditProfileForm = ({ userDetails, onUpdate }) => {
@@ -41,18 +41,44 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     lastName: userDetails?.lastName || "",
     year: userDetails?.year || "",
     major: userDetails?.major || "",
+    otherMajor: "",
     memberId: userDetails?.memberId || "",
     bio: userDetails?.bio || "",
-    swePoints: userDetails?.swePoints || "",
+    swePoints: userDetails?.swePoints || 0,
   });
 
   const [errors, setErrors] = useState({});
   const [imageFile, setImageFile] = useState(null);
+  const [bioWordCount, setBioWordCount] = useState(
+    userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "bio") {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount <= 100) {
+        setFormData((prev) => ({ ...prev, bio: value }));
+        setBioWordCount(wordCount);
+        setErrors((prev) => ({ ...prev, bio: "" })); // Remove error if valid
+      } else {
+        setErrors((prev) => ({ ...prev, bio: "Bio cannot exceed 100 words." }));
+      }
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleMajorChange = (e) => {
+    const selectedMajor = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      major: selectedMajor,
+      otherMajor: selectedMajor === "Other" ? prev.otherMajor : "",
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -68,11 +94,20 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (bioWordCount > 100) {
+      setErrors((prev) => ({
+        ...prev,
+        bio: "Bio cannot exceed 100 words.",
+      }));
+      return;
+    }
+
     const newErrors = {
       firstName: validateField("First Name", formData.firstName),
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
+      otherMajor: formData.major === "Other" && !formData.otherMajor.trim() ? "Please specify your major." : "",
     };
 
     setErrors(newErrors);
@@ -105,6 +140,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         updatedFormData.profilePicture = cloudinaryResult.secure_url;
       }
 
+      if (formData.major === "Other") {
+        updatedFormData.major = formData.otherMajor;
+      }
+
       const userRef = doc(db, "Users", user.uid);
       await updateDoc(userRef, updatedFormData);
       console.log("Profile updated successfully.");
@@ -125,54 +164,50 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
       <div className="form-group">
         <label>First Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={errors.firstName ? "input-error" : ""} />
-        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
       </div>
 
       <div className="form-group">
         <label>Last Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={errors.lastName ? "input-error" : ""} />
-        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
       </div>
 
       <div className="form-group">
         <label>Year <span style={{ color: "red" }}>*</span>:</label>
-        <select name="year" value={formData.year} onChange={handleChange} className={errors.year ? "input-error" : ""}>
+        <select name="year" value={formData.year} onChange={handleChange}>
           {yearOptions.map((option, index) => (
-            <option key={index} value={option}>{option}</option>
+            <option key={index} value={option.value} disabled={option.disabled}>
+              {option.label}
+            </option>
           ))}
         </select>
-        {errors.year && <span className="error-message">{errors.year}</span>}
       </div>
 
       <div className="form-group">
         <label>Major <span style={{ color: "red" }}>*</span>:</label>
-        <select name="major" value={formData.major} onChange={handleChange} className={errors.major ? "input-error" : ""}>
+        <select name="major" value={formData.major} onChange={handleMajorChange}>
           {majorOptions.map((option, index) => (
             <option key={index} value={option}>{option}</option>
           ))}
         </select>
-        {errors.major && <span className="error-message">{errors.major}</span>}
+        {formData.major === "Other" && (
+          <input type="text" name="otherMajor" placeholder="Enter your major" value={formData.otherMajor} onChange={handleChange} />
+        )}
       </div>
 
       <div className="form-group">
-        <label>Member ID:</label>
-        <input type="text" name="memberId" value={formData.memberId} onChange={handleChange} />
-      </div>
-
-      <div className="form-group">
-        <label>Bio:</label>
+        <label>Bio (Max 100 words):</label>
         <textarea name="bio" value={formData.bio} onChange={handleChange} />
+        <div className="word-counter">{100 - bioWordCount} words left</div>
+        {errors.bio && <span className="error-message">{errors.bio}</span>}
       </div>
 
       <div className="form-group">
         <label>#SWE Points:</label>
-        <input type="text" name="swePoints" value={formData.swePoints} onChange={handleChange} />
+        <input type="text" name="swePoints" value={formData.swePoints} readOnly />
       </div>
 
-      <div className="button-group">
-        <button type="submit" className="btn btn-primary">Save Changes</button>
-      </div>
+      <button type="submit" className="btn btn-primary">Save Changes</button>
     </form>
   );
 };
