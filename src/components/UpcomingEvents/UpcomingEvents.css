@@ -1,0 +1,341 @@
+/* UpcomingEvents page styles */
+.events-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9e9fe 100%);
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .events-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+  }
+  
+  .events-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Event card styles */
+  .event-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .event-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Fix for the title and date overlap */
+  .event-card h4 {
+    background: linear-gradient(135deg, #8a2be2, #ff69b4);
+    color: white;
+    padding: 1.2rem;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    /* Ensure there's room for the date badge */
+    padding-right: 120px;
+    /* Add text ellipsis for very long titles */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .event-card-content {
+    padding: 1.5rem;
+  }
+  
+  .event-card p {
+    color: #666;
+    margin: 1rem 0;
+    line-height: 1.6;
+  }
+  
+  .event-detail {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.7rem;
+  }
+  
+  .event-detail strong {
+    min-width: 100px;
+    color: #555;
+    font-weight: 600;
+  }
+  
+  .event-date-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: white;
+    color: #8a2be2;
+    padding: 0.4rem 0.7rem;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 5; /* Ensure it's above other elements */
+  }
+  
+  /* Today badge styling */
+  .today-badge {
+    background: #ff69b4 !important;
+    color: white !important;
+    font-weight: 700;
+  }
+  
+  /* Completely remove the Today indicator overlay */
+  .today-event::before {
+    content: none !important;
+    display: none !important;
+  }
+  
+  /* If there's any top label trying to appear, disable it */
+  .event-card::after,
+  .event-card::before {
+    display: none !important;
+  }
+  
+  /* Make sure the header doesn't have any unwanted before/after elements */
+  .event-header::before,
+  .event-header::after {
+    display: none !important;
+  }
+  
+  .event-card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  /* Button styles */
+  .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 7px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.95rem;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    color: white;
+    box-shadow: 0 4px 10px rgba(138, 43, 226, 0.2);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(138, 43, 226, 0.3);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+  
+  .btn-add-event {
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .btn-add-event:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(138, 43, 226, 0.2);
+  }
+  
+  /* Loading and empty states */
+  .loading-message {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #555;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    max-width: 600px;
+    margin: 3rem auto;
+  }
+  
+  .empty-message {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #555;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    max-width: 600px;
+    margin: 3rem auto;
+  }
+  
+  /* Loading spinner */
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(138, 43, 226, 0.2);
+    border-radius: 50%;
+    border-top-color: #8a2be2;
+    animation: spin 1s ease-in-out infinite;
+    margin: 2rem auto;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Alternative header layout if using flexbox structure */
+  .event-header {
+    background: linear-gradient(135deg, #8a2be2, #ff69b4);
+    color: white;
+    padding: 1.2rem;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .event-name {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Committee badge styling */
+  .event-committee {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+  }
+  
+  /* Time display in event cards */
+  .event-time {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+    color: #555;
+  }
+  
+  .event-time svg {
+    margin-right: 8px;
+    color: #8a2be2;
+  }
+  
+  /* Form row for date and time fields */
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-col {
+    flex: 1;
+  }
+  
+  /* Time input styling */
+  input[type="time"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  input[type="time"]:focus {
+    outline: none;
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .events-container {
+      padding: 1.5rem;
+    }
+    
+    .event-cards-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-card {
+      margin-bottom: 1.5rem;
+    }
+    
+    .event-card h4 {
+      font-size: 1.2rem;
+      padding-right: 100px; /* Slightly smaller padding for mobile */
+    }
+    
+    .event-date-badge {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+    }
+    
+    .loading-message, .empty-message {
+      padding: 2rem;
+      margin: 2rem auto;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+  
+  /* Fix for very small screens */
+  @media (max-width: 400px) {
+    .event-cards-container {
+      display: block;
+    }
+    
+    .event-card h4 {
+      padding-right: 90px;
+      font-size: 1.1rem;
+    }
+    
+    .event-detail strong {
+      min-width: 80px;
+    }
+  }

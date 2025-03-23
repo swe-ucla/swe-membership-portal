@@ -1,18 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import "./UpcomingEvents.css";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [userEvents, setUserEvents] = useState([]);
   const navigate = useNavigate();
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login");
+      } else {
+        setUser(user);
+        
+        // Fetch the events the user has signed up for
+        const userDocRef = doc(db, "Users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists() && userDoc.data().signedUpEvents) {
+          setUserEvents(userDoc.data().signedUpEvents || []);
+        } else {
+          // Initialize signedUpEvents array if it doesn't exist
+          await updateDoc(userDocRef, {
+            signedUpEvents: []
+          });
+          setUserEvents([]);
+        }
       }
     });
   };
@@ -28,7 +46,6 @@ function UpcomingEvents() {
         id: doc.id,
         ...doc.data(),
       }));
-      setEvents(eventsData);
 
       const today = new Date();
       const futureEvents = eventsData.filter((event) => {
@@ -39,7 +56,6 @@ function UpcomingEvents() {
         return eventDate >= today; // Only keep events that are today or in the future
       });
       setEvents(futureEvents);
-
     } catch (error) {
       console.error("Error fetching events:", error);
     }
@@ -50,9 +66,6 @@ function UpcomingEvents() {
     const today = new Date();
     const eventDateObj = eventDate?.toDate ? eventDate.toDate() : new Date(eventDate);
     
-    console.log("Event Date:", eventDateObj); // Log the event date to check
-    console.log("Today:", today); // Log today's date to check
-    
     return (
       today.getDate() === eventDateObj.getDate() &&
       today.getMonth() === eventDateObj.getMonth() &&
@@ -61,14 +74,75 @@ function UpcomingEvents() {
   };
 
   const formatDate = (timestamp) => {
-    if (timestamp && timestamp.toDate) {
-      return timestamp.toDate().toLocaleDateString(); // Use .toDate() for Firebase Timestamp
+    if (!timestamp) return null;
+    
+    const eventDate = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+    
+    // Check if the event is today
+    if (isToday(timestamp)) {
+      return "Today";
     }
-    return null; // If no valid date is found
+    
+    // Otherwise format the date normally
+    return eventDate.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
-  const handleSignUpClick = (eventId) => {
-    navigate(`/eventsignin/${eventId}`); // Navigate to the event signing page with event ID
+  const handleSignUpClick = async (event) => {
+    if (!user) return;
+    
+    try {
+      const userDocRef = doc(db, "Users", user.uid);
+      
+      // Check if user is already signed up
+      const isSignedUp = userEvents.some(e => e.id === event.id);
+      
+      if (isSignedUp) {
+        // Remove the event from user's signedUpEvents
+        await updateDoc(userDocRef, {
+          signedUpEvents: arrayRemove({
+            id: event.id,
+            name: event.name,
+            date: event.date,
+            location: event.location,
+            committee: event.createdBy,
+            time: event.time || "",
+          })
+        });
+        
+        setUserEvents(userEvents.filter(e => e.id !== event.id));
+        alert("You have been removed from this event.");
+      } else {
+        // Add the event to user's signedUpEvents
+        await updateDoc(userDocRef, {
+          signedUpEvents: arrayUnion({
+            id: event.id,
+            name: event.name,
+            date: event.date,
+            location: event.location,
+            committee: event.createdBy,
+            time: event.time || "",
+          })
+        });
+        
+        setUserEvents([...userEvents, {
+          id: event.id,
+          name: event.name,
+          date: event.date
+        }]);
+        alert("You have successfully signed up for this event!");
+      }
+    } catch (error) {
+      console.error("Error updating user events:", error);
+      alert("There was an error. Please try again.");
+    }
+  };
+
+  const isUserSignedUp = (eventId) => {
+    return userEvents.some(event => event.id === eventId);
   };
 
   useEffect(() => {
@@ -77,32 +151,68 @@ function UpcomingEvents() {
   }, []);
 
   return (
-    <div>
-      <h2>Upcoming Events</h2>
+    <div className="events-container">
+      <div className="events-header">
+        <h2 className="events-title">Upcoming Events</h2>
+      </div>
+
       {loading ? (
-        <p>Loading events...</p>
+        <div className="loading-message">
+          <div className="loading-spinner"></div>
+          <p>Loading events...</p>
+        </div>
       ) : events.length > 0 ? (
-        <ul>
+        <div className="event-cards-container">
           {events.map((event) => (
-            <div key={event.id} className="event-card">
+            <div 
+              key={event.id} 
+              className={`event-card ${isToday(event.date) ? 'today-event' : ''}`}
+            >
               <h4>{event.name}</h4>
-              <strong>Date:</strong> {formatDate(event.date)} {/* Format event date */}
-              <strong>Location:</strong> {event.location}
-              <strong>Created By:</strong> {event.createdBy} Committee
-              <p>{event.description}</p>
-              {isToday(event.date) && (
-                <button
-                  onClick={() => handleSignUpClick(event.id)}
-                  className="btn btn-primary"
-                >
-                  Sign In
-                </button>
+              {formatDate(event.date) && (
+                <div className={`event-date-badge ${isToday(event.date) ? 'today-badge' : ''}`}>
+                  {formatDate(event.date)}
+                </div>
               )}
+              
+              <div className="event-card-content">
+                <div className="event-detail">
+                  <strong>Location:</strong>
+                  <span>{event.location}</span>
+                </div>
+                
+                <div className="event-detail">
+                  <strong>Committee:</strong>
+                  <span>{event.createdBy}</span>
+                </div>
+                
+                {event.time && (
+                  <div className="event-detail">
+                    <strong>Time:</strong>
+                    <span>{event.time}</span>
+                  </div>
+                )}
+                
+                {event.description && (
+                  <p>{event.description}</p>
+                )}
+                
+                <div className="event-card-footer">
+                  <button
+                    onClick={() => handleSignUpClick(event)}
+                    className={`btn ${isUserSignedUp(event.id) ? 'btn-signed-up' : 'btn-primary'}`}
+                  >
+                    {isUserSignedUp(event.id) ? 'Cancel Registration' : 'Sign Up'}
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No upcoming events.</p>
+        <div className="empty-message">
+          <p>No upcoming events.</p>
+        </div>
       )}
     </div>
   );
