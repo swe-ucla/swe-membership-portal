@@ -1,13 +1,15 @@
 import { NavLink } from "react-router-dom";
-import "./NavBar.css"; // Import the CSS file for styling
-
+import "./NavBar.css";
+import SWELogo from "./SWE_Logo.png"; // Import the SWE logo
 
 const NavBar = ({ isAdmin }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="logo">Logo</div>
-
+        <div className="logo">
+          <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
+        </div>
+        
         <div className="nav-links">
           <NavLink
             to="/home"
@@ -46,6 +48,5 @@ const NavBar = ({ isAdmin }) => {
     </nav>
   );
 };
-
 
 export default NavBar;
