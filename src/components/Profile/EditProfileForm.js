@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { auth, db } from "../firebase"; 
+import React, { useState, useEffect, useRef } from "react";
+import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteUser, signOut } from "firebase/auth";
 import "./Profile.css";
-
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
@@ -42,8 +41,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     firstName: userDetails?.firstName || "",
     lastName: userDetails?.lastName || "",
     year: userDetails?.year || "",
-    major: userDetails?.major || "",
-    otherMajor: "",
+    major: majorOptions.includes(userDetails?.major) ? userDetails?.major : "Other",
+    otherMajor: userDetails?.major && !majorOptions.includes(userDetails?.major) ? userDetails?.major : "",
     memberId: userDetails?.memberId || "",
     bio: userDetails?.bio || "",
     swePoints: userDetails?.swePoints || 0,
@@ -55,6 +54,25 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
   );
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    // Update formData when userDetails changes (on initial load or updates)
+    setFormData({
+      profilePicture: userDetails?.profilePicture || "",
+      firstName: userDetails?.firstName || "",
+      lastName: userDetails?.lastName || "",
+      year: userDetails?.year || "",
+      major: majorOptions.includes(userDetails?.major) ? userDetails?.major : "Other",
+      otherMajor: userDetails?.major && !majorOptions.includes(userDetails?.major) ? userDetails?.major : "",
+      memberId: userDetails?.memberId || "",
+      bio: userDetails?.bio || "",
+      swePoints: userDetails?.swePoints || 0,
+    });
+    setBioWordCount(userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0);
+  }, [userDetails]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -63,7 +81,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       if (wordCount <= 100) {
         setFormData((prev) => ({ ...prev, bio: value }));
         setBioWordCount(wordCount);
-        setErrors((prev) => ({ ...prev, bio: "" })); // Remove error if valid
+        setErrors((prev) => ({ ...prev, bio: "" }));
       } else {
         setErrors((prev) => ({ ...prev, bio: "Bio cannot exceed 100 words." }));
       }
@@ -76,11 +94,19 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   const handleMajorChange = (e) => {
     const selectedMajor = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      major: selectedMajor,
-      otherMajor: selectedMajor === "Other" ? prev.otherMajor : "",
-    }));
+    if (selectedMajor === "Other") {
+      setFormData((prev) => ({
+        ...prev,
+        major: selectedMajor,
+        otherMajor: prev.otherMajor || "",
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        major: selectedMajor,
+        otherMajor: "",
+      }));
+    }
   };
 
   const handleFileChange = (e) => {
@@ -121,6 +147,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       let updatedFormData = { ...formData };
 
@@ -144,14 +172,20 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
       if (formData.major === "Other") {
         updatedFormData.major = formData.otherMajor;
+      } else {
+        updatedFormData.otherMajor = ""; // Clear otherMajor if major is not "Other"
       }
 
       const userRef = doc(db, "Users", user.uid);
       await updateDoc(userRef, updatedFormData);
       console.log("Profile updated successfully.");
       onUpdate(updatedFormData);
+      alert("Profile updated successfully.");
     } catch (error) {
       console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,7 +210,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="edit-profile-form">
+    <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
       <div className="form-group">
         <label>
           Upload Profile Picture:
@@ -187,11 +221,13 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       <div className="form-group">
         <label>First Name <span style={{ color: "red" }}>*</span>:</label>
         <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
+        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
       </div>
 
       <div className="form-group">
         <label>Last Name <span style={{ color: "red" }}>*</span>:</label>
         <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
+        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
       </div>
 
       <div className="form-group">
@@ -203,6 +239,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
             </option>
           ))}
         </select>
+        {errors.year && <span className="error-message">{errors.year}</span>}
       </div>
 
       <div className="form-group">
@@ -215,6 +252,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         {formData.major === "Other" && (
           <input type="text" name="otherMajor" placeholder="Enter your major" value={formData.otherMajor} onChange={handleChange} />
         )}
+        {errors.major && <span className="error-message">{errors.major}</span>}
+        {errors.otherMajor && <span className="error-message">{errors.otherMajor}</span>}
       </div>
 
       <div className="form-group">
@@ -225,8 +264,12 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       </div>
 
       <div className="button-group">
-        <button type="submit" className="btn btn-primary">Save Changes</button>
-        <button type="button" className="btn btn-danger" onClick={handleDeleteAccount}>Delete Account</button>
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : "Save Changes"}
+        </button>
+        <button type="button" className="btn btn-danger" onClick={handleDeleteAccount}>
+          Delete Account
+        </button>
       </div>
     </form>
   );
