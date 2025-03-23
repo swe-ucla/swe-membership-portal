@@ -34,7 +34,7 @@ const yearOptions = [
   { label: "Other", value: "Other", disabled: false }
 ];
 
-const EditProfileForm = ({ userDetails, onUpdate }) => {
+const EditProfileForm = ({ userDetails, onUpdate, onCancel }) => {
   const [formData, setFormData] = useState({
     profilePicture: userDetails?.profilePicture || "",
     firstName: userDetails?.firstName || "",
@@ -50,14 +50,15 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   const [errors, setErrors] = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [bioWordCount, setBioWordCount] = useState(
-    userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
+    userDetails?.bio ? userDetails.bio.trim().split(/\s+/).filter(Boolean).length : 0
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "bio") {
-      const wordCount = value.trim().split(/\s+/).length;
+      const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount <= 100) {
         setFormData((prev) => ({ ...prev, bio: value }));
         setBioWordCount(wordCount);
@@ -84,6 +85,12 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
       setImageFile(e.target.files[0]);
+      // Preview image immediately
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFormData(prev => ({ ...prev, profilePicture: event.target.result }));
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
@@ -120,6 +127,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     }
 
     try {
+      setIsLoading(true);
       let updatedFormData = { ...formData };
 
       if (imageFile) {
@@ -147,67 +155,141 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       const userRef = doc(db, "Users", user.uid);
       await updateDoc(userRef, updatedFormData);
       console.log("Profile updated successfully.");
+      setIsLoading(false);
       onUpdate(updatedFormData);
     } catch (error) {
       console.error("Error updating profile:", error);
+      setIsLoading(false);
+      alert("There was an error updating your profile. Please try again.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="edit-profile-form">
       <div className="form-group">
-        <label>
-          Upload Profile Picture:
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-        </label>
+        <label>Upload Profile Picture:</label>
+        <div className="profile-picture-container">
+          {formData.profilePicture ? (
+            <img
+              src={formData.profilePicture}
+              alt="Profile Preview"
+              className="profile-picture"
+            />
+          ) : (
+            <div className="no-picture">No Profile Picture</div>
+          )}
+        </div>
+        <input 
+          type="file" 
+          accept="image/*" 
+          onChange={handleFileChange} 
+          className="file-input"
+        />
       </div>
 
       <div className="form-group">
-        <label>First Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
+        <label>First Name <span style={{ color: "#ff3860" }}>*</span>:</label>
+        <input 
+          type="text" 
+          name="firstName" 
+          value={formData.firstName} 
+          onChange={handleChange} 
+          className={errors.firstName ? "input-error" : ""}
+        />
+        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
       </div>
 
       <div className="form-group">
-        <label>Last Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
+        <label>Last Name <span style={{ color: "#ff3860" }}>*</span>:</label>
+        <input 
+          type="text" 
+          name="lastName" 
+          value={formData.lastName} 
+          onChange={handleChange} 
+          className={errors.lastName ? "input-error" : ""}
+        />
+        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
       </div>
 
       <div className="form-group">
-        <label>Year <span style={{ color: "red" }}>*</span>:</label>
-        <select name="year" value={formData.year} onChange={handleChange}>
+        <label>Year <span style={{ color: "#ff3860" }}>*</span>:</label>
+        <select 
+          name="year" 
+          value={formData.year} 
+          onChange={handleChange}
+          className={errors.year ? "input-error" : ""}
+        >
+          <option value="">Select a year</option>
           {yearOptions.map((option, index) => (
             <option key={index} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>
           ))}
         </select>
+        {errors.year && <span className="error-message">{errors.year}</span>}
       </div>
 
       <div className="form-group">
-        <label>Major <span style={{ color: "red" }}>*</span>:</label>
-        <select name="major" value={formData.major} onChange={handleMajorChange}>
+        <label>Major <span style={{ color: "#ff3860" }}>*</span>:</label>
+        <select 
+          name="major" 
+          value={formData.major} 
+          onChange={handleMajorChange}
+          className={errors.major ? "input-error" : ""}
+        >
+          <option value="">Select a major</option>
           {majorOptions.map((option, index) => (
             <option key={index} value={option}>{option}</option>
           ))}
         </select>
         {formData.major === "Other" && (
-          <input type="text" name="otherMajor" placeholder="Enter your major" value={formData.otherMajor} onChange={handleChange} />
+          <input 
+            type="text" 
+            name="otherMajor" 
+            placeholder="Enter your major" 
+            value={formData.otherMajor} 
+            onChange={handleChange} 
+            className={errors.otherMajor ? "input-error" : ""}
+          />
         )}
+        {errors.major && <span className="error-message">{errors.major}</span>}
+        {errors.otherMajor && <span className="error-message">{errors.otherMajor}</span>}
       </div>
 
       <div className="form-group">
         <label>Bio (Max 100 words):</label>
-        <textarea name="bio" value={formData.bio} onChange={handleChange} />
-        <div className="word-counter">{100 - bioWordCount} words left</div>
+        <textarea 
+          name="bio" 
+          value={formData.bio} 
+          onChange={handleChange}
+          className={errors.bio ? "input-error" : ""}
+        />
+        <div className="word-counter">{bioWordCount}/100 words</div>
         {errors.bio && <span className="error-message">{errors.bio}</span>}
       </div>
 
       <div className="form-group">
-        <label>#SWE Points:</label>
+        <label>SWE Points:</label>
         <input type="text" name="swePoints" value={formData.swePoints} readOnly />
       </div>
 
-      <button type="submit" className="btn btn-primary">Save Changes</button>
+      <div className="button-group">
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? "Saving..." : "Save Changes"}
+        </button>
+        <button 
+          type="button" 
+          className="btn btn-secondary"
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };

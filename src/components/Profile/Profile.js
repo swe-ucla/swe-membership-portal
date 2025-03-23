@@ -10,20 +10,28 @@ import './Profile.css';
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchUserData = async () => {
-    auth.onAuthStateChanged(async (user) => {
-      console.log(user);
+  const fetchUserData = async (user) => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
       const docRef = doc(db, "Users", user.uid);
       const docSnap = await getDoc(docRef);
+      
       if (docSnap.exists()) {
         setUserDetails(docSnap.data());
-        console.log(docSnap.data());
+        console.log("User data loaded:", docSnap.data());
       } else {
-        console.log("User is not logged in");
+        console.log("No user data found");
       }
-    });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -44,7 +52,7 @@ function Profile() {
   async function handleLogout() {
     try {
       await auth.signOut();
-      window.location.href = "/login";
+      navigate("/login");
       console.log("User logged out successfully!");
     } catch (error) {
       console.error("Error logging out:", error.message);
@@ -53,6 +61,10 @@ function Profile() {
 
   const handleProfileUpdate = (updatedData) => {
     setUserDetails(updatedData);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
     setIsEditing(false);
   };
 
@@ -81,6 +93,17 @@ function Profile() {
       });
   };
 
+  if (isLoading) {
+    return (
+      <div className="profile-container">
+        <div className="loading-state">
+          <div className="loading-spinner"></div>
+          <p>Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-container">
       {userDetails ? (
@@ -90,53 +113,73 @@ function Profile() {
           </button>
           <h3 className="profile-header">Profile</h3>
 
-          <div className="profile-picture-container">
-            {userDetails.profilePicture ? (
-              <img
-                src={userDetails.profilePicture}
-                alt="Profile"
-                className="profile-picture"
-              />
-            ) : (
-              <div className="no-picture">No Profile Picture</div>
-            )}
-          </div>
+          {!isEditing && (
+            <>
+              <div className="profile-picture-container">
+                {userDetails.profilePicture ? (
+                  <img
+                    src={userDetails.profilePicture}
+                    alt="Profile"
+                    className="profile-picture"
+                  />
+                ) : (
+                  <div className="no-picture">No Profile Picture</div>
+                )}
+              </div>
 
-          <div className="profile-details">
-            <p className="profile-field">
-              <span className="field-label">Name:</span>
-              <span className="field-value">{userDetails.firstName} {userDetails.lastName}</span>
-            </p>
-            <p className="profile-field">
-              <span className="field-label">Year:</span>
-              <span className="field-value">{userDetails.year}</span>
-            </p>
-            <p className="profile-field">
-              <span className="field-label">Major:</span>
-              <span className="field-value">{userDetails.major}</span>
-            </p>
-            <p className="profile-field">
-              <span className="field-label">Member ID:</span>
-              <span className="field-value">{userDetails.memberId}</span>
-            </p>
-            <p className="profile-field">
-              <span className="field-label">Bio:</span>
-              <span className="field-value">{userDetails.bio}</span>
-            </p>
-            <p className="profile-field">
-              <span className="field-label">#SWE Points:</span>
-              <span className="field-value">{userDetails.swePoints}</span>
-            </p>
-          </div>
+              <div className="profile-details">
+                <div className="profile-field">
+                  <span className="field-label">Name:</span>
+                  <span className="field-value">{userDetails.firstName} {userDetails.lastName}</span>
+                </div>
+                
+                <div className="profile-field">
+                  <span className="field-label">Year:</span>
+                  <span className="field-value">{userDetails.year || "Not specified"}</span>
+                </div>
+                
+                <div className="profile-field">
+                  <span className="field-label">Major:</span>
+                  <span className="field-value">{userDetails.major || "Not specified"}</span>
+                </div>
+                
+                <div className="profile-field">
+                  <span className="field-label">Email:</span>
+                  <span className="field-value">{userDetails.email}</span>
+                </div>
+                
+                {userDetails.memberId && (
+                  <div className="profile-field">
+                    <span className="field-label">Member ID:</span>
+                    <span className="field-value">{userDetails.memberId}</span>
+                  </div>
+                )}
+                
+                <div className="profile-field">
+                  <span className="field-label">Bio:</span>
+                  <span className="field-value">{userDetails.bio || "No bio provided"}</span>
+                </div>
+                
+                <div className="profile-field">
+                  <span className="field-label">SWE Points:</span>
+                  <span className="field-value">{userDetails.swePoints || 0}</span>
+                </div>
+              </div>
 
-          {(!userDetails.year || !userDetails.major) && (
-            <p className="warning-message">
-              Please fill out the required fields marked with *.
-            </p>
+              {(!userDetails.year || !userDetails.major) && (
+                <div className="warning-message">
+                  Please complete your profile by adding your year and major.
+                </div>
+              )}
+            </>
           )}
 
           {isEditing ? (
-            <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />
+            <EditProfileForm 
+              userDetails={userDetails} 
+              onUpdate={handleProfileUpdate} 
+              onCancel={handleCancelEdit}
+            />
           ) : (
             <div className="button-group">
               <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
@@ -146,13 +189,18 @@ function Profile() {
                 Logout
               </button>
               <button className="btn btn-secondary" onClick={requestAdminAccess}>
-                Request Admin Access (board members only)
+                Request Admin Access
               </button>
             </div>
           )}
         </>
       ) : (
-        <p className="loading-state">Loading...</p>
+        <div className="loading-state">
+          <p>No user data found. Please log in again.</p>
+          <button className="btn btn-primary" onClick={() => navigate("/login")}>
+            Go to Login
+          </button>
+        </div>
       )}
     </div>
   );
