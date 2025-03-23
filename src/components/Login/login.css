@@ -1,30 +1,186 @@
+/* Updated Login/Register CSS with vibrant purple/pink theme */
+:root {
+  --primary-gradient: linear-gradient(135deg, #8a2be2, #ff69b4);
+  --secondary-gradient: linear-gradient(135deg, #9370db, #ee82ee);
+  --accent-color: #ff1493;
+  --text-color: #333;
+  --light-text: #fff;
+  --bg-color: #f8f9fa;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
+}
+
 .auth-wrapper {
   width: 100%;
-  height: 100%;
-}
-
-.navbar-light {
-  background-color: #ffffff;
-  box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
-}
-
-.auth-wrapper {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  flex-direction: column;
-  text-align: left;
+  align-items: center;
+  background: var(--primary-gradient);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--secondary-gradient);
+  animation: rotate 15s linear infinite;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-inner {
   width: 450px;
-  margin: auto;
-  background: #ffffff;
-  box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
-  padding: 40px 55px 45px 55px;
-  border-radius: 15px;
-  transition: all 0.3s;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--box-shadow);
+  padding: 40px 55px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
 }
 
+.auth-inner h3 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
+.form-control {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  background-color: var(--input-bg);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
 
+.form-control:focus {
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+  outline: none;
+}
 
+label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+  color: var(--text-color);
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--light-text);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(138, 43, 226, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--text-color);
+}
+
+.forgot-password a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.text-danger {
+  color: #ff3860;
+  font-size: 0.85rem;
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+/* Decorative elements */
+.auth-decoration {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--secondary-gradient);
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.decoration-1 {
+  width: 150px;
+  height: 150px;
+  top: -75px;
+  right: -75px;
+}
+
+.decoration-2 {
+  width: 100px;
+  height: 100px;
+  bottom: -50px;
+  left: -50px;
+}
+
+/* Logo styling */
+.auth-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-logo img {
+  height: 60px;
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .auth-inner {
+    width: 90%;
+    padding: 30px 25px;
+  }
+}
