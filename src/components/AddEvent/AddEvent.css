@@ -1,0 +1,406 @@
+/* AddEvent page styles */
+.add-event-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9e9fe 100%);
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .add-event-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .add-event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+  }
+  
+  .add-event-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #333;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .form-control, input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  .form-control:focus, input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+  }
+  
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+  }
+  
+  textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 7px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.95rem;
+  }
+  
+  .btn-success {
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    color: white;
+    box-shadow: 0 4px 10px rgba(138, 43, 226, 0.2);
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 2rem auto 0;
+    text-align: center;
+  }
+  
+  .btn-success:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(138, 43, 226, 0.2);
+  }
+  
+  .btn-success:active {
+    transform: translateY(1px);
+  }
+  
+  .btn-back {
+    background: transparent;
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-back:hover {
+    background: rgba(138, 43, 226, 0.05);
+  }
+  
+  /* Form layout */
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-col {
+    flex: 1;
+  }
+  
+  /* Event Management Section */
+  .event-management-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #333;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+  }
+  
+  .events-list {
+    margin-top: 1.5rem;
+  }
+  
+  .event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background-color: #f9f9ff;
+    border-left: 4px solid #8a2be2;
+    transition: all 0.3s ease;
+  }
+  
+  .event-item:hover {
+    transform: translateX(5px);
+    background-color: #f5f5ff;
+  }
+  
+  .event-info {
+    flex: 1;
+  }
+  
+  .event-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+  }
+  
+  .event-meta {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .btn-delete-event {
+    background-color: transparent;
+    color: #ff3860;
+    border: 1px solid #ff3860;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-delete-event:hover {
+    background-color: rgba(255, 56, 96, 0.05);
+  }
+  
+  .loading-indicator {
+    text-align: center;
+    padding: 1.5rem;
+    color: #666;
+  }
+  
+  .no-events-message {
+    text-align: center;
+    padding: 1.5rem;
+    color: #666;
+    font-style: italic;
+  }
+  
+  /* Modal styles */
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  .modal-body {
+    margin-bottom: 1.5rem;
+  }
+  
+  .modal-message {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .btn-cancel {
+    background: #f0f0f0;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .btn-confirm {
+    background: #ff3860;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .add-event-container {
+      padding: 1rem;
+    }
+    
+    .add-event-card {
+      padding: 1.5rem;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .add-event-title {
+      font-size: 1.7rem;
+    }
+    
+    .event-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .btn-delete-event {
+      margin-top: 1rem;
+      align-self: flex-end;
+    }
+
+    /* CSS updates for the "Today" label and time field */
+
+/* Today badge styling */
+.today-badge {
+    background: #ff69b4 !important;
+    color: white !important;
+    font-weight: 700;
+  }
+  
+  /* Remove the Today indicator before element since we're showing it in the badge */
+  .today-event::before {
+    content: none;
+  }
+  
+  /* Form row for date and time fields */
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-col {
+    flex: 1;
+  }
+  
+  /* Time input styling */
+  input[type="time"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  input[type="time"]:focus {
+    outline: none;
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+  }
+  
+  /* Time display in event cards */
+  .event-time {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+    color: #555;
+  }
+  
+  .event-time svg {
+    margin-right: 8px;
+    color: #8a2be2;
+  }
+  
+  /* Updated mobile responsiveness */
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+  }
