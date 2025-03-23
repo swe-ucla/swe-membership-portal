@@ -1,0 +1,286 @@
+/* Home page styles with gradient purple/pink theme */
+.home-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9e9fe 100%);
+    padding: 2rem;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .welcome-section {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .welcome-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+  }
+  
+  .welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .welcome-text {
+    font-size: 2rem;
+    margin: 0;
+    color: #333;
+    position: relative;
+    text-align: left;
+  }
+  
+  .btn-profile {
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+    white-space: nowrap;
+  }
+  
+  .btn-profile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(138, 43, 226, 0.4);
+  }
+  
+  .btn-profile:active {
+    transform: translateY(1px);
+  }
+  
+  /* My Events Section */
+  .my-events-section {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(138, 43, 226, 0.15);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+  }
+  
+  .btn-view-all {
+    background: transparent;
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .btn-view-all:hover {
+    background: rgba(138, 43, 226, 0.05);
+  }
+  
+  .my-events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .my-event-card {
+    background: #f9f9ff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border-left: 4px solid #8a2be2;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .my-event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .event-info {
+    padding: 1.2rem;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .event-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+  
+  .event-date {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e9e9fe;
+    color: #8a2be2;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 10px;
+  }
+  
+  .today-date {
+    background: #ff69b4;
+    color: white;
+  }
+  
+  .event-details {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .event-location, .event-time, .event-committee {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 0.95rem;
+  }
+  
+  .detail-icon {
+    margin-right: 10px;
+    width: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a2be2;
+  }
+  
+  .no-events-message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+  }
+  
+  .btn-find-events {
+    background: linear-gradient(90deg, #8a2be2, #ff69b4);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+  
+  .btn-find-events:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .home-container {
+      padding: 1.5rem;
+    }
+    
+    .welcome-section {
+      padding: 2rem;
+    }
+    
+    .welcome-content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .welcome-text {
+      font-size: 1.7rem;
+      text-align: center;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .btn-view-all {
+      margin-top: 0.5rem;
+    }
+    
+    .my-events-list {
+      grid-template-columns: 1fr;
+    }
+    
+    .event-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .event-date {
+      margin-left: 0;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .home-container {
+      padding: 1rem;
+    }
+    
+    .welcome-section {
+      padding: 1.5rem;
+    }
+    
+    .welcome-text {
+      font-size: 1.5rem;
+    }
+  }
