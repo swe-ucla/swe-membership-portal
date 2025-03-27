@@ -19,7 +19,7 @@ import UpcomingEvents from "./components/UpcomingEvents/UpcomingEvents";
 import EventSignin from "./components/EventSignin/EventSignin";
 import NavBar from "./components/NavBar/NavBar";
 import Leaderboard from "./components/Leaderboard/Leaderboard";
-import PastEvents from "./components/PastEvents/PastEvents";
+import ManageEvents from "./components/ManageEvents/ManageEvents";
 
 function App() {
   // TODO: Fetch this from user authentication logic! Need to implement admin checking logic 
@@ -37,7 +37,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/addevent" element={<AddEvent />} />
           <Route path="/upcoming" element={<UpcomingEvents />} />
-          <Route path="/pastevents" element={<PastEvents />} />
+          <Route path="/manageevents" element={<ManageEvents />} />
           <Route path="/eventsignin/:eventID" element={<EventSignin />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>

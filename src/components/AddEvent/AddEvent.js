@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Timestamp } from "firebase/firestore"; // Import Timestamp
+import "./AddEvent.css";
 
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
@@ -14,6 +15,7 @@ function AddEvent() {
     committee: "",
     description: "",
     attendanceCode: "",
+    points: 1,
     questions: [], // Array to store questions
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
@@ -57,8 +59,13 @@ function AddEvent() {
   useEffect(() => {
     fetchUserData();
   }, []);
+  
   if (!isAdmin) {
-    return <p>You do not have permission to view this page.</p>; // Hide page for non-admins
+    return (
+      <div className="unauthorized-message">
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
   }
 
   const handleInputChange = (e) => {
@@ -175,11 +182,11 @@ function AddEvent() {
   };
 
   return (
-    <div>
-      <h2>Add Event</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Event Name:</label>
+    <div className="add-event-container">
+      <h2 className="add-event-title">Add Event</h2>
+      <form className="add-event-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label">Event Name:</label>
           <input
             type="text"
             name="name"
@@ -188,8 +195,8 @@ function AddEvent() {
             required
           />
         </div>
-        <div>
-          <label>Event Date:</label>
+        <div className="form-group">
+          <label className="form-label">Event Date:</label>
           <input
             type="date"
             name="date"
@@ -198,8 +205,8 @@ function AddEvent() {
             required
           />
         </div>
-        <div>
-          <label>Location:</label>
+        <div className="form-group">
+          <label className="form-label">Location:</label>
           <input
             type="text"
             name="location"
@@ -208,8 +215,8 @@ function AddEvent() {
             required
           />
         </div>
-        <div>
-          <label>Committee:</label>
+        <div className="form-group">
+          <label className="form-label">Committee:</label>
           <select
             name="committee"
             value={eventData.committee}
@@ -226,8 +233,8 @@ function AddEvent() {
             ))}
           </select>
         </div>
-        <div>
-          <label>Points:</label>
+        <div className="form-group">
+          <label className="form-label">Points:</label>
           <input
             type="range"
             name="points"
@@ -236,19 +243,19 @@ function AddEvent() {
             value={eventData.points}
             onChange={handleInputChange}
           />
-          <span>{eventData.points} points</span>
+          <span className="points-display">{eventData.points} points</span>
         </div>
-        <div>
-          <label>Description:</label>
+        <div className="form-group">
+          <label className="form-label">Description:</label>
           <textarea
             name="description"
             value={eventData.description}
             onChange={handleInputChange}
           />
         </div>
-        <div className="mb-3">
-          <label>Attendance Code:</label>
-          <div className="form-check mb-2">
+        <div className="form-group">
+          <label className="form-label">Attendance Code:</label>
+          <div className="form-check">
             <input
               type="checkbox"
               className="form-check-input"
@@ -284,46 +291,46 @@ function AddEvent() {
         </div>
 
         {/* Questions Section */}
-        <div className="mb-4">
-          <h3>Event Questions</h3>
+        <div className="questions-section">
+          <h3 className="questions-title">Event Questions</h3>
           
           {/* Display existing questions */}
           {eventData.questions.map((question, index) => (
-            <div key={index} className="mb-3 p-3 border rounded">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="mb-2"><strong>Question {index + 1}:</strong> {question.text}</p>
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={question.required}
-                      onChange={() => handleQuestionRequiredChange(index)}
-                    />
-                    <label className="form-check-label">Required</label>
-                  </div>
+            <div key={index} className="question-item">
+              <div className="question-header">
+                <p className="question-title"><strong>Question {index + 1}:</strong> {question.text}</p>
+                <div className="question-actions">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleRemoveQuestion(index)}
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleRemoveQuestion(index)}
-                >
-                  Remove
-                </button>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={question.required}
+                  onChange={() => handleQuestionRequiredChange(index)}
+                />
+                <label className="form-check-label">Required</label>
               </div>
             </div>
           ))}
 
           {/* Add new question form */}
-          <div className="mb-3">
+          <div className="add-question-form">
             <input
               type="text"
-              className="form-control mb-2"
+              className="form-control"
               placeholder="Enter new question"
               value={newQuestion.text}
               onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
             />
-            <div className="form-check mb-2">
+            <div className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"

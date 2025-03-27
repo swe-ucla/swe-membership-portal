@@ -105,7 +105,7 @@ const NavBar = () => {
           </NavLink>
           {isAdmin && (
             <NavLink
-              to="/pastevents"
+              to="/manageevents"
               className={({ isActive }) => (isActive ? "active" : "")}
               onClick={() => setIsMenuOpen(false)}
             >
