@@ -76,7 +76,7 @@ const EventSignin = () => {
 
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          const currentPoints = userData.swePoints || 0;
+          const currentPoints = Number(userData.swePoints) || 0;
           const attendedEvents = userData.attendedEvents || [];
 
           if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
@@ -93,7 +93,7 @@ const EventSignin = () => {
           await updateDoc(userRef, {
             attendedEvents: arrayUnion(eventID),
           [`eventResponses.${eventID}`]: responses,
-            swePoints: currentPoints + (event.points || 0),
+            swePoints: currentPoints + (Number(event.points) || 0),
             // lastEventSignIn: new Date().toISOString(),
           });
 

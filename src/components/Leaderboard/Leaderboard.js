@@ -20,49 +20,43 @@ function Leaderboard() {
 
   const fetchLeaderboardData = async () => {
     try {
-      // get the top 10 users ordered by swePoints in descending order
       const leaderboardQuery = query(
         collection(db, "Users"),
-        orderBy("swePoints", "desc"),
-        limit(10)
+        orderBy("swePoints", "desc")
       );
-
+  
       const querySnapshot = await getDocs(leaderboardQuery);
-
-      const leaderboardData = querySnapshot.docs.map((doc, index) => {
+  
+      let leaderboardData = querySnapshot.docs.map((doc) => {
         const userData = doc.data();
-        
-        // create full name from firstName and lastName
-        let fullName = "";
-        if (userData.firstName && userData.lastName) {
-          fullName = `${userData.firstName} ${userData.lastName}`;
-        } else if (userData.firstName) {
-          fullName = userData.firstName;
-        } else if (userData.lastName) {
-          fullName = userData.lastName;
-        } else if (userData.username) {
-          fullName = userData.username;
-        } else {
-          fullName = "Anonymous User";
-        }
-
+        const fullName =
+          userData.firstName && userData.lastName
+            ? `${userData.firstName} ${userData.lastName}`
+            : userData.firstName || userData.lastName || userData.username || "Anonymous User";
+  
         return {
           id: doc.id,
-          rank: index + 1,
-          fullName: fullName,
-          points: userData.swePoints || 0,
+          fullName,
+          points: typeof userData.swePoints === "number" ? userData.swePoints : 0,
           ...userData,
         };
       });
-
+  
+      // Sort again just in case Firestore didn't enforce it due to missing fields
+      leaderboardData = leaderboardData
+        .sort((a, b) => b.points - a.points)
+        .slice(0, 10)
+        .map((user, index) => ({ ...user, rank: index + 1 }));
+  
       setUsers(leaderboardData);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching leaderboard data:", err);
       setError("Failed to load leaderboard data. Please try again later.");
+    } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchUserData();

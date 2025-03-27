@@ -170,8 +170,11 @@ function Profile() {
                 </p>
                 <p className="profile-field">
                   <span className="field-label">#SWE Points:</span>
-                  <span className="field-value">{userDetails.swePoints}</span>
+                  <span className="field-value">
+                    {Number(userDetails.swePoints) || 0}
+                  </span>
                 </p>
+
               </div>
   
               {(!userDetails.year || !userDetails.major) && (
