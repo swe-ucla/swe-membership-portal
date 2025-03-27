@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Timestamp } from "firebase/firestore"; // Import Timestamp
+import { Timestamp } from "firebase/firestore";
+import "./AddEvent.css";
 
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
@@ -14,15 +15,11 @@ function AddEvent() {
     committee: "",
     description: "",
     attendanceCode: "",
-    questions: [], // Array to store questions
+    points: 1,
+    questions: [],
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
-  
-  // New state for managing a new question before adding to questions array
-  const [newQuestion, setNewQuestion] = useState({
-    text: "",
-    required: true,
-  });
+  const [newQuestion, setNewQuestion] = useState({ text: "", required: true, type: "shortAnswer", options: [""] });
 
   const [committees, setCommittees] = useState([
     "Evening with Industry",
@@ -57,8 +54,13 @@ function AddEvent() {
   useEffect(() => {
     fetchUserData();
   }, []);
+
   if (!isAdmin) {
-    return <p>You do not have permission to view this page.</p>; // Hide page for non-admins
+    return (
+      <div className="unauthorized-message">
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
   }
 
   const handleInputChange = (e) => {
@@ -69,7 +71,6 @@ function AddEvent() {
     }));
   };
 
-  // Generate random 6-letter code
   const generateAttendanceCode = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let code = '';
@@ -79,11 +80,10 @@ function AddEvent() {
     return code;
   };
 
-  // Handle custom code input
   const handleCodeChange = (e) => {
-    let value = e.target.value.toUpperCase(); // Convert to uppercase
-    value = value.replace(/[^A-Z]/g, ''); // Only allow letters
-    if (value.length <= 6) { // Limit to 6 characters
+    let value = e.target.value.toUpperCase();
+    value = value.replace(/[^A-Z]/g, '');
+    if (value.length <= 6) {
       setEventData(prev => ({
         ...prev,
         attendanceCode: value
@@ -91,18 +91,33 @@ function AddEvent() {
     }
   };
 
-  // Add a new question to the questions array
   const handleAddQuestion = () => {
-    if (newQuestion.text.trim()) {
-      setEventData(prev => ({
-        ...prev,
-        questions: [...prev.questions, { ...newQuestion }]
-      }));
-      setNewQuestion({ text: "", required: true }); // Reset new question form
+    if (!newQuestion.text.trim()) return;
+  
+    const { type, options } = newQuestion;
+  
+    // Check that at least one option is filled if it's multiple choice or checkboxes
+    if (
+      (type === "multipleChoice" || type === "checkboxes" || type === "dropdown") &&
+      options.every((opt) => opt.trim() === "")
+    ) {
+      alert("Please fill in at least one option.");
+      return;
     }
+  
+    setEventData((prev) => ({
+      ...prev,
+      questions: [...prev.questions, { ...newQuestion }]
+    }));
+  
+    setNewQuestion({
+      text: "",
+      required: true,
+      type: "shortAnswer",
+      options: [""],
+    });
   };
-
-  // Remove a question from the array
+  
   const handleRemoveQuestion = (indexToRemove) => {
     setEventData(prev => ({
       ...prev,
@@ -110,7 +125,6 @@ function AddEvent() {
     }));
   };
 
-  // Update question requirement status
   const handleQuestionRequiredChange = (index) => {
     setEventData(prev => ({
       ...prev,
@@ -135,24 +149,22 @@ function AddEvent() {
 
       const eventId = `${Date.now()}`;
       const eventRef = doc(db, "events", eventId);
-      
-      // Use custom code or generate one
+
       const attendanceCode = useCustomCode 
         ? eventData.attendanceCode 
         : generateAttendanceCode();
 
-      // Validate custom code if being used
       if (useCustomCode && attendanceCode.length !== 6) {
         alert("Custom attendance code must be exactly 6 letters.");
         return;
       }
-      
+
       await setDoc(eventRef, {
         ...eventData,
         date: timestamp,
         createdBy: eventData.committee,
         createdAt: new Date().toISOString(),
-        attendanceCode: attendanceCode, // Save the generated code
+        attendanceCode: attendanceCode,
       });
 
       alert("Event created successfully!");
@@ -174,84 +186,69 @@ function AddEvent() {
     }
   };
 
+  const updateNewQuestionOption = (index, value) => {
+    const updatedOptions = [...newQuestion.options];
+    updatedOptions[index] = value;
+    setNewQuestion(prev => ({ ...prev, options: updatedOptions }));
+  };
+
+  const addNewOptionField = () => {
+    setNewQuestion(prev => ({ ...prev, options: [...prev.options, ""] }));
+  };
+
+  const handleDeleteOption = (indexToRemove) => {
+    setNewQuestion((prev) => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== indexToRemove),
+    }));
+  };
+
   return (
-    <div>
-      <h2>Add Event</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Event Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={eventData.name}
-            onChange={handleInputChange}
-            required
-          />
+    <div className="add-event-container">
+      <h2 className="add-event-title">Add Event</h2>
+      <form className="add-event-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label">Event Name:</label>
+          <input type="text" name="name" value={eventData.name} onChange={handleInputChange} required />
         </div>
-        <div>
-          <label>Event Date:</label>
-          <input
-            type="date"
-            name="date"
-            value={eventData.date}
-            onChange={handleInputChange}
-            required
-          />
+
+        <div className="form-group">
+          <label className="form-label">Event Date:</label>
+          <input type="date" name="date" value={eventData.date} onChange={handleInputChange} required />
         </div>
-        <div>
-          <label>Location:</label>
-          <input
-            type="text"
-            name="location"
-            value={eventData.location}
-            onChange={handleInputChange}
-            required
-          />
+
+        <div className="form-group">
+          <label className="form-label">Location:</label>
+          <input type="text" name="location" value={eventData.location} onChange={handleInputChange} required />
         </div>
-        <div>
-          <label>Committee:</label>
-          <select
-            name="committee"
-            value={eventData.committee}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="" disabled>
-              Select a committee
-            </option>
+
+        <div className="form-group">
+          <label className="form-label">Committee:</label>
+          <select name="committee" value={eventData.committee} onChange={handleInputChange} required>
+            <option value="" disabled>Select a committee</option>
             {committees.map((committee, index) => (
-              <option key={index} value={committee}>
-                {committee}
-              </option>
+              <option key={index} value={committee}>{committee}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label>Points:</label>
-          <input
-            type="range"
-            name="points"
-            min="1"
-            max="5"
-            value={eventData.points}
-            onChange={handleInputChange}
-          />
-          <span>{eventData.points} points</span>
+
+        <div className="form-group">
+          <label className="form-label">Points:</label>
+          <input type="range" name="points" min="1" max="5" value={eventData.points} onChange={handleInputChange} />
+          <span className="points-display">{eventData.points} points</span>
         </div>
-        <div>
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={eventData.description}
-            onChange={handleInputChange}
-          />
+
+        <div className="form-group">
+          <label className="form-label">Description:</label>
+          <textarea name="description" value={eventData.description} onChange={handleInputChange} />
         </div>
-        <div className="mb-3">
-          <label>Attendance Code:</label>
-          <div className="form-check mb-2">
+
+        <div className="form-group">
+          <label className="form-label">Attendance Code:</label>
+          <div className="d-flex align-items-center mb-2">
             <input
               type="checkbox"
-              className="form-check-input"
+              className="form-check-input me-2"
               id="useCustomCode"
               checked={useCustomCode}
               onChange={(e) => {
@@ -261,21 +258,14 @@ function AddEvent() {
                 }
               }}
             />
-            <label className="form-check-label" htmlFor="useCustomCode">
+            <label htmlFor="useCustomCode" className="mb-0">
               Use custom attendance code
             </label>
           </div>
-          
+
+
           {useCustomCode ? (
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter 6-letter code"
-              value={eventData.attendanceCode}
-              onChange={handleCodeChange}
-              maxLength={6}
-              required={useCustomCode}
-            />
+            <input type="text" className="form-control" placeholder="Enter 6-letter code" value={eventData.attendanceCode} onChange={handleCodeChange} maxLength={6} required={useCustomCode} />
           ) : (
             <p className="text-muted">
               A random 6-letter code will be generated when the event is created.
@@ -283,60 +273,80 @@ function AddEvent() {
           )}
         </div>
 
-        {/* Questions Section */}
-        <div className="mb-4">
-          <h3>Event Questions</h3>
-          
-          {/* Display existing questions */}
+        <div className="questions-section">
+          <h3 className="questions-title">Event Questions</h3>
           {eventData.questions.map((question, index) => (
-            <div key={index} className="mb-3 p-3 border rounded">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="mb-2"><strong>Question {index + 1}:</strong> {question.text}</p>
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={question.required}
-                      onChange={() => handleQuestionRequiredChange(index)}
-                    />
-                    <label className="form-check-label">Required</label>
-                  </div>
+            <div key={index} className="question-item">
+              <div className="question-header">
+                <p className="question-title"><strong>Question {index + 1}:</strong> {question.text} <em>({question.type})</em></p>
+                <div className="question-actions">
+                  <button type="button" className="btn btn-danger btn-sm" onClick={() => handleRemoveQuestion(index)}>
+                    Remove
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleRemoveQuestion(index)}
-                >
-                  Remove
-                </button>
               </div>
+              <div className="form-check">
+                <input type="checkbox" className="form-check-input" checked={question.required} onChange={() => handleQuestionRequiredChange(index)} />
+                <label className="form-check-label">Required</label>
+              </div>
+              {question.options && question.type !== "shortAnswer" && (
+                <ul className="mb-0 ps-4 text-start">
+                  {question.options.filter(opt => opt.trim() !== "").map((opt, i) => (
+                    <li key={i}>{opt}</li>
+                  ))}
+                </ul>
+              )}
+
             </div>
           ))}
 
-          {/* Add new question form */}
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Enter new question"
-              value={newQuestion.text}
-              onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
-            />
-            <div className="form-check mb-2">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={newQuestion.required}
-                onChange={(e) => setNewQuestion(prev => ({ ...prev, required: e.target.checked }))}
-              />
+          <div className="add-question-form">
+            <input type="text" className="form-control" placeholder="Enter new question" value={newQuestion.text} onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))} />
+            <div className="form-group">
+              <label>Question Type:</label>
+              <select className="form-control" value={newQuestion.type} onChange={(e) => setNewQuestion(prev => ({ ...prev, type: e.target.value, options: [""] }))}>
+                <option value="shortAnswer">Short Answer</option>
+                <option value="multipleChoice">Multiple Choice</option>
+                <option value="checkboxes">Checkboxes</option>
+                <option value="trueFalse">True/False</option>
+                <option value="dropdown">Dropdown</option>
+              </select>
+            </div>
+            {["multipleChoice", "checkboxes", "dropdown"].includes(newQuestion.type) && (
+              <div className="form-group">
+                <label>Options:</label>
+                {newQuestion.options.map((option, index) => (
+                  <div key={index} className="d-flex align-items-center mb-1">
+                    <input
+                      type="text"
+                      className="form-control me-2"
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) => updateNewQuestionOption(index, e.target.value)}
+                      disabled={newQuestion.type === "trueFalse"}
+                    />
+                    {newQuestion.options.length > 1 && newQuestion.type !== "trueFalse" && (
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDeleteOption(index)}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <button type="button" className="btn btn-sm btn-outline-primary" onClick={addNewOptionField}>
+                  Add Option
+                </button>
+              </div>
+            )}
+            <div className="form-check">
+              <input type="checkbox" className="form-check-input" checked={newQuestion.required} onChange={(e) => setNewQuestion(prev => ({ ...prev, required: e.target.checked }))} />
               <label className="form-check-label">Required</label>
             </div>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleAddQuestion}
-            >
+            <button type="button" className="btn btn-secondary" onClick={handleAddQuestion}>
               Add Question
             </button>
           </div>

@@ -46,9 +46,17 @@ const EventSignin = () => {
     setError("");
     
     // Validate required questions
-    const missingRequired = event.questions?.some((q, index) => 
-      q.required && !responses[index]?.trim()
-    );
+    const missingRequired = event.questions?.some((q, index) => {
+      const response = responses[index];
+      if (!q.required) return false;
+    
+      if (q.type === "checkboxes") {
+        return !Array.isArray(response) || response.length === 0;
+      }
+    
+      return !response || (typeof response === "string" && response.trim() === "");
+    });
+    
 
     if (missingRequired) {
       setError("Please answer all required questions");
@@ -99,7 +107,7 @@ const EventSignin = () => {
 
           setSuccess(true);
           setTimeout(() => {
-            navigate("/home");
+            navigate("/upcoming");
           }, 2000);
         }
       } catch (error) {
@@ -126,29 +134,7 @@ const EventSignin = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              {/* Questions Section */}
-              {event.questions && event.questions.length > 0 && (
-                <div className="mb-4">
-                  <h3>Event Questions</h3>
-                  {event.questions.map((question, index) => (
-                    <div key={index} className="mb-3">
-                      <label className="form-label">
-                        {question.text}
-                        {question.required && <span className="text-danger">*</span>}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={responses[index] || ""}
-                        onChange={(e) => handleResponseChange(index, e.target.value)}
-                        required={question.required}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Attendance Code Section */}
+                            {/* Attendance Code Section */}
               <div className="form-group">
                 <label>Enter Attendance Code:</label>
                 <input
@@ -160,7 +146,121 @@ const EventSignin = () => {
                   maxLength={6}
                   required
                 />
+              
+              {/* Questions Section */}
+              {event.questions && event.questions.length > 0 && (
+                <div className="mb-4">
+                  <h3>Event Questions</h3>
+                  {[...event.questions]
+                    .sort((a, b) => a.text.toLowerCase().includes("attendance code") ? -1 : 1)
+                    .map((question, index) => (
+                      <div key={index} className="mb-3">
+                        <label className="form-label">
+                          {question.text}
+                          {question.required && <span className="text-danger">*</span>}
+                        </label>
+
+                        {question.type === "shortAnswer" && (
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={responses[index] || ""}
+                            onChange={(e) => handleResponseChange(index, e.target.value)}
+                            required={question.required}
+                          />
+                        )}
+
+                        {question.type === "multipleChoice" && (
+                          <div>
+                            {question.options.map((option, i) => (
+                              <div className="form-check" key={i}>
+                                <input
+                                  type="radio"
+                                  className="form-check-input"
+                                  name={`question-${index}`}
+                                  value={option}
+                                  checked={responses[index] === option}
+                                  onChange={() => handleResponseChange(index, option)}
+                                  required={question.required}
+                                />
+                                <label className="form-check-label">{option}</label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {question.type === "checkboxes" && (
+                          <div>
+                            {question.options.map((option, i) => (
+                              <div className="form-check" key={i}>
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  name={`question-${index}-${i}`}
+                                  value={option}
+                                  checked={Array.isArray(responses[index]) && responses[index].includes(option)}
+                                  onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setResponses((prev) => {
+                                      const current = Array.isArray(prev[index]) ? [...prev[index]] : [];
+                                      if (checked) {
+                                        return { ...prev, [index]: [...current, option] };
+                                      } else {
+                                        return {
+                                          ...prev,
+                                          [index]: current.filter((item) => item !== option),
+                                        };
+                                      }
+                                    });
+                                  }}
+                                />
+                                <label className="form-check-label">{option}</label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {question.type === "trueFalse" && (
+                          <div>
+                            {["True", "False"].map((option, i) => (
+                              <div className="form-check" key={i}>
+                                <input
+                                  type="radio"
+                                  className="form-check-input"
+                                  name={`question-${index}`}
+                                  value={option}
+                                  checked={responses[index] === option}
+                                  onChange={() => handleResponseChange(index, option)}
+                                  required={question.required}
+                                />
+                                <label className="form-check-label">{option}</label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {question.type === "dropdown" && (
+                          <select
+                            className="form-select"
+                            value={responses[index] || ""}
+                            onChange={(e) => handleResponseChange(index, e.target.value)}
+                            required={question.required}
+                          >
+                            <option value="" disabled>Select an option</option>
+                            {question.options.map((option, i) => (
+                              <option key={i} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        )}
+                        
+                      </div>
+                  ))}
+
+                </div>
+              )}
               </div>
+
+
               {error && <div className="alert alert-danger">{error}</div>}
               <button type="submit" className="btn btn-primary mt-3">
                 Sign In

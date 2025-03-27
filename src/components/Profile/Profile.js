@@ -50,9 +50,9 @@ function Profile() {
     return () => unsubscribe();
   }, [navigate]);
   
-  const handleHomeClick = () => {
-    navigate("/home");
-  };
+  // const handleHomeClick = () => {
+  //   navigate("/home");
+  // };
   
   async function handleLogout() {
     try {
@@ -123,14 +123,15 @@ function Profile() {
     <div className="profile-container">
       {userDetails ? (
         <>
-          <button onClick={handleHomeClick}> <FaHome/></button>
+          {/* <button onClick={handleHomeClick}> <FaHome/></button> */}
           
           {isEditing ? (
             <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />
           ) : (
             <>
+            <div className="profile-section">
               <h3 className="profile-header">Profile</h3>
-  
+
               <div className="profile-picture-container">
                 {userDetails.profilePicture ? (
                   <img
@@ -142,6 +143,8 @@ function Profile() {
                   <div className="no-picture">No Profile Picture</div>
                 )}
               </div>
+            </div>
+
   
               <div className="profile-details">
                 <p className="profile-field">
@@ -149,7 +152,7 @@ function Profile() {
                   <span className="field-value">{userDetails.firstName} {userDetails.lastName}</span>
                 </p>
                 <p className="profile-field">
-                  <span className="field-label">Emaik:</span>
+                  <span className="field-label">Email:</span>
                   <span className="field-value">{userDetails.email}</span>
                 </p>
                 <p className="profile-field">
@@ -179,7 +182,7 @@ function Profile() {
   
               {(!userDetails.year || !userDetails.major) && (
                 <p className="warning-message">
-                  Please fill out the required fields marked with *.
+                  Please fill out the required fields marked with * in the Edit Profile page.
                 </p>
               )}
   

@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
+import SWELogo from "./SWE_Logo.png"; // Import the SWE logo
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -66,13 +67,9 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="logo">swe logo</div>
-
-        <button className="hamburger" onClick={toggleMenu}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <div className="logo">
+          <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
+        </div>
 
         <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>
           {/* <NavLink
@@ -82,36 +79,40 @@ const NavBar = () => {
           >
             Home
           </NavLink> */}
-          <NavLink
-            to="/upcoming"
-            className={({ isActive }) => (isActive ? "active" : "")}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Upcoming Events
-          </NavLink>
-          <NavLink
-            to="/leaderboard"
-            className={({ isActive }) => (isActive ? "active" : "")}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Leaderboard
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) => (isActive ? "active" : "")}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Profile
-          </NavLink>
-          {isAdmin && (
-            <NavLink
-              to="/pastevents"
+          <div className="nav-links">
+            {/* <NavLink
+              to="/home"
               className={({ isActive }) => (isActive ? "active" : "")}
-              onClick={() => setIsMenuOpen(false)}
             >
-              Admin Only
+              Home
+            </NavLink> */}
+            <NavLink
+              to="/upcoming"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Upcoming Events
             </NavLink>
-          )}
+            <NavLink
+              to="/leaderboard"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Leaderboard
+            </NavLink>
+            <NavLink
+              to="/profile"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Profile
+            </NavLink>
+            {isAdmin && (
+              <NavLink
+                to="/manageevents"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Admin Only
+              </NavLink>
+            )}
+          </div>
         </div>
       </div>
     </nav>

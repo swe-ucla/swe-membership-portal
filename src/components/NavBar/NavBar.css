@@ -1,91 +1,144 @@
-.navbar {
+/* Navbar.css with modern purple theme and glowing logo */
+:root {
+    --color-purple-dark: #4525A2;
+    --color-purple-medium: #6677CA;
+    --color-purple-light: #A6A7E3;
+    --color-pink: #E85F7A;
+    --color-pink-dark: #890C50;
+    --color-background: #F5F7FA;
+    --border-radius-lg: 20px;
+    --border-radius-md: 15px;
+    --border-radius-sm: 12px;
+    --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .navbar {
     background-color: white;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-container {
+    padding: 12px 20px;
+    box-shadow: 0 4px 15px rgba(69, 37, 162, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-}
-
-.logo {
-    color: #333;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.nav-links {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .logo-image {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 0 5px rgba(69, 37, 162, 0.3));
+    transition: var(--transition);
+  }
+  
+  /* Logo glow effect */
+  .logo::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(69, 37, 162, 0.3) 0%, rgba(69, 37, 162, 0) 70%);
+    top: 0;
+    left: 0;
+    opacity: 0.7;
+    z-index: -1;
+    filter: blur(6px);
+    animation: pulse 3s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 0.5;
+      transform: scale(0.95);
+    }
+  }
+  
+  .logo:hover .logo-image {
+    filter: drop-shadow(0 0 8px rgba(69, 37, 162, 0.5));
+    transform: scale(1.05);
+  }
+  
+  .nav-links {
     display: flex;
     gap: 15px;
     text-align: right;
-}
-
-.nav-links a {
+  }
+  
+  .nav-links a {
     text-decoration: none;
     color: #333;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: 0.3s;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+    font-weight: 500;
     display: block;
-    text-align: right;
-}
-
-.nav-links a:hover {
-    background-color: #f0f0f0;
-}
-
-.nav-links .active,
-.nav-links .active:hover {
-    background-color: #a258df;
+    text-align: center;
+  }
+  
+  .nav-links a:hover {
+    background-color: #f5f0ff;
+    color: var(--color-purple-dark);
+    transform: translateY(-2px);
+  }
+  
+  .nav-links .active {
+    background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
     color: white;
-}
-
-/* Hamburger menu icon (hidden by default) */
-.hamburger {
-    display: none;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 5px;
-}
-
-.hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background-color: #333;
-    margin: 5px 0;
-    transition: 0.3s;
-}
-
-/* Mobile styles */
-@media screen and (max-width: 768px) {
-    .hamburger {
-        display: block;
+    box-shadow: 0 4px 10px rgba(69, 37, 162, 0.25);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .navbar-container {
+      flex-direction: column;
+      padding: 10px 0;
     }
-
+    
+    .logo {
+      margin-bottom: 10px;
+    }
+    
     .nav-links {
-        display: none;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        background-color: white;
-        padding: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
-
-    .nav-links.active {
-        display: flex;
-    }
-
+    
     .nav-links a {
-        width: 100%;
-        text-align: left;
+      font-size: 0.9rem;
+      padding: 6px 12px;
     }
-}
+  }
+  
+  @media (max-width: 480px) {
+    .nav-links {
+      gap: 5px;
+    }
+    
+    .nav-links a {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+    }
+  }
