@@ -170,7 +170,7 @@ function Profile() {
                 </p>
                 <p className="profile-field">
                   <span className="field-label">#SWE Points:</span>
-                  <span className="field-value">{userDetails.totalPoints}</span>
+                  <span className="field-value">{userDetails.swePoints}</span>
                 </p>
               </div>
   
