@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Timestamp } from "firebase/firestore"; // Import Timestamp
 import "./AddEvent.css";
 
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ Loading state
+
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
@@ -16,15 +17,11 @@ function AddEvent() {
     description: "",
     attendanceCode: "",
     points: 1,
-    questions: [], // Array to store questions
+    questions: [],
   });
+
   const [useCustomCode, setUseCustomCode] = useState(false);
-  
-  // New state for managing a new question before adding to questions array
-  const [newQuestion, setNewQuestion] = useState({
-    text: "",
-    required: true,
-  });
+  const [newQuestion, setNewQuestion] = useState({ text: "", required: true });
 
   const [committees, setCommittees] = useState([
     "Evening with Industry",
@@ -39,27 +36,38 @@ function AddEvent() {
 
   const navigate = useNavigate();
 
-  const fetchUserData = async () => {
-    auth.onAuthStateChanged(async (user) => {
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user && user.uid) {
         const docRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserDetails(docSnap.data());
-          const userData = docSnap.data();
-          setIsAdmin(userData.isAdmin || false);
+          setIsAdmin(docSnap.data().isAdmin || false);
         }
       } else {
         navigate("/login");
         setUserDetails(null);
       }
+      setLoading(false); // ✅ Ensure this is set after user data is fetched
     });
-  };
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-  
+    return () => unsubscribe();
+  }, [navigate]);
+
+  // ✅ Handle loading state
+  if (loading) {
+    return (
+      <div className="add-event-container">
+        <div className="loading-message">
+          <div className="loading-spinner"></div>
+          <p>Checking permissions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Handle unauthorized access AFTER loading
   if (!isAdmin) {
     return (
       <div className="unauthorized-message">
@@ -76,7 +84,6 @@ function AddEvent() {
     }));
   };
 
-  // Generate random 6-letter code
   const generateAttendanceCode = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let code = '';
@@ -86,30 +93,23 @@ function AddEvent() {
     return code;
   };
 
-  // Handle custom code input
   const handleCodeChange = (e) => {
-    let value = e.target.value.toUpperCase(); // Convert to uppercase
-    value = value.replace(/[^A-Z]/g, ''); // Only allow letters
-    if (value.length <= 6) { // Limit to 6 characters
-      setEventData(prev => ({
-        ...prev,
-        attendanceCode: value
-      }));
+    let value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+    if (value.length <= 6) {
+      setEventData(prev => ({ ...prev, attendanceCode: value }));
     }
   };
 
-  // Add a new question to the questions array
   const handleAddQuestion = () => {
     if (newQuestion.text.trim()) {
       setEventData(prev => ({
         ...prev,
         questions: [...prev.questions, { ...newQuestion }]
       }));
-      setNewQuestion({ text: "", required: true }); // Reset new question form
+      setNewQuestion({ text: "", required: true });
     }
   };
 
-  // Remove a question from the array
   const handleRemoveQuestion = (indexToRemove) => {
     setEventData(prev => ({
       ...prev,
@@ -117,11 +117,10 @@ function AddEvent() {
     }));
   };
 
-  // Update question requirement status
   const handleQuestionRequiredChange = (index) => {
     setEventData(prev => ({
       ...prev,
-      questions: prev.questions.map((q, i) => 
+      questions: prev.questions.map((q, i) =>
         i === index ? { ...q, required: !q.required } : q
       )
     }));
@@ -142,24 +141,22 @@ function AddEvent() {
 
       const eventId = `${Date.now()}`;
       const eventRef = doc(db, "events", eventId);
-      
-      // Use custom code or generate one
-      const attendanceCode = useCustomCode 
-        ? eventData.attendanceCode 
+
+      const attendanceCode = useCustomCode
+        ? eventData.attendanceCode
         : generateAttendanceCode();
 
-      // Validate custom code if being used
       if (useCustomCode && attendanceCode.length !== 6) {
         alert("Custom attendance code must be exactly 6 letters.");
         return;
       }
-      
+
       await setDoc(eventRef, {
         ...eventData,
         date: timestamp,
         createdBy: eventData.committee,
         createdAt: new Date().toISOString(),
-        attendanceCode: attendanceCode, // Save the generated code
+        attendanceCode: attendanceCode,
       });
 
       alert("Event created successfully!");
@@ -195,6 +192,7 @@ function AddEvent() {
             required
           />
         </div>
+
         <div className="form-group">
           <label className="form-label">Event Date:</label>
           <input
@@ -205,6 +203,7 @@ function AddEvent() {
             required
           />
         </div>
+
         <div className="form-group">
           <label className="form-label">Location:</label>
           <input
@@ -215,6 +214,7 @@ function AddEvent() {
             required
           />
         </div>
+
         <div className="form-group">
           <label className="form-label">Committee:</label>
           <select
@@ -223,9 +223,7 @@ function AddEvent() {
             onChange={handleInputChange}
             required
           >
-            <option value="" disabled>
-              Select a committee
-            </option>
+            <option value="" disabled>Select a committee</option>
             {committees.map((committee, index) => (
               <option key={index} value={committee}>
                 {committee}
@@ -233,6 +231,7 @@ function AddEvent() {
             ))}
           </select>
         </div>
+
         <div className="form-group">
           <label className="form-label">Points:</label>
           <input
@@ -245,6 +244,7 @@ function AddEvent() {
           />
           <span className="points-display">{eventData.points} points</span>
         </div>
+
         <div className="form-group">
           <label className="form-label">Description:</label>
           <textarea
@@ -253,6 +253,7 @@ function AddEvent() {
             onChange={handleInputChange}
           />
         </div>
+
         <div className="form-group">
           <label className="form-label">Attendance Code:</label>
           <div className="form-check">
@@ -272,7 +273,7 @@ function AddEvent() {
               Use custom attendance code
             </label>
           </div>
-          
+
           {useCustomCode ? (
             <input
               type="text"
@@ -293,8 +294,7 @@ function AddEvent() {
         {/* Questions Section */}
         <div className="questions-section">
           <h3 className="questions-title">Event Questions</h3>
-          
-          {/* Display existing questions */}
+
           {eventData.questions.map((question, index) => (
             <div key={index} className="question-item">
               <div className="question-header">
@@ -321,7 +321,6 @@ function AddEvent() {
             </div>
           ))}
 
-          {/* Add new question form */}
           <div className="add-question-form">
             <input
               type="text"
