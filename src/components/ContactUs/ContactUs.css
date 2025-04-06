@@ -1,0 +1,9 @@
+.emailus-container {
+    display:flex;
+    justify-content: center;
+}
+
+.emailus {
+    background: white;
+    width: fit-content;
+}
