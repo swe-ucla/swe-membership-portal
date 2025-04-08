@@ -68,7 +68,9 @@ const NavBar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="logo">
-          <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
+          <NavLink to="/contactus">
+            <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
+          </NavLink>
         </div>
 
         <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>

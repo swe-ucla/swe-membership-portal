@@ -21,6 +21,7 @@ import EventSignin from "./components/EventSignin/EventSignin";
 import NavBar from "./components/NavBar/NavBar";
 import Leaderboard from "./components/Leaderboard/Leaderboard";
 import ManageEvents from "./components/ManageEvents/ManageEvents";
+import ContactUs from "./components/ContactUs/ContactUs"
 
 // 🧠 A wrapper component to access `useLocation`
 function AppWrapper() {
@@ -42,6 +43,7 @@ function AppWrapper() {
         <Route path="/manageevents" element={<ManageEvents />} />
         <Route path="/eventsignin/:eventID" element={<EventSignin />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/contactus" element={<ContactUs />} />
       </Routes>
       {/* <ToastContainer /> */}
     </div>
