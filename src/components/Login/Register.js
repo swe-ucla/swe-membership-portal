@@ -14,6 +14,25 @@ function Register() {
   const [lname, setLname] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const adminEmails = [
+    "ewi.swe.ucla@gmail.com",
+    "mentorship.swe.ucla@gmail.com",
+    "webmaster.swe.ucla@gmail.com",
+    "advocacy.swe.ucla@gmail.com",
+    "teamtech.swe.ucla@gmail.com",
+    "studentrelations.swe.ucla@gmail.com",
+    "lobbying.swe.ucla@gmail.com",
+    "president.swe.ucla@gmail.com",
+    "ivp.swe.ucla@gmail.com",
+    "evp.swe.ucla@gmail.com",
+    "outreach.swe.ucla@gmail.com",
+    "secretary.swe.ucla@gmail.com",
+    "graduate.swe.ucla@gmail.com",
+    "publicity.swe.ucla@gmail.com",
+    "alumnirelations.swe.ucla@gmail.com",
+    "historian.swe.ucla@gmail.com",
+  ];
+
   const handleEmailChange = (e) => {
     const inputEmail = e.target.value;
     setEmail(inputEmail);
@@ -40,13 +59,15 @@ function Register() {
       const user = auth.currentUser;
   
       if (user && user.uid) {
+        const isAdmin = adminEmails.includes(user.email);
         // If user created successfully, store additional information in Firestore
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           firstName: fname,
           lastName: lname,
           photo: "",
-          swePoints: 10
+          swePoints: 10,
+          isAdmin: isAdmin
         });
       }
   
