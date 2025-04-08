@@ -5,17 +5,28 @@ import './ContactUs.css';
 // TODO: in sendEmail, replace service, template, and API key with the SWE webmaster email account
 const ContactUs = () => {
     const form = useRef();
+  
     const sendEmail = (e) => {
-        e.preventDefault();
-        emailjs.sendForm('SERVICE', 'TEMPLATE', form.current, 'APIKEY')
-        .then(response => {
-            console.log("Success:", response);
-            alert("Thank you for your feedback!");
-        })
-        .catch(error => {
-            console.error("Failed to send email:", JSON.stringify(error, null, 2));
-        });
-        e.target.reset();
+      e.preventDefault();
+  
+      emailjs
+        .sendForm(
+          'service_oa92hy9',       
+          'template_xschbvb',      
+          form.current,
+          'Z7j812LuDjlbsCsMe'      
+        )
+        .then(
+          (result) => {
+            console.log('Email sent successfully!', result.text);
+            alert('Message sent successfully!');
+            form.current.reset();
+          },
+          (error) => {
+            console.error('Error sending email:', error.text);
+            alert('Failed to send message. Please try again later.');
+          }
+        );
     };
 
     return (
