@@ -13,6 +13,7 @@ function Register() {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [error, setError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const handleEmailChange = (e) => {
     const inputEmail = e.target.value;
@@ -32,6 +33,15 @@ function Register() {
     if (!email.endsWith('g.ucla.edu')) {
       setError('Email must end with g.ucla.edu');
       return; // Exit early if email is not valid
+    }
+
+    // Check password length
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      toast.error('Password must be at least 6 characters long', {
+        position: "top-center",
+      });
+      return;
     }
   
     try {
@@ -54,9 +64,16 @@ function Register() {
       console.log("User Registered Successfully!!");
     } catch (error) {
       console.error(error.message);
-      toast.error(error.message, {
-        position: "top-center",
-      });
+      if (error.code === 'auth/email-already-in-use') {
+        setError('This email is already registered. Please use a different email or log in.');
+        toast.error('This email is already registered. Please use a different email or log in.', {
+          position: "top-center",
+        });
+      } else {
+        toast.error(error.message, {
+          position: "top-center",
+        });
+      }
     }
   };
   
@@ -107,9 +124,13 @@ function Register() {
             type="password"
             className="form-control"
             placeholder="Enter password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordError(''); // Clear password error when user types
+            }}
             required
           />
+          {passwordError && <div className="text-danger">{passwordError}</div>}
         </div>
 
         <div className="d-grid">
