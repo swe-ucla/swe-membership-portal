@@ -180,6 +180,22 @@ const ManageEvents = () => {
       });
   };
 
+  const handleEditEvent = (event) => {
+    // Convert Firestore timestamp to format for date input (YYYY-MM-DD)
+    const eventDate = event.date.toDate();
+    const formattedDate = eventDate.toISOString().split('T')[0];
+    
+    // Store the event data in localStorage for the edit page to access
+    const eventForEdit = {
+      ...event,
+      date: formattedDate,
+      isEditing: true
+    };
+    
+    localStorage.setItem('editEventData', JSON.stringify(eventForEdit));
+    navigate(`/addevent?edit=${event.id}`);
+  };
+
   const deleteEvent = async (event) => {
     if (deleteLoading) return;
 
@@ -266,6 +282,12 @@ const ManageEvents = () => {
             <td>{event.attendees ? event.attendees.length : 0}</td>
             <td className="event-actions">
               <button
+                className="btn-edit"
+                onClick={() => handleEditEvent(event)}
+              >
+                Edit
+              </button>
+              <button
                 className="btn-export"
                 onClick={() => exportToCSV(event)}
                 disabled={!event.attendees || event.attendees.length === 0}
@@ -284,7 +306,7 @@ const ManageEvents = () => {
                 onClick={() => deleteEvent(event)}
                 disabled={deleteLoading}
               >
-                {deleteLoading ? "Deleting..." : "Delete Event"}
+                {deleteLoading ? "Deleting..." : "Delete"}
               </button>
             </td>
           </tr>

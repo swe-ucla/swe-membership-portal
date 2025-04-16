@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import "./AddEvent.css";
 
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [eventId, setEventId] = useState("");
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
@@ -20,6 +22,7 @@ function AddEvent() {
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
   const [newQuestion, setNewQuestion] = useState({ text: "", required: true, type: "shortAnswer", options: [""] });
+  const [loading, setLoading] = useState(true);
 
   const [committees, setCommittees] = useState([
     "Evening with Industry",
@@ -33,8 +36,89 @@ function AddEvent() {
   ]);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we're in edit mode by looking at the URL query params
+    const params = new URLSearchParams(location.search);
+    const editId = params.get("edit");
+    
+    if (editId) {
+      setIsEditMode(true);
+      setEventId(editId);
+      
+      // Try to get event data from localStorage first (it was set in ManageEvents.js)
+      const storedEventData = localStorage.getItem("editEventData");
+      if (storedEventData) {
+        const parsedData = JSON.parse(storedEventData);
+        
+        // Initialize form with the event data
+        setEventData({
+          name: parsedData.name || "",
+          date: parsedData.date || "",
+          location: parsedData.location || "",
+          committee: parsedData.createdBy || "",
+          description: parsedData.description || "",
+          attendanceCode: parsedData.attendanceCode || "",
+          points: parsedData.points || 1,
+          questions: parsedData.questions || [],
+        });
+        
+        // Set custom code checkbox
+        setUseCustomCode(!!parsedData.attendanceCode);
+        
+        // Clear localStorage after using it
+        localStorage.removeItem("editEventData");
+      } else {
+        // If not in localStorage, fetch from Firestore
+        fetchEventData(editId);
+      }
+    }
+    
+    fetchUserData();
+  }, [location.search]);
+
+  const fetchEventData = async (id) => {
+    try {
+      const eventRef = doc(db, "events", id);
+      const eventSnap = await getDoc(eventRef);
+      
+      if (eventSnap.exists()) {
+        const data = eventSnap.data();
+        
+        // Format date for HTML date input
+        let formattedDate = "";
+        if (data.date) {
+          const date = data.date.toDate();
+          formattedDate = date.toISOString().split('T')[0];
+        }
+        
+        setEventData({
+          name: data.name || "",
+          date: formattedDate,
+          location: data.location || "",
+          committee: data.createdBy || "",
+          description: data.description || "",
+          attendanceCode: data.attendanceCode || "",
+          points: data.points || 1,
+          questions: data.questions || [],
+        });
+        
+        setUseCustomCode(!!data.attendanceCode);
+      } else {
+        alert("Event not found!");
+        navigate("/manageevents");
+      }
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+      alert("Failed to load event data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUserData = async () => {
+    setLoading(true);
     auth.onAuthStateChanged(async (user) => {
       if (user && user.uid) {
         const docRef = doc(db, "Users", user.uid);
@@ -48,20 +132,9 @@ function AddEvent() {
         navigate("/login");
         setUserDetails(null);
       }
+      setLoading(false);
     });
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  if (!isAdmin) {
-    return (
-      <div className="unauthorized-message">
-        <p>You do not have permission to view this page.</p>
-      </div>
-    );
-  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -147,27 +220,50 @@ function AddEvent() {
       eventDate.setTime(eventDate.getTime() + 24 * 60 * 60 * 1000);
       const timestamp = Timestamp.fromDate(eventDate);
 
-      const eventId = `${Date.now()}`;
-      const eventRef = doc(db, "events", eventId);
-
-      const attendanceCode = useCustomCode 
+      let attendanceCode = useCustomCode 
         ? eventData.attendanceCode 
-        : generateAttendanceCode();
+        : (isEditMode && eventData.attendanceCode) || generateAttendanceCode();
 
       if (useCustomCode && attendanceCode.length !== 6) {
         alert("Custom attendance code must be exactly 6 letters.");
         return;
       }
 
-      await setDoc(eventRef, {
-        ...eventData,
-        date: timestamp,
-        createdBy: eventData.committee,
-        createdAt: new Date().toISOString(),
-        attendanceCode: attendanceCode,
-      });
+      if (isEditMode) {
+        // Update existing event
+        const eventRef = doc(db, "events", eventId);
+        
+        await updateDoc(eventRef, {
+          name: eventData.name,
+          date: timestamp,
+          location: eventData.location,
+          createdBy: eventData.committee,
+          description: eventData.description,
+          attendanceCode: attendanceCode,
+          points: Number(eventData.points),
+          questions: eventData.questions,
+          lastUpdated: new Date().toISOString(),
+        });
 
-      alert("Event created successfully!");
+        alert("Event updated successfully!");
+      } else {
+        // Create new event
+        const newEventId = `${Date.now()}`;
+        const eventRef = doc(db, "events", newEventId);
+
+        await setDoc(eventRef, {
+          ...eventData,
+          date: timestamp,
+          createdBy: eventData.committee,
+          createdAt: new Date().toISOString(),
+          attendanceCode: attendanceCode,
+          points: Number(eventData.points),
+        });
+
+        alert("Event created successfully!");
+      }
+      
+      // Reset form and navigate back
       setEventData({
         name: "",
         date: "",
@@ -179,10 +275,11 @@ function AddEvent() {
         questions: [],
       });
       setUseCustomCode(false);
-      navigate("/upcoming");
+      navigate("/manageevents");
+      
     } catch (error) {
-      console.error("Error creating event:", error);
-      alert("Failed to create the event. Try again later.");
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} event:`, error);
+      alert(`Failed to ${isEditMode ? 'update' : 'create'} the event. Try again later.`);
     }
   };
 
@@ -203,9 +300,26 @@ function AddEvent() {
     }));
   };
 
+  if (loading) {
+    return (
+      <div className="add-event-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="unauthorized-message">
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="add-event-container">
-      <h2 className="add-event-title">Add Event</h2>
+      <h2 className="add-event-title">{isEditMode ? "Edit Event" : "Add Event"}</h2>
       <form className="add-event-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Event Name:</label>
@@ -253,7 +367,7 @@ function AddEvent() {
               checked={useCustomCode}
               onChange={(e) => {
                 setUseCustomCode(e.target.checked);
-                if (!e.target.checked) {
+                if (!e.target.checked && !isEditMode) {
                   setEventData(prev => ({ ...prev, attendanceCode: '' }));
                 }
               }}
@@ -265,10 +379,20 @@ function AddEvent() {
 
 
           {useCustomCode ? (
-            <input type="text" className="form-control" placeholder="Enter 6-letter code" value={eventData.attendanceCode} onChange={handleCodeChange} maxLength={6} required={useCustomCode} />
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Enter 6-letter code" 
+              value={eventData.attendanceCode} 
+              onChange={handleCodeChange} 
+              maxLength={6} 
+              required={useCustomCode} 
+            />
           ) : (
             <p className="text-muted">
-              A random 6-letter code will be generated when the event is created.
+              {isEditMode 
+                ? "Existing attendance code will be preserved."
+                : "A random 6-letter code will be generated when the event is created."}
             </p>
           )}
         </div>
@@ -352,9 +476,14 @@ function AddEvent() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-success">
-          Add Event
-        </button>
+        <div className="form-actions">
+          <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/manageevents")}>
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-success">
+            {isEditMode ? "Update Event" : "Add Event"}
+          </button>
+        </div>
       </form>
     </div>
   );
