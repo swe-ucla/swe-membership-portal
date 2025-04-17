@@ -133,6 +133,7 @@
   font-weight: 600;
   color: var(--color-purple-dark);
   border: 2px solid #f0f0f0;
+  flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -148,16 +149,24 @@
 .user-details {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .user-name {
   font-weight: 600;
   color: #333;
+  display: block;
+  width: 100%;
+  text-align: left;
 }
 
 .user-major {
   font-size: 0.8rem;
   color: #666;
+  display: block;
+  width: 100%;
+  text-align: left;
 }
 
 .points-column {
@@ -172,14 +181,6 @@
   font-size: 1.2rem;
 }
 
-/* Top 3 styling */
-.rank-number-1, .rank-number-2, .rank-number-3 {
-  background: linear-gradient(135deg, var(--color-purple-dark), var(--color-pink));
-  color: white;
-  width: 40px;
-  height: 40px;
-  box-shadow: 0 4px 10px rgba(69, 37, 162, 0.2);
-}
 
 /* Responsive styles */
 @media (max-width: 768px) {
