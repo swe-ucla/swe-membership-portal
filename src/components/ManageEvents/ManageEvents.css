@@ -183,6 +183,25 @@
   flex-wrap: wrap;
 }
 
+.btn-edit {
+  background: white;
+  border: 2px solid var(--color-purple-dark);
+  color: var(--color-purple-dark);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-edit:hover:not(:disabled) {
+  background-color: var(--color-purple-dark);
+  color: white;
+  transform: translateY(-2px);
+}
+
 .btn-export, .btn-copy {
   background: white;
   border: 2px solid var(--color-purple-medium);
@@ -224,7 +243,8 @@
 
 .btn-export:disabled, 
 .btn-copy:disabled, 
-.btn-delete:disabled {
+.btn-delete:disabled,
+.btn-edit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
@@ -334,7 +354,7 @@
     gap: 0.5rem;
   }
   
-  .btn-export, .btn-copy, .btn-delete {
+  .btn-export, .btn-copy, .btn-delete, .btn-edit {
     width: 100%;
     text-align: center;
     padding: 0.6rem;
