@@ -5,6 +5,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import './login.css';
+import SignInwithGoogle from "../signInWIthGoogle";
 
 
 function Register() {
@@ -163,6 +164,7 @@ function Register() {
         <p className="forgot-password text-right">
           Already registered? <a href="/login">Login</a>
         </p>
+        <SignInwithGoogle/>
       </form>
       </div>
     </div>
