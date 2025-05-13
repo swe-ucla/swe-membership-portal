@@ -5,10 +5,14 @@ import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 
-function SignInwithGoogle() {
+function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
   const navigate = useNavigate();
 
   const googleLogin = async () => {
+    if (onGoogleSignInStart) {
+      onGoogleSignInStart();
+    }
+    
     try {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({
@@ -23,6 +27,9 @@ function SignInwithGoogle() {
         toast.error("Please use your UCLA email to sign in", {
           position: "top-center",
         });
+        if (onGoogleSignInEnd) {
+          onGoogleSignInEnd();
+        }
         return;
       }
 
@@ -80,6 +87,10 @@ function SignInwithGoogle() {
         toast.error("Failed to sign in with Google", {
           position: "top-center",
         });
+      }
+    } finally {
+      if (onGoogleSignInEnd) {
+        onGoogleSignInEnd();
       }
     }
   };

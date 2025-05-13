@@ -16,6 +16,7 @@ function Login() {
   const [showResetForm, setShowResetForm] = useState(false);
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isGoogleSignIn, setIsGoogleSignIn] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -102,7 +103,7 @@ function Login() {
           <form onSubmit={handleSubmit}>
             <h3>Login</h3>
 
-            {errorMessage && (
+            {errorMessage && !isGoogleSignIn && (
               <div className="alert alert-danger" role="alert">
                 {errorMessage}
               </div>
@@ -143,7 +144,13 @@ function Login() {
             <p className="forgot-password text-right">
               New user? <a href="/register">Register Here</a>
             </p>
-            <SignInwithGoogle/>
+            <SignInwithGoogle 
+              onGoogleSignInStart={() => {
+                setIsGoogleSignIn(true);
+                setErrorMessage(""); // Clear any existing error message
+              }} 
+              onGoogleSignInEnd={() => setIsGoogleSignIn(false)}
+            />
           </form>
         ) : (
           <div>
