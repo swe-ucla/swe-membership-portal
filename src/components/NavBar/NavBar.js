@@ -68,7 +68,7 @@ const NavBar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="logo">
-          <NavLink to="/contactus">
+          <NavLink to="/upcoming">
             <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
           </NavLink>
         </div>
@@ -105,6 +105,12 @@ const NavBar = () => {
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               Profile
+            </NavLink>
+            <NavLink
+              to="/contactus"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Contact Us
             </NavLink>
             {isAdmin && (
               <NavLink
