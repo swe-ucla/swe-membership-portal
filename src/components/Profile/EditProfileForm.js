@@ -18,7 +18,7 @@ const majorOptions = [
   "Electrical Engineering",
   "Materials Engineering",
   "Mechanical Engineering",
-  "Other"
+  "Other",
 ];
 
 const yearOptions = [
@@ -28,11 +28,27 @@ const yearOptions = [
   { label: "Junior", value: "Junior", disabled: false },
   { label: "Senior", value: "Senior", disabled: false },
   { label: "Graduate Students:", value: "", disabled: true },
-  { label: "First-year graduate student", value: "First-year graduate student", disabled: false },
-  { label: "Second-year graduate student", value: "Second-year graduate student", disabled: false },
-  { label: "Third-year graduate student", value: "Third-year graduate student", disabled: false },
-  { label: "Fourth-year graduate student and beyond", value: "Fourth-year graduate student and beyond", disabled: false },
-  { label: "Other", value: "Other", disabled: false }
+  {
+    label: "First-year graduate student",
+    value: "First-year graduate student",
+    disabled: false,
+  },
+  {
+    label: "Second-year graduate student",
+    value: "Second-year graduate student",
+    disabled: false,
+  },
+  {
+    label: "Third-year graduate student",
+    value: "Third-year graduate student",
+    disabled: false,
+  },
+  {
+    label: "Fourth-year graduate student and beyond",
+    value: "Fourth-year graduate student and beyond",
+    disabled: false,
+  },
+  { label: "Other", value: "Other", disabled: false },
 ];
 
 const EditProfileForm = ({ userDetails, onUpdate }) => {
@@ -41,8 +57,13 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     firstName: userDetails?.firstName || "",
     lastName: userDetails?.lastName || "",
     year: userDetails?.year || "",
-    major: majorOptions.includes(userDetails?.major) ? userDetails?.major : "Other",
-    otherMajor: userDetails?.major && !majorOptions.includes(userDetails?.major) ? userDetails?.major : "",
+    major: majorOptions.includes(userDetails?.major)
+      ? userDetails?.major
+      : "Other",
+    otherMajor:
+      userDetails?.major && !majorOptions.includes(userDetails?.major)
+        ? userDetails?.major
+        : "",
     memberId: userDetails?.memberId || "",
     bio: userDetails?.bio || "",
     swePoints: userDetails?.swePoints || 0,
@@ -64,13 +85,20 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       firstName: userDetails?.firstName || "",
       lastName: userDetails?.lastName || "",
       year: userDetails?.year || "",
-      major: majorOptions.includes(userDetails?.major) ? userDetails?.major : "Other",
-      otherMajor: userDetails?.major && !majorOptions.includes(userDetails?.major) ? userDetails?.major : "",
+      major: majorOptions.includes(userDetails?.major)
+        ? userDetails?.major
+        : "Other",
+      otherMajor:
+        userDetails?.major && !majorOptions.includes(userDetails?.major)
+          ? userDetails?.major
+          : "",
       memberId: userDetails?.memberId || "",
       bio: userDetails?.bio || "",
       swePoints: userDetails?.swePoints || 0,
     });
-    setBioWordCount(userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0);
+    setBioWordCount(
+      userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
+    );
   }, [userDetails]);
 
   const handleChange = (e) => {
@@ -135,7 +163,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
-      otherMajor: formData.major === "Other" && !formData.otherMajor.trim() ? "Please specify your major." : "",
+      otherMajor:
+        formData.major === "Other" && !formData.otherMajor.trim()
+          ? "Please specify your major."
+          : "",
     };
 
     setErrors(newErrors);
@@ -201,7 +232,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       await deleteUser(user);
       await signOut(auth);
       console.log("User account deleted successfully and logged out.");
-      alert("Your account has been deleted. You will be redirected to the homepage.");
+      alert(
+        "Your account has been deleted. You will be redirected to the homepage."
+      );
       window.location.href = "/"; // Redirect to homepage after logout
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -219,19 +252,39 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       </div>
 
       <div className="form-group">
-        <label>First Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
-        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+        <label>
+          First Name <span style={{ color: "red" }}>*</span>:
+        </label>
+        <input
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+        {errors.firstName && (
+          <span className="error-message">{errors.firstName}</span>
+        )}
       </div>
 
       <div className="form-group">
-        <label>Last Name <span style={{ color: "red" }}>*</span>:</label>
-        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
-        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+        <label>
+          Last Name <span style={{ color: "red" }}>*</span>:
+        </label>
+        <input
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+        />
+        {errors.lastName && (
+          <span className="error-message">{errors.lastName}</span>
+        )}
       </div>
 
       <div className="form-group">
-        <label>Year <span style={{ color: "red" }}>*</span>:</label>
+        <label>
+          Year <span style={{ color: "red" }}>*</span>:
+        </label>
         <select name="year" value={formData.year} onChange={handleChange}>
           {yearOptions.map((option, index) => (
             <option key={index} value={option.value} disabled={option.disabled}>
@@ -243,17 +296,52 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       </div>
 
       <div className="form-group">
-        <label>Major <span style={{ color: "red" }}>*</span>:</label>
-        <select name="major" value={formData.major} onChange={handleMajorChange}>
+        <label>
+          Major <span style={{ color: "red" }}>*</span>:
+        </label>
+        <select
+          name="major"
+          value={formData.major}
+          onChange={handleMajorChange}
+        >
           {majorOptions.map((option, index) => (
-            <option key={index} value={option}>{option}</option>
+            <option key={index} value={option}>
+              {option}
+            </option>
           ))}
         </select>
+
+        {/* 
         {formData.major === "Other" && (
-          <input type="text" name="otherMajor" placeholder="Enter your major" value={formData.otherMajor} onChange={handleChange} />
+          <input
+            type="text"
+            name="otherMajor"
+            placeholder="Enter your major"
+            value={formData.otherMajor}
+            onChange={handleChange}
+          />
         )}
+        */}
         {errors.major && <span className="error-message">{errors.major}</span>}
-        {errors.otherMajor && <span className="error-message">{errors.otherMajor}</span>}
+        {errors.otherMajor && (
+          <span className="error-message">{errors.otherMajor}</span>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label>
+          Member ID <span style={{ color: "red" }}>*</span>:
+        </label>
+        <input
+          type="number"
+          inputmode="numeric"
+          name="memberId"
+          value={formData.memberId}
+          onChange={handleChange}
+        />
+        {errors.memberId && (
+          <span className="error-message">{errors.memberId}</span>
+        )}
       </div>
 
       <div className="form-group">
@@ -264,10 +352,18 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       </div>
 
       <div className="button-group">
-        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
-        <button type="button" className="btn btn-danger" onClick={handleDeleteAccount}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={handleDeleteAccount}
+        >
           Delete Account
         </button>
       </div>

@@ -1,11 +1,11 @@
 /* Profile.css - Updated with modern purple/pink theme */
 :root {
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
-  --color-pink: #E85F7A;
-  --color-pink-dark: #890C50;
-  --color-background: #F5F7FA;
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #6677ca;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
   --border-radius-lg: 20px;
   --border-radius-md: 15px;
   --border-radius-sm: 12px;
@@ -51,7 +51,11 @@
   font-weight: 700;
   margin-bottom: 2rem;
   text-align: center; /* changed from left to center */
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-pink)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -159,6 +163,7 @@
 
 .form-group input[type="text"],
 .form-group input[type="file"],
+.form-group input[type="number"],
 .form-group textarea,
 .form-group select {
   width: 100%;
@@ -171,6 +176,16 @@
 }
 
 .form-group input[type="text"]:focus,
+.form-group input[type="number"],
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--color-purple-medium);
+  box-shadow: 0 0 0 2px rgba(69, 37, 162, 0.1);
+  outline: none;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"],
 .form-group textarea:focus,
 .form-group select:focus {
   border-color: var(--color-purple-medium);
@@ -247,7 +262,11 @@
 }
 
 .btn-primary {
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-pink)
+  );
   color: white;
   box-shadow: 0 4px 15px rgba(69, 37, 162, 0.3);
 }
@@ -310,12 +329,20 @@
   .btn {
     width: 100%;
   }
-  
+
   .profile-field {
     flex-direction: column;
   }
-  
+
   .field-label {
     margin-bottom: 0.5rem;
   }
+}
+
+/* Remove up down arrows from input type number */
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
