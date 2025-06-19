@@ -143,6 +143,16 @@ function AddEvent() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Set word limit on event description to 180
+    if (name === "description") {
+      const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 180) {
+        alert("Description cannot exceed 180 words.");
+        return;
+      }
+    }
+
     setEventData((prevData) => ({
       ...prevData,
       [name]: value,
