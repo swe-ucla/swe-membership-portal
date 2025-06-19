@@ -52,35 +52,11 @@ const yearOptions = [
 ];
 
 const EditProfileForm = ({ userDetails, onUpdate }) => {
-  const [formData, setFormData] = useState({
-    profilePicture: userDetails?.profilePicture || "",
-    firstName: userDetails?.firstName || "",
-    lastName: userDetails?.lastName || "",
-    year: userDetails?.year || "",
-    major: majorOptions.includes(userDetails?.major)
-      ? userDetails?.major
-      : "Other",
-    otherMajor:
-      userDetails?.major && !majorOptions.includes(userDetails?.major)
-        ? userDetails?.major
-        : "",
-    memberId: userDetails?.memberId || "",
-    bio: userDetails?.bio || "",
-    swePoints: userDetails?.swePoints || 0,
-  });
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem("editProfileForm");
+    if (saved) return JSON.parse(saved);
 
-  const [errors, setErrors] = useState({});
-  const [imageFile, setImageFile] = useState(null);
-  const [bioWordCount, setBioWordCount] = useState(
-    userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
-  );
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef(null);
-
-  useEffect(() => {
-    // Update formData when userDetails changes (on initial load or updates)
-    setFormData({
+    return {
       profilePicture: userDetails?.profilePicture || "",
       firstName: userDetails?.firstName || "",
       lastName: userDetails?.lastName || "",
@@ -95,11 +71,47 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       memberId: userDetails?.memberId || "",
       bio: userDetails?.bio || "",
       swePoints: userDetails?.swePoints || 0,
-    });
-    setBioWordCount(
-      userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
-    );
+    };
+  });
+
+  const [errors, setErrors] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [bioWordCount, setBioWordCount] = useState(
+    userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
+  );
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    // Update formData when userDetails changes (on initial load or updates)
+    const saved = localStorage.getItem("editProfileForm");
+    if (!saved && userDetails) {
+      setFormData({
+        profilePicture: userDetails?.profilePicture || "",
+        firstName: userDetails?.firstName || "",
+        lastName: userDetails?.lastName || "",
+        year: userDetails?.year || "",
+        major: majorOptions.includes(userDetails?.major)
+          ? userDetails?.major
+          : "Other",
+        otherMajor:
+          userDetails?.major && !majorOptions.includes(userDetails?.major)
+            ? userDetails?.major
+            : "",
+        memberId: userDetails?.memberId || "",
+        bio: userDetails?.bio || "",
+        swePoints: userDetails?.swePoints || 0,
+      });
+      setBioWordCount(
+        userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
+      );
+    }
   }, [userDetails]);
+
+  useEffect(() => {
+    localStorage.setItem("editProfileForm", JSON.stringify(formData));
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,6 +167,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         ...prev,
         bio: "Bio cannot exceed 100 words.",
       }));
+
       return;
     }
 
@@ -163,6 +176,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
+      memberId: validateField("Member ID", formData.memberId),
       otherMajor:
         formData.major === "Other" && !formData.otherMajor.trim()
           ? "Please specify your major."
@@ -218,6 +232,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     } finally {
       setIsSubmitting(false);
     }
+    localStorage.removeItem("editProfileForm");
   };
 
   const handleDeleteAccount = async () => {
@@ -311,7 +326,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
           ))}
         </select>
 
-        {/* 
         {formData.major === "Other" && (
           <input
             type="text"
@@ -321,7 +335,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
             onChange={handleChange}
           />
         )}
-        */}
+
         {errors.major && <span className="error-message">{errors.major}</span>}
         {errors.otherMajor && (
           <span className="error-message">{errors.otherMajor}</span>
