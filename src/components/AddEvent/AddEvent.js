@@ -21,7 +21,12 @@ function AddEvent() {
     questions: [],
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
-  const [newQuestion, setNewQuestion] = useState({ text: "", required: true, type: "shortAnswer", options: [""] });
+  const [newQuestion, setNewQuestion] = useState({
+    text: "",
+    required: true,
+    type: "shortAnswer",
+    options: [""],
+  });
   const [loading, setLoading] = useState(true);
 
   const [committees, setCommittees] = useState([
@@ -42,16 +47,16 @@ function AddEvent() {
     // Check if we're in edit mode by looking at the URL query params
     const params = new URLSearchParams(location.search);
     const editId = params.get("edit");
-    
+
     if (editId) {
       setIsEditMode(true);
       setEventId(editId);
-      
+
       // Try to get event data from localStorage first (it was set in ManageEvents.js)
       const storedEventData = localStorage.getItem("editEventData");
       if (storedEventData) {
         const parsedData = JSON.parse(storedEventData);
-        
+
         // Initialize form with the event data
         setEventData({
           name: parsedData.name || "",
@@ -63,10 +68,10 @@ function AddEvent() {
           points: parsedData.points || 1,
           questions: parsedData.questions || [],
         });
-        
+
         // Set custom code checkbox
         setUseCustomCode(!!parsedData.attendanceCode);
-        
+
         // Clear localStorage after using it
         localStorage.removeItem("editEventData");
       } else {
@@ -74,7 +79,7 @@ function AddEvent() {
         fetchEventData(editId);
       }
     }
-    
+
     fetchUserData();
   }, [location.search]);
 
@@ -82,17 +87,17 @@ function AddEvent() {
     try {
       const eventRef = doc(db, "events", id);
       const eventSnap = await getDoc(eventRef);
-      
+
       if (eventSnap.exists()) {
         const data = eventSnap.data();
-        
+
         // Format date for HTML date input
         let formattedDate = "";
         if (data.date) {
           const date = data.date.toDate();
-          formattedDate = date.toISOString().split('T')[0];
+          formattedDate = date.toISOString().split("T")[0];
         }
-        
+
         setEventData({
           name: data.name || "",
           date: formattedDate,
@@ -103,7 +108,7 @@ function AddEvent() {
           points: data.points || 1,
           questions: data.questions || [],
         });
-        
+
         setUseCustomCode(!!data.attendanceCode);
       } else {
         alert("Event not found!");
@@ -138,6 +143,16 @@ function AddEvent() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Set word limit on event description to 180
+    if (name === "description") {
+      const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > 180) {
+        alert("Description cannot exceed 180 words.");
+        return;
+      }
+    }
+
     setEventData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -145,8 +160,8 @@ function AddEvent() {
   };
 
   const generateAttendanceCode = () => {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let code = '';
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let code = "";
     for (let i = 0; i < 6; i++) {
       code += letters.charAt(Math.floor(Math.random() * letters.length));
     }
@@ -155,34 +170,36 @@ function AddEvent() {
 
   const handleCodeChange = (e) => {
     let value = e.target.value.toUpperCase();
-    value = value.replace(/[^A-Z]/g, '');
+    value = value.replace(/[^A-Z]/g, "");
     if (value.length <= 6) {
-      setEventData(prev => ({
+      setEventData((prev) => ({
         ...prev,
-        attendanceCode: value
+        attendanceCode: value,
       }));
     }
   };
 
   const handleAddQuestion = () => {
     if (!newQuestion.text.trim()) return;
-  
+
     const { type, options } = newQuestion;
-  
+
     // Check that at least one option is filled if it's multiple choice or checkboxes
     if (
-      (type === "multipleChoice" || type === "checkboxes" || type === "dropdown") &&
+      (type === "multipleChoice" ||
+        type === "checkboxes" ||
+        type === "dropdown") &&
       options.every((opt) => opt.trim() === "")
     ) {
       alert("Please fill in at least one option.");
       return;
     }
-  
+
     setEventData((prev) => ({
       ...prev,
-      questions: [...prev.questions, { ...newQuestion }]
+      questions: [...prev.questions, { ...newQuestion }],
     }));
-  
+
     setNewQuestion({
       text: "",
       required: true,
@@ -190,26 +207,31 @@ function AddEvent() {
       options: [""],
     });
   };
-  
+
   const handleRemoveQuestion = (indexToRemove) => {
-    setEventData(prev => ({
+    setEventData((prev) => ({
       ...prev,
-      questions: prev.questions.filter((_, index) => index !== indexToRemove)
+      questions: prev.questions.filter((_, index) => index !== indexToRemove),
     }));
   };
 
   const handleQuestionRequiredChange = (index) => {
-    setEventData(prev => ({
+    setEventData((prev) => ({
       ...prev,
-      questions: prev.questions.map((q, i) => 
+      questions: prev.questions.map((q, i) =>
         i === index ? { ...q, required: !q.required } : q
-      )
+      ),
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!eventData.name || !eventData.date || !eventData.location || !eventData.committee) {
+    if (
+      !eventData.name ||
+      !eventData.date ||
+      !eventData.location ||
+      !eventData.committee
+    ) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -220,8 +242,8 @@ function AddEvent() {
       eventDate.setTime(eventDate.getTime() + 24 * 60 * 60 * 1000);
       const timestamp = Timestamp.fromDate(eventDate);
 
-      let attendanceCode = useCustomCode 
-        ? eventData.attendanceCode 
+      let attendanceCode = useCustomCode
+        ? eventData.attendanceCode
         : (isEditMode && eventData.attendanceCode) || generateAttendanceCode();
 
       if (useCustomCode && attendanceCode.length !== 6) {
@@ -232,7 +254,7 @@ function AddEvent() {
       if (isEditMode) {
         // Update existing event
         const eventRef = doc(db, "events", eventId);
-        
+
         await updateDoc(eventRef, {
           name: eventData.name,
           date: timestamp,
@@ -262,7 +284,7 @@ function AddEvent() {
 
         alert("Event created successfully!");
       }
-      
+
       // Reset form and navigate back
       setEventData({
         name: "",
@@ -276,21 +298,27 @@ function AddEvent() {
       });
       setUseCustomCode(false);
       navigate("/manageevents");
-      
     } catch (error) {
-      console.error(`Error ${isEditMode ? 'updating' : 'creating'} event:`, error);
-      alert(`Failed to ${isEditMode ? 'update' : 'create'} the event. Try again later.`);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} event:`,
+        error
+      );
+      alert(
+        `Failed to ${
+          isEditMode ? "update" : "create"
+        } the event. Try again later.`
+      );
     }
   };
 
   const updateNewQuestionOption = (index, value) => {
     const updatedOptions = [...newQuestion.options];
     updatedOptions[index] = value;
-    setNewQuestion(prev => ({ ...prev, options: updatedOptions }));
+    setNewQuestion((prev) => ({ ...prev, options: updatedOptions }));
   };
 
   const addNewOptionField = () => {
-    setNewQuestion(prev => ({ ...prev, options: [...prev.options, ""] }));
+    setNewQuestion((prev) => ({ ...prev, options: [...prev.options, ""] }));
   };
 
   const handleDeleteOption = (indexToRemove) => {
@@ -319,42 +347,83 @@ function AddEvent() {
 
   return (
     <div className="add-event-container">
-      <h2 className="add-event-title">{isEditMode ? "Edit Event" : "Add Event"}</h2>
+      <h2 className="add-event-title">
+        {isEditMode ? "Edit Event" : "Add Event"}
+      </h2>
       <form className="add-event-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label">Event Name:</label>
-          <input type="text" name="name" value={eventData.name} onChange={handleInputChange} required />
+          <input
+            type="text"
+            name="name"
+            value={eventData.name}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label className="form-label">Event Date:</label>
-          <input type="date" name="date" value={eventData.date} onChange={handleInputChange} required />
+          <input
+            type="date"
+            name="date"
+            value={eventData.date}
+            onChange={handleInputChange}
+            min={new Date().toISOString().split("T")[0]} // Restrict selecting past dates
+            required
+          />
         </div>
 
         <div className="form-group">
           <label className="form-label">Location:</label>
-          <input type="text" name="location" value={eventData.location} onChange={handleInputChange} required />
+          <input
+            type="text"
+            name="location"
+            value={eventData.location}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label className="form-label">Committee:</label>
-          <select name="committee" value={eventData.committee} onChange={handleInputChange} required>
-            <option value="" disabled>Select a committee</option>
+          <select
+            name="committee"
+            value={eventData.committee}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="" disabled>
+              Select a committee
+            </option>
             {committees.map((committee, index) => (
-              <option key={index} value={committee}>{committee}</option>
+              <option key={index} value={committee}>
+                {committee}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="form-group">
           <label className="form-label">Points:</label>
-          <input type="range" name="points" min="1" max="5" value={eventData.points} onChange={handleInputChange} />
+          <input
+            type="range"
+            name="points"
+            min="1"
+            max="5"
+            value={eventData.points}
+            onChange={handleInputChange}
+          />
           <span className="points-display">{eventData.points} points</span>
         </div>
 
         <div className="form-group">
           <label className="form-label">Description:</label>
-          <textarea name="description" value={eventData.description} onChange={handleInputChange} />
+          <textarea
+            name="description"
+            value={eventData.description}
+            onChange={handleInputChange}
+          />
         </div>
 
         <div className="form-group">
@@ -368,7 +437,7 @@ function AddEvent() {
               onChange={(e) => {
                 setUseCustomCode(e.target.checked);
                 if (!e.target.checked && !isEditMode) {
-                  setEventData(prev => ({ ...prev, attendanceCode: '' }));
+                  setEventData((prev) => ({ ...prev, attendanceCode: "" }));
                 }
               }}
             />
@@ -377,20 +446,19 @@ function AddEvent() {
             </label>
           </div>
 
-
           {useCustomCode ? (
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Enter 6-letter code" 
-              value={eventData.attendanceCode} 
-              onChange={handleCodeChange} 
-              maxLength={6} 
-              required={useCustomCode} 
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter 6-letter code"
+              value={eventData.attendanceCode}
+              onChange={handleCodeChange}
+              maxLength={6}
+              required={useCustomCode}
             />
           ) : (
             <p className="text-muted">
-              {isEditMode 
+              {isEditMode
                 ? "Existing attendance code will be preserved."
                 : "A random 6-letter code will be generated when the event is created."}
             </p>
@@ -402,33 +470,64 @@ function AddEvent() {
           {eventData.questions.map((question, index) => (
             <div key={index} className="question-item">
               <div className="question-header">
-                <p className="question-title"><strong>Question {index + 1}:</strong> {question.text} <em>({question.type})</em></p>
+                <p className="question-title">
+                  <strong>Question {index + 1}:</strong> {question.text}{" "}
+                  <em>({question.type})</em>
+                </p>
                 <div className="question-actions">
-                  <button type="button" className="btn btn-danger btn-sm" onClick={() => handleRemoveQuestion(index)}>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleRemoveQuestion(index)}
+                  >
                     Remove
                   </button>
                 </div>
               </div>
               <div className="form-check">
-                <input type="checkbox" className="form-check-input" checked={question.required} onChange={() => handleQuestionRequiredChange(index)} />
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={question.required}
+                  onChange={() => handleQuestionRequiredChange(index)}
+                />
                 <label className="form-check-label">Required</label>
               </div>
               {question.options && question.type !== "shortAnswer" && (
                 <ul className="mb-0 ps-4 text-start">
-                  {question.options.filter(opt => opt.trim() !== "").map((opt, i) => (
-                    <li key={i}>{opt}</li>
-                  ))}
+                  {question.options
+                    .filter((opt) => opt.trim() !== "")
+                    .map((opt, i) => (
+                      <li key={i}>{opt}</li>
+                    ))}
                 </ul>
               )}
-
             </div>
           ))}
 
           <div className="add-question-form">
-            <input type="text" className="form-control" placeholder="Enter new question" value={newQuestion.text} onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))} />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter new question"
+              value={newQuestion.text}
+              onChange={(e) =>
+                setNewQuestion((prev) => ({ ...prev, text: e.target.value }))
+              }
+            />
             <div className="form-group">
               <label>Question Type:</label>
-              <select className="form-control" value={newQuestion.type} onChange={(e) => setNewQuestion(prev => ({ ...prev, type: e.target.value, options: [""] }))}>
+              <select
+                className="form-control"
+                value={newQuestion.type}
+                onChange={(e) =>
+                  setNewQuestion((prev) => ({
+                    ...prev,
+                    type: e.target.value,
+                    options: [""],
+                  }))
+                }
+              >
                 <option value="shortAnswer">Short Answer</option>
                 <option value="multipleChoice">Multiple Choice</option>
                 <option value="checkboxes">Checkboxes</option>
@@ -436,7 +535,9 @@ function AddEvent() {
                 <option value="dropdown">Dropdown</option>
               </select>
             </div>
-            {["multipleChoice", "checkboxes", "dropdown"].includes(newQuestion.type) && (
+            {["multipleChoice", "checkboxes", "dropdown"].includes(
+              newQuestion.type
+            ) && (
               <div className="form-group">
                 <label>Options:</label>
                 {newQuestion.options.map((option, index) => (
@@ -446,38 +547,63 @@ function AddEvent() {
                       className="form-control me-2"
                       placeholder={`Option ${index + 1}`}
                       value={option}
-                      onChange={(e) => updateNewQuestionOption(index, e.target.value)}
+                      onChange={(e) =>
+                        updateNewQuestionOption(index, e.target.value)
+                      }
                       disabled={newQuestion.type === "trueFalse"}
                     />
-                    {newQuestion.options.length > 1 && newQuestion.type !== "trueFalse" && (
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => handleDeleteOption(index)}
-                      >
-                        ✕
-                      </button>
-                    )}
+                    {newQuestion.options.length > 1 &&
+                      newQuestion.type !== "trueFalse" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDeleteOption(index)}
+                        >
+                          ✕
+                        </button>
+                      )}
                   </div>
                 ))}
 
-                <button type="button" className="btn btn-sm btn-outline-primary" onClick={addNewOptionField}>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-primary"
+                  onClick={addNewOptionField}
+                >
                   Add Option
                 </button>
               </div>
             )}
             <div className="form-check">
-              <input type="checkbox" className="form-check-input" checked={newQuestion.required} onChange={(e) => setNewQuestion(prev => ({ ...prev, required: e.target.checked }))} />
+              <input
+                type="checkbox"
+                className="form-check-input"
+                checked={newQuestion.required}
+                onChange={(e) =>
+                  setNewQuestion((prev) => ({
+                    ...prev,
+                    required: e.target.checked,
+                  }))
+                }
+              />
               <label className="form-check-label">Required</label>
             </div>
-            <button type="button" className="btn btn-secondary" onClick={handleAddQuestion}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleAddQuestion}
+            >
               Add Question
             </button>
           </div>
         </div>
 
         <div className="form-actions">
-          <button type="button" className="btn btn-outline-secondary" onClick={() => navigate("/manageevents")}>
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/manageevents")}
+          >
             Cancel
           </button>
           <button type="submit" className="btn btn-success">
