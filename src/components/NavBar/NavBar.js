@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
-import SWELogo from "./SWE_Logo.png"; // Import the SWE logo
+import SWELogo from "./SWE_Logo.png"; 
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
