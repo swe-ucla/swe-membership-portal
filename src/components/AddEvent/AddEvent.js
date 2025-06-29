@@ -10,15 +10,22 @@ function AddEvent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
+
+  const pad = (n) => n.toString().padStart(2, "0");
+  const now = new Date(Date.now());
+  const localDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const localMin = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
   const [eventData, setEventData] = useState({
     name: "",
-    date: "",
+    date: localDateTime,
     location: "",
     committee: "",
     description: "",
     attendanceCode: "",
     points: 1,
     questions: [],
+    signInOpensHoursBefore: 1, // default 1 hour before
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
   const [newQuestion, setNewQuestion] = useState({
@@ -67,6 +74,7 @@ function AddEvent() {
           attendanceCode: parsedData.attendanceCode || "",
           points: parsedData.points || 1,
           questions: parsedData.questions || [],
+          signInOpensHoursBefore: parsedData.signInOpensHoursBefore || 1,
         });
 
         // Set custom code checkbox
@@ -91,11 +99,17 @@ function AddEvent() {
       if (eventSnap.exists()) {
         const data = eventSnap.data();
 
-        // Format date for HTML date input
+        // Format date for HTML date input - preserve local time
         let formattedDate = "";
         if (data.date) {
           const date = data.date.toDate();
-          formattedDate = date.toISOString().split("T")[0];
+          // Convert to local timezone string for datetime-local input
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
         setEventData({
@@ -107,6 +121,7 @@ function AddEvent() {
           attendanceCode: data.attendanceCode || "",
           points: data.points || 1,
           questions: data.questions || [],
+          signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
         });
 
         setUseCustomCode(!!data.attendanceCode);
@@ -233,13 +248,12 @@ function AddEvent() {
       !eventData.committee
     ) {
       alert("Please fill in all required fields.");
+      console.log("missing fields: ", eventData);
       return;
     }
 
     try {
-      const eventDate = new Date(eventData.date);
-      eventDate.setHours(0, 0, 0, 0);
-      eventDate.setTime(eventDate.getTime() + 24 * 60 * 60 * 1000);
+      const eventDate = new Date(eventData.date + ':00'); // Create date in local timezone, add seconds for proper parsing
       const timestamp = Timestamp.fromDate(eventDate);
 
       let attendanceCode = useCustomCode
@@ -263,7 +277,7 @@ function AddEvent() {
           description: eventData.description,
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
-          questions: eventData.questions,
+          signInOpensHoursBefore: eventData.signInOpensHoursBefore,
           lastUpdated: new Date().toISOString(),
         });
 
@@ -280,6 +294,7 @@ function AddEvent() {
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
+          signInOpensHoursBefore: eventData.signInOpensHoursBefore,
         });
 
         alert("Event created successfully!");
@@ -295,6 +310,7 @@ function AddEvent() {
         attendanceCode: "",
         points: 1,
         questions: [],
+        signInOpensHoursBefore: 1,
       });
       setUseCustomCode(false);
       navigate("/manageevents");
@@ -363,13 +379,13 @@ function AddEvent() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Event Date:</label>
+          <label className="form-label">Event Date & Time:</label>
           <input
-            type="date"
+            type="datetime-local"
             name="date"
             value={eventData.date}
             onChange={handleInputChange}
-            min={new Date().toISOString().split("T")[0]} // Restrict selecting past dates
+            min={localMin} // Restrict selecting past dates
             required
           />
         </div>
@@ -414,7 +430,27 @@ function AddEvent() {
             value={eventData.points}
             onChange={handleInputChange}
           />
-          <span className="points-display">{eventData.points} points</span>
+          <span className="slider-display">{eventData.points} points</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Sign In Opens:</label>
+          <input
+            type="range"
+            name="signInOpensHoursBefore"
+            min="1"
+            max="24"
+            value={eventData.signInOpensHoursBefore}
+            onChange={e =>
+              setEventData(prev => ({
+                ...prev,
+                signInOpensHoursBefore: Number(e.target.value),
+              }))
+            }
+          />
+          <span className="slider-display">
+            {eventData.signInOpensHoursBefore} hour(s) before event
+          </span>
         </div>
 
         <div className="form-group">

@@ -141,9 +141,19 @@
   
   .event-card-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid #eee;
+    /* border-top: 1px solid #eee; */
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .event-registration-status {
+    padding: 0.5rem 0.8rem;
+    background: rgba(69, 37, 162, 0.05);
+    border-radius: 6px;
+    border: 2px solid var(--color-purple-dark);
+    color: var(--color-purple-dark);
+    font-weight: 600;
   }
   
   /* Button styles */

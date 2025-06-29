@@ -11,6 +11,7 @@ function UpcomingEvents() {
   const [isAdmin, setIsAdmin] = useState(true);
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
+  const [rsvpEvents, setRsvpEvents] = useState([]);
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -25,6 +26,7 @@ function UpcomingEvents() {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         setIsSignedIn(userData.attendedEvents || []); // store user's signed-in events
+        setRsvpEvents(userData.rsvpEvents || []); // store user's RSVP events
 
         if (userData.hasOwnProperty("isAdmin")) {
           setIsAdmin(userData.isAdmin);
@@ -115,10 +117,18 @@ function UpcomingEvents() {
         const userData = userSnap.data();
         const eventData = eventSnap.data();
   
+        // Remove from both RSVP and attended events
+        const updatedRsvp = (userData.rsvpEvents || []).filter((id) => id !== eventId);
         const updatedAttended = (userData.attendedEvents || []).filter((id) => id !== eventId);
-        const updatedSWEPoints = Math.max((userData.swePoints || 0) - (points || 0), 0);
+        
+        // Only deduct points if they were signed in
+        const wasSignedIn = (userData.attendedEvents || []).includes(eventId);
+        const updatedSWEPoints = wasSignedIn 
+          ? Math.max((userData.swePoints || 0) - (points || 0), 0)
+          : (userData.swePoints || 0);
   
         await setDoc(userRef, {
+          rsvpEvents: updatedRsvp,
           attendedEvents: updatedAttended,
           swePoints: updatedSWEPoints,
         }, { merge: true });
@@ -129,14 +139,77 @@ function UpcomingEvents() {
           attendees: updatedAttendees,
         }, { merge: true });
   
+        setRsvpEvents(updatedRsvp);
         setIsSignedIn(updatedAttended);
       }
     } catch (error) {
       console.error("Error canceling registration:", error);
     }
   };
-  
-  
+
+  const isSignInOpen = (event) => {
+    if (!event.date || !event.signInOpensHoursBefore) return false;
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    const now = new Date();
+    const signInOpens = new Date(eventDate.getTime() - (event.signInOpensHoursBefore || 1) * 3600000); // Convert hours to milliseconds
+    return now >= signInOpens && now <= eventDate;
+  };
+
+  const isRSVPOpen = (event) => {
+    if (!event.date || !event.signInOpensHoursBefore) return false;
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    const now = new Date();
+    const signInOpens = new Date(eventDate.getTime() - (event.signInOpensHoursBefore || 1) * 3600000); // Convert hours to milliseconds
+    return now < signInOpens;
+  };
+
+  const hasUserRSVPd = (eventId) => {
+    return rsvpEvents.includes(eventId);
+  };
+
+  const hasUserSignedIn = (eventId) => {
+    return isSignedIn.includes(eventId);
+  };
+
+  const isUserRegistered = (eventId) => {
+    return hasUserRSVPd(eventId) || hasUserSignedIn(eventId);
+  };
+
+  const handleRSVP = async (eventId) => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) return;
+
+    const userRef = doc(db, "Users", userId);
+    const eventRef = doc(db, "events", eventId);
+
+    try {
+      const userSnap = await getDoc(userRef);
+      const eventSnap = await getDoc(eventRef);
+
+      if (userSnap.exists() && eventSnap.exists()) {
+        const userData = userSnap.data();
+        const eventData = eventSnap.data();
+
+        // Add to RSVP events (no points)
+        const updatedRsvpEvents = [...(userData.rsvpEvents || []), eventId];
+        
+        // Add to attendees list for the event
+        const updatedAttendees = [...(eventData.attendees || []), userId];
+
+        await setDoc(userRef, {
+          rsvpEvents: updatedRsvpEvents,
+        }, { merge: true });
+
+        await setDoc(eventRef, {
+          attendees: updatedAttendees,
+        }, { merge: true });
+
+        setRsvpEvents(updatedRsvpEvents);
+      }
+    } catch (error) {
+      console.error("Error RSVPing:", error);
+    }
+  };
 
   useEffect(() => {
     fetchUserData();
@@ -183,6 +256,16 @@ function UpcomingEvents() {
 
                 {event.description && <p>{event.description}</p>}
 
+                {isUserRegistered(event.id) && (
+                  <div className="event-registration-status">
+                    {hasUserSignedIn(event.id) ? (
+                      <span>Signed in ({event.points || 0} point(s) earned)</span>
+                    ) : (
+                      <span>RSVP received (no points earned)</span>
+                    )}
+                  </div>
+                )}
+
                 {isAdmin && event.attendanceCode && (
                   <div className="event-detail">
                     <strong>Attendance Code:</strong>
@@ -190,9 +273,10 @@ function UpcomingEvents() {
                   </div>
                 )}
 
-                {isToday(event.date) && (
-                  <div className="event-card-footer">
-                    {isSignedIn.includes(event.id) ? (
+                <div className="event-card-footer">
+                  {isSignInOpen(event) ? (
+                    // Sign-in period is open
+                    hasUserSignedIn(event.id) ? (
                       <button
                         onClick={() => handleCancelRegistration(event.id, event.points || 0)}
                         className="btn btn-danger"
@@ -202,13 +286,46 @@ function UpcomingEvents() {
                     ) : (
                       <button
                         onClick={() => handleSignUpClick(event.id)}
-                        className="btn btn-primary"
+                        className="btn btn-secondary"
                       >
-                        Sign In (Earn {event.points || 0} points)
+                        Sign In to Earn {event.points || 0} Point(s)
                       </button>
-                    )}
-                  </div>
-                )}
+                    )
+                  ) : isRSVPOpen(event) ? (
+                    // RSVP period is open
+                    isUserRegistered(event.id) ? (
+                      <button
+                        onClick={() => handleCancelRegistration(event.id, 0)}
+                        className="btn btn-danger"
+                      >
+                        Cancel RSVP
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleRSVP(event.id)}
+                        className="btn btn-secondary"
+                      >
+                        RSVP
+                      </button>
+                    )
+                  ) : (
+                    // Event is in the future but registration is closed, or event is past
+                    isUserRegistered(event.id) ? (
+                      <button
+                        onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
+                        className="btn btn-danger"
+                      >
+                        Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
+                      </button>
+                    ) : (
+                      <span>
+                        {new Date() > (event.date?.toDate ? event.date.toDate() : new Date(event.date)) 
+                          ? 'Event has passed' 
+                          : 'Registration closed'}
+                      </span>
+                    )
+                  )}
+                </div>
 
               </div>
             </div>
