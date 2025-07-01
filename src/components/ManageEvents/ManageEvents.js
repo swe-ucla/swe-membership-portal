@@ -117,7 +117,9 @@ const ManageEvents = () => {
       return;
     }
 
-    const questionHeaders = event.questions ? event.questions.map((q) => q.text) : [];
+    const questionHeaders = event.questions
+      ? event.questions.map((q) => q.text)
+      : [];
     const headers = [
       "Email",
       "Full Name",
@@ -172,7 +174,8 @@ const ManageEvents = () => {
       return;
     }
 
-    navigator.clipboard.writeText(emails)
+    navigator.clipboard
+      .writeText(emails)
       .then(() => alert("Emails copied to clipboard!"))
       .catch((err) => {
         console.error("Failed to copy emails:", err);
@@ -183,23 +186,27 @@ const ManageEvents = () => {
   const handleEditEvent = (event) => {
     // Convert Firestore timestamp to format for date input (YYYY-MM-DD)
     const eventDate = event.date.toDate();
-    const formattedDate = eventDate.toISOString().split('T')[0];
-    
+    const formattedDate = eventDate.toISOString().split("T")[0];
+
     // Store the event data in localStorage for the edit page to access
     const eventForEdit = {
       ...event,
       date: formattedDate,
-      isEditing: true
+      isEditing: true,
     };
-    
-    localStorage.setItem('editEventData', JSON.stringify(eventForEdit));
+
+    localStorage.setItem("editEventData", JSON.stringify(eventForEdit));
     navigate(`/addevent?edit=${event.id}`);
   };
 
   const deleteEvent = async (event) => {
     if (deleteLoading) return;
 
-    if (!window.confirm(`Are you sure you want to delete "${event.name}"? This action cannot be undone.`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${event.name}"? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -214,8 +221,13 @@ const ManageEvents = () => {
 
           if (userSnap.exists()) {
             const userData = userSnap.data();
-            const updatedEvents = (userData.attendedEvents || []).filter(id => id !== event.id);
-            await setDoc(userRef, { ...userData, attendedEvents: updatedEvents });
+            const updatedEvents = (userData.attendedEvents || []).filter(
+              (id) => id !== event.id
+            );
+            await setDoc(userRef, {
+              ...userData,
+              attendedEvents: updatedEvents,
+            });
           }
         });
 
@@ -227,8 +239,8 @@ const ManageEvents = () => {
       await deleteDoc(eventRef);
 
       // Remove from state
-      setPastEvents(prev => prev.filter(e => e.id !== event.id));
-      setUpcomingEvents(prev => prev.filter(e => e.id !== event.id));
+      setPastEvents((prev) => prev.filter((e) => e.id !== event.id));
+      setUpcomingEvents((prev) => prev.filter((e) => e.id !== event.id));
 
       alert(`"${event.name}" has been successfully deleted.`);
     } catch (error) {
@@ -301,13 +313,20 @@ const ManageEvents = () => {
               >
                 Copy Emails
               </button>
-              <button
-                className="btn-delete"
-                onClick={() => deleteEvent(event)}
-                disabled={deleteLoading}
-              >
-                {deleteLoading ? "Deleting..." : "Delete"}
-              </button>
+
+              {auth.currentUser?.uid === event.createdBy ? (
+                <button
+                  className="btn-delete"
+                  onClick={() => deleteEvent(event)}
+                  disabled={deleteLoading}
+                >
+                  {deleteLoading ? "Deleting..." : "Delete"}
+                </button>
+              ) : (
+                <button disabled className="btn-delete">
+                  Delete
+                </button>
+              )}
             </td>
           </tr>
         ))}
@@ -319,7 +338,10 @@ const ManageEvents = () => {
     <div className="manage-events-container">
       <div className="header-section">
         <h2 className="manage-events-title">Event Management</h2>
-        <button onClick={() => navigate("/addevent")} className="btn-create-event">
+        <button
+          onClick={() => navigate("/addevent")}
+          className="btn-create-event"
+        >
           Create New Event
         </button>
       </div>
@@ -341,13 +363,17 @@ const ManageEvents = () => {
         </div>
 
         <div className="tab-content">
-          {activeTab === "upcoming"
-            ? upcomingEvents.length === 0
-              ? <p className="no-events-message">No upcoming events found.</p>
-              : renderTable(upcomingEvents)
-            : pastEvents.length === 0
-              ? <p className="no-events-message">No past events found.</p>
-              : renderTable(pastEvents)}
+          {activeTab === "upcoming" ? (
+            upcomingEvents.length === 0 ? (
+              <p className="no-events-message">No upcoming events found.</p>
+            ) : (
+              renderTable(upcomingEvents)
+            )
+          ) : pastEvents.length === 0 ? (
+            <p className="no-events-message">No past events found.</p>
+          ) : (
+            renderTable(pastEvents)
+          )}
         </div>
       </div>
     </div>

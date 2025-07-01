@@ -1,12 +1,12 @@
 /* ManageEvents.css - Matching the modern purple theme */
 :root {
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
-  --color-pink: #E85F7A;
-  --color-pink-light: #FFB7C5;
-  --color-pink-dark: #890C50;
-  --color-background: #F5F7FA;
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #6677ca;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-light: #ffb7c5;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
   --color-card: rgba(255, 255, 255, 0.9);
   --border-radius-lg: 24px;
   --border-radius-md: 16px;
@@ -29,13 +29,17 @@
 }
 
 .manage-events-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 6px;
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-pink)
+  );
 }
 
 .header-section {
@@ -57,18 +61,26 @@
 }
 
 .manage-events-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-pink)
+  );
 }
 
 .btn-create-event {
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-pink)
+  );
   color: white;
   border: none;
   padding: 14px 30px;
@@ -122,7 +134,11 @@
 }
 
 .tab-button.active {
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-purple-medium));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-purple-medium)
+  );
   color: white;
   border: none;
   box-shadow: 0 4px 15px rgba(69, 37, 162, 0.2);
@@ -139,7 +155,11 @@
 }
 
 .events-table th {
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-purple-medium));
+  background: linear-gradient(
+    90deg,
+    var(--color-purple-dark),
+    var(--color-purple-medium)
+  );
   color: white;
   padding: 1rem 1.5rem;
   text-align: left;
@@ -202,7 +222,8 @@
   transform: translateY(-2px);
 }
 
-.btn-export, .btn-copy {
+.btn-export,
+.btn-copy {
   background: white;
   border: 2px solid var(--color-purple-medium);
   color: var(--color-purple-dark);
@@ -215,7 +236,7 @@
   white-space: nowrap;
 }
 
-.btn-export:hover:not(:disabled), 
+.btn-export:hover:not(:disabled),
 .btn-copy:hover:not(:disabled) {
   background-color: var(--color-purple-medium);
   color: white;
@@ -241,8 +262,8 @@
   transform: translateY(-2px);
 }
 
-.btn-export:disabled, 
-.btn-copy:disabled, 
+.btn-export:disabled,
+.btn-copy:disabled,
 .btn-delete:disabled,
 .btn-edit:disabled {
   opacity: 0.5;
@@ -250,7 +271,9 @@
   transform: none;
 }
 
-.loading-message, .no-events-message, .unauthorized-message {
+.loading-message,
+.no-events-message,
+.unauthorized-message {
   text-align: center;
   padding: 3rem;
   color: #555;
@@ -314,7 +337,7 @@
     padding: 2rem;
     margin: 1.5rem;
   }
-  
+
   .events-table {
     display: block;
     overflow-x: auto;
@@ -326,35 +349,38 @@
     padding: 1.5rem;
     margin: 1rem;
   }
-  
+
   .manage-events-title {
     font-size: 1.8rem;
   }
-  
+
   .tabs-header {
     flex-direction: column;
     gap: 0.8rem;
   }
-  
+
   .tab-button {
     width: 100%;
   }
-  
+
   .btn-create-event {
     width: 100%;
   }
-  
-  .events-table th, 
+
+  .events-table th,
   .events-table td {
     padding: 0.8rem 1rem;
   }
-  
+
   .event-actions {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
-  .btn-export, .btn-copy, .btn-delete, .btn-edit {
+
+  .btn-export,
+  .btn-copy,
+  .btn-delete,
+  .btn-edit {
     width: 100%;
     text-align: center;
     padding: 0.6rem;
@@ -366,12 +392,12 @@
     padding: 1.2rem;
     border-radius: var(--border-radius-md);
   }
-  
+
   .manage-events-title {
     font-size: 1.6rem;
   }
-  
-  .events-table th, 
+
+  .events-table th,
   .events-table td {
     padding: 0.7rem 0.8rem;
     font-size: 0.9rem;

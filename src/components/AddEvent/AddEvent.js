@@ -276,7 +276,7 @@ function AddEvent() {
         await setDoc(eventRef, {
           ...eventData,
           date: timestamp,
-          createdBy: eventData.committee,
+          createdBy: auth.currentUser.uid,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
