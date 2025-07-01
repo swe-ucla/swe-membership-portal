@@ -5,6 +5,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import "./AddEvent.css";
 
+// Add Cloudinary constants
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
+const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
+
 function AddEvent() {
   const [userDetails, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -13,12 +17,15 @@ function AddEvent() {
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
+    startTime: "",
+    endTime: "",
     location: "",
     committee: "",
     description: "",
     attendanceCode: "",
     points: 1,
     questions: [],
+    photo: null,
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
   const [newQuestion, setNewQuestion] = useState({
@@ -28,6 +35,7 @@ function AddEvent() {
     options: [""],
   });
   const [loading, setLoading] = useState(true);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   const [committees, setCommittees] = useState([
     "Evening with Industry",
@@ -61,13 +69,23 @@ function AddEvent() {
         setEventData({
           name: parsedData.name || "",
           date: parsedData.date || "",
+          startTime: parsedData.startTime || "",
+          endTime: parsedData.endTime || "",
           location: parsedData.location || "",
           committee: parsedData.createdBy || "",
           description: parsedData.description || "",
           attendanceCode: parsedData.attendanceCode || "",
           points: parsedData.points || 1,
           questions: parsedData.questions || [],
+          photo: parsedData.photo || null,
         });
+
+        // Show preview if photo is a URL
+        if (parsedData.photo && typeof parsedData.photo === 'string') {
+          setPhotoPreview(parsedData.photo);
+        } else {
+          setPhotoPreview(null);
+        }
 
         // Set custom code checkbox
         setUseCustomCode(!!parsedData.attendanceCode);
@@ -101,13 +119,23 @@ function AddEvent() {
         setEventData({
           name: data.name || "",
           date: formattedDate,
+          startTime: data.startTime || "",
+          endTime: data.endTime || "",
           location: data.location || "",
           committee: data.createdBy || "",
           description: data.description || "",
           attendanceCode: data.attendanceCode || "",
           points: data.points || 1,
           questions: data.questions || [],
+          photo: data.photo || null,
         });
+
+        // Show preview if photo is a URL
+        if (data.photo && typeof data.photo === 'string') {
+          setPhotoPreview(data.photo);
+        } else {
+          setPhotoPreview(null);
+        }
 
         setUseCustomCode(!!data.attendanceCode);
       } else {
@@ -229,6 +257,7 @@ function AddEvent() {
     if (
       !eventData.name ||
       !eventData.date ||
+      !eventData.startTime ||
       !eventData.location ||
       !eventData.committee
     ) {
@@ -237,10 +266,11 @@ function AddEvent() {
     }
 
     try {
-      const eventDate = new Date(eventData.date);
-      eventDate.setHours(0, 0, 0, 0);
-      eventDate.setTime(eventDate.getTime() + 24 * 60 * 60 * 1000);
-      const timestamp = Timestamp.fromDate(eventDate);
+      // Combine date and startTime for event timestamp
+      const [year, month, day] = eventData.date.split("-");
+      const [startHours = 0, startMinutes = 0] = eventData.startTime.split(":");
+      const eventStartDate = new Date(year, month - 1, day, startHours, startMinutes, 0, 0);
+      const timestamp = Timestamp.fromDate(eventStartDate);
 
       let attendanceCode = useCustomCode
         ? eventData.attendanceCode
@@ -251,6 +281,25 @@ function AddEvent() {
         return;
       }
 
+      // --- Cloudinary upload logic ---
+      let photoURL = eventData.photo;
+      if (eventData.photo && eventData.photo instanceof File) {
+        const formData = new FormData();
+        formData.append("file", eventData.photo);
+        formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        const response = await fetch(CLOUDINARY_URL, {
+          method: "POST",
+          body: formData,
+        });
+        if (!response.ok) {
+          alert("Failed to upload event photo.");
+          return;
+        }
+        const data = await response.json();
+        photoURL = data.secure_url;
+      }
+      // --- End Cloudinary upload logic ---
+
       if (isEditMode) {
         // Update existing event
         const eventRef = doc(db, "events", eventId);
@@ -258,12 +307,15 @@ function AddEvent() {
         await updateDoc(eventRef, {
           name: eventData.name,
           date: timestamp,
+          startTime: eventData.startTime,
+          endTime: eventData.endTime,
           location: eventData.location,
           createdBy: eventData.committee,
           description: eventData.description,
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
           questions: eventData.questions,
+          photo: photoURL,
           lastUpdated: new Date().toISOString(),
         });
 
@@ -276,10 +328,13 @@ function AddEvent() {
         await setDoc(eventRef, {
           ...eventData,
           date: timestamp,
+          startTime: eventData.startTime,
+          endTime: eventData.endTime,
           createdBy: eventData.committee,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
+          photo: photoURL,
         });
 
         alert("Event created successfully!");
@@ -289,13 +344,17 @@ function AddEvent() {
       setEventData({
         name: "",
         date: "",
+        startTime: "00:00",
+        endTime: "",
         location: "",
         committee: "",
         description: "",
         attendanceCode: "",
         points: 1,
         questions: [],
+        photo: null,
       });
+      setPhotoPreview(null);
       setUseCustomCode(false);
       navigate("/manageevents");
     } catch (error) {
@@ -326,6 +385,17 @@ function AddEvent() {
       ...prev,
       options: prev.options.filter((_, i) => i !== indexToRemove),
     }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEventData((prev) => ({ ...prev, photo: file }));
+      setPhotoPreview(URL.createObjectURL(file));
+    } else {
+      setEventData((prev) => ({ ...prev, photo: null }));
+      setPhotoPreview(null);
+    }
   };
 
   if (loading) {
@@ -362,6 +432,28 @@ function AddEvent() {
           />
         </div>
 
+        <div className="form-group event-photo-upload">
+          <label className="form-label" style={{ marginBottom: '0.4rem', display: 'block' }}>Event Photo:</label>
+          <label htmlFor="event-photo-input" className="upload-label">Choose Photo</label>
+          <input
+            id="event-photo-input"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+          />
+          {eventData.photo && (
+            <span className="file-name">{eventData.photo.name}</span>
+          )}
+          {photoPreview && (
+            <div className="event-photo-preview">
+              <img
+                src={photoPreview}
+                alt="Event Preview"
+              />
+            </div>
+          )}
+        </div>
+
         <div className="form-group">
           <label className="form-label">Event Date:</label>
           <input
@@ -372,6 +464,30 @@ function AddEvent() {
             min={new Date().toISOString().split("T")[0]} // Restrict selecting past dates
             required
           />
+        </div>
+
+        <div className="form-group" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+          <div style={{ flex: 1 }}>
+            <label className="form-label">Start Time:</label>
+            <input
+              type="time"
+              name="startTime"
+              value={eventData.startTime}
+              onChange={handleInputChange}
+              required
+              className="form-control"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label className="form-label">End Time:</label>
+            <input
+              type="time"
+              name="endTime"
+              value={eventData.endTime}
+              onChange={handleInputChange}
+              className="form-control"
+            />
+          </div>
         </div>
 
         <div className="form-group">
