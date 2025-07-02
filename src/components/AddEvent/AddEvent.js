@@ -10,29 +10,28 @@ const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
 
 function AddEvent() {
-  const [userDetails, setUserDetails] = useState(null);
+  const [, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
 
   const pad = (n) => n.toString().padStart(2, "0");
   const now = new Date(Date.now());
-  const localDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  const localMin = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const todayDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 
   const [eventData, setEventData] = useState({
-   name: "",
-  date: "", 
-  startTime: "",
-  endTime: "",
-  location: "",
-  committee: "",
-  description: "",
-  attendanceCode: "",
-  points: 1,
-  questions: [],
-  signInOpensHoursBefore: 1, // default 1 hour before
-  photo: null,
+    name: "",
+    date: "", // This will be just the date (YYYY-MM-DD)
+    startTime: "",
+    endTime: "",
+    location: "",
+    committee: "",
+    description: "",
+    attendanceCode: "",
+    points: 1,
+    questions: [],
+    signInOpensHoursBefore: 1, // default 1 hour before
+    photo: null,
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
   const [newQuestion, setNewQuestion] = useState({
@@ -44,7 +43,7 @@ function AddEvent() {
   const [loading, setLoading] = useState(true);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const [committees, setCommittees] = useState([
+  const committees = [
     "Evening with Industry",
     "Dev",
     "Technical",
@@ -53,136 +52,165 @@ function AddEvent() {
     "Internal Affairs",
     "Advocacy",
     "General",
-  ]);
+  ];
 
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we're in edit mode by looking at the URL query params
-    const params = new URLSearchParams(location.search);
-    const editId = params.get("edit");
+    const fetchEventData = async (id) => {
+      try {
+        const eventRef = doc(db, "events", id);
+        const eventSnap = await getDoc(eventRef);
 
-    if (editId) {
-      setIsEditMode(true);
-      setEventId(editId);
+        if (eventSnap.exists()) {
+          const data = eventSnap.data();
 
-      // Try to get event data from localStorage first (it was set in ManageEvents.js)
-      const storedEventData = localStorage.getItem("editEventData");
-      if (storedEventData) {
-        const parsedData = JSON.parse(storedEventData);
+          // Format date and time separately
+          let formattedDate = "";
+          let extractedStartTime = "";
+          let extractedEndTime = "";
+          
+          if (data.date) {
+            const date = data.date.toDate();
+            // Extract just the date part
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+            
+            // Extract time from the stored date if startTime isn't separate
+            if (!data.startTime) {
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              extractedStartTime = `${hours}:${minutes}`;
+            }
+          }
 
-        // Initialize form with the event data
-        setEventData({
-          name: parsedData.name || "",
-          date: parsedData.date || "",
-          startTime: parsedData.startTime || "",
-          endTime: parsedData.endTime || "",
-          location: parsedData.location || "",
-          committee: parsedData.createdBy || "",
-          description: parsedData.description || "",
-          attendanceCode: parsedData.attendanceCode || "",
-          points: parsedData.points || 1,
-          questions: parsedData.questions || [],
-          signInOpensHoursBefore: parsedData.signInOpensHoursBefore || 1,
-          photo: parsedData.photo || null,
-        });
+          setEventData({
+            name: data.name || "",
+            date: formattedDate,
+            startTime: data.startTime || extractedStartTime,
+            endTime: data.endTime || extractedEndTime,
+            location: data.location || "",
+            committee: data.createdBy || "",
+            description: data.description || "",
+            attendanceCode: data.attendanceCode || "",
+            points: data.points || 1,
+            questions: data.questions || [],
+            signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
+            photo: data.photo || null,
+          });
 
-        // Show preview if photo is a URL
-        if (parsedData.photo && typeof parsedData.photo === 'string') {
-          setPhotoPreview(parsedData.photo);
+          // Show preview if photo is a URL
+          if (data.photo && typeof data.photo === 'string') {
+            setPhotoPreview(data.photo);
+          } else {
+            setPhotoPreview(null);
+          }
+
+          setUseCustomCode(!!data.attendanceCode);
         } else {
-          setPhotoPreview(null);
+          alert("Event not found!");
+          navigate("/manageevents");
         }
-
-        // Set custom code checkbox
-        setUseCustomCode(!!parsedData.attendanceCode);
-
-        // Clear localStorage after using it
-        localStorage.removeItem("editEventData");
-      } else {
-        // If not in localStorage, fetch from Firestore
-        fetchEventData(editId);
+      } catch (error) {
+        console.error("Error fetching event data:", error);
+        alert("Failed to load event data.");
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUserData();
-  }, [location.search]);
-
-  const fetchEventData = async (id) => {
-    try {
-      const eventRef = doc(db, "events", id);
-      const eventSnap = await getDoc(eventRef);
-
-      if (eventSnap.exists()) {
-        const data = eventSnap.data();
-
-        // Format date for HTML date input - preserve local time
-        let formattedDate = "";
-        if (data.date) {
-          const date = data.date.toDate();
-          // Convert to local timezone string for datetime-local input
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          const hours = String(date.getHours()).padStart(2, '0');
-          const minutes = String(date.getMinutes()).padStart(2, '0');
-          formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-        }
-
-        setEventData({
-          name: data.name || "",
-          date: formattedDate,
-          startTime: data.startTime || "",
-          endTime: data.endTime || "",
-          location: data.location || "",
-          committee: data.createdBy || "",
-          description: data.description || "",
-          attendanceCode: data.attendanceCode || "",
-          points: data.points || 1,
-          questions: data.questions || [],
-          signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
-          photo: data.photo || null,
-        });
-
-        // Show preview if photo is a URL
-        if (data.photo && typeof data.photo === 'string') {
-          setPhotoPreview(data.photo);
+    const fetchUserData = async () => {
+      setLoading(true);
+      auth.onAuthStateChanged(async (user) => {
+        if (user && user.uid) {
+          const docRef = doc(db, "Users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserDetails(docSnap.data());
+            const userData = docSnap.data();
+            setIsAdmin(userData.isAdmin || false);
+          }
         } else {
-          setPhotoPreview(null);
+          navigate("/login");
+          setUserDetails(null);
         }
+        setLoading(false);
+      });
+    };
 
-        setUseCustomCode(!!data.attendanceCode);
-      } else {
-        alert("Event not found!");
-        navigate("/manageevents");
-      }
-    } catch (error) {
-      console.error("Error fetching event data:", error);
-      alert("Failed to load event data.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchData = async () => {
+      // Check if we're in edit mode by looking at the URL query params
+      const params = new URLSearchParams(location.search);
+      const editId = params.get("edit");
 
-  const fetchUserData = async () => {
-    setLoading(true);
-    auth.onAuthStateChanged(async (user) => {
-      if (user && user.uid) {
-        const docRef = doc(db, "Users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserDetails(docSnap.data());
-          const userData = docSnap.data();
-          setIsAdmin(userData.isAdmin || false);
+      if (editId) {
+        setIsEditMode(true);
+        setEventId(editId);
+
+        // Try to get event data from localStorage first (it was set in ManageEvents.js)
+        const storedEventData = localStorage.getItem("editEventData");
+        if (storedEventData) {
+          const parsedData = JSON.parse(storedEventData);
+
+          // Format date separately from time
+          let formattedDate = "";
+          let extractedStartTime = "";
+          if (parsedData.date) {
+            if (typeof parsedData.date === 'string' && parsedData.date.includes('T')) {
+              // If it's a datetime string, split it
+              const [datePart, timePart] = parsedData.date.split('T');
+              formattedDate = datePart;
+              extractedStartTime = timePart || parsedData.startTime || "";
+            } else {
+              formattedDate = parsedData.date;
+              extractedStartTime = parsedData.startTime || "";
+            }
+          }
+
+          // Initialize form with the event data
+          setEventData({
+            name: parsedData.name || "",
+            date: formattedDate,
+            startTime: extractedStartTime,
+            endTime: parsedData.endTime || "",
+            location: parsedData.location || "",
+            committee: parsedData.createdBy || "",
+            description: parsedData.description || "",
+            attendanceCode: parsedData.attendanceCode || "",
+            points: parsedData.points || 1,
+            questions: parsedData.questions || [],
+            signInOpensHoursBefore: parsedData.signInOpensHoursBefore || 1,
+            photo: parsedData.photo || null,
+          });
+
+          // Show preview if photo is a URL
+          if (parsedData.photo && typeof parsedData.photo === 'string') {
+            setPhotoPreview(parsedData.photo);
+          } else {
+            setPhotoPreview(null);
+          }
+
+          // Set custom code checkbox
+          setUseCustomCode(!!parsedData.attendanceCode);
+
+          // Clear localStorage after using it
+          localStorage.removeItem("editEventData");
+        } else {
+          // If not in localStorage, fetch from Firestore
+          await fetchEventData(editId);
         }
-      } else {
-        navigate("/login");
-        setUserDetails(null);
       }
-      setLoading(false);
-    });
-  };
+
+      await fetchUserData();
+    };
+
+    fetchData();
+  }, [location.search, navigate]);
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -281,14 +309,12 @@ function AddEvent() {
       return;
     }
 
- 
     try {
-  // Combine date and startTime for event timestamp
-       const [year, month, day] = eventData.date.split("-");
-       const [startHours = 0, startMinutes = 0] = eventData.startTime.split(":");
-       const eventStartDate = new Date(year, month - 1, day, startHours, startMinutes, 0, 0);
-       const timestamp = Timestamp.fromDate(eventStartDate);
-
+      // Combine date and startTime for event timestamp
+      const [year, month, day] = eventData.date.split("-");
+      const [startHours = 0, startMinutes = 0] = eventData.startTime.split(":");
+      const eventStartDate = new Date(year, month - 1, day, startHours, startMinutes, 0, 0);
+      const timestamp = Timestamp.fromDate(eventStartDate);
 
       let attendanceCode = useCustomCode
         ? eventData.attendanceCode
@@ -345,16 +371,19 @@ function AddEvent() {
         const eventRef = doc(db, "events", newEventId);
 
         await setDoc(eventRef, {
-          ...eventData,
+          name: eventData.name,
           date: timestamp,
-          createdBy: auth.currentUser.uid,
           startTime: eventData.startTime,
           endTime: eventData.endTime,
-          createdBy: eventData.committee,
+          location: eventData.location,
+          committee: eventData.committee,
+          description: eventData.description,
+          createdBy: auth.currentUser.uid,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
           signInOpensHoursBefore: eventData.signInOpensHoursBefore,
+          questions: eventData.questions,
           photo: photoURL,
         });
 
@@ -365,7 +394,7 @@ function AddEvent() {
       setEventData({
         name: "",
         date: "",
-        startTime: "00:00",
+        startTime: "",
         endTime: "",
         location: "",
         committee: "",
@@ -477,13 +506,13 @@ function AddEvent() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Event Date & Time:</label>
+          <label className="form-label">Event Date:</label>
           <input
-            type="datetime-local"
+            type="date"
             name="date"
             value={eventData.date}
             onChange={handleInputChange}
-            min={localMin} // Restrict selecting past dates
+            min={todayDate} // Restrict selecting past dates
             required
           />
         </div>
