@@ -176,7 +176,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
-      memberId: validateField("Member ID", formData.memberId),
+      // Removed memberId validation since it's now optional
       otherMajor:
         formData.major === "Other" && !formData.otherMajor.trim()
           ? "Please specify your major."
@@ -344,7 +344,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
       <div className="form-group">
         <label>
-          Member ID <span style={{ color: "red" }}>*</span>:
+          Member ID:
         </label>
         <input
           type="number"
