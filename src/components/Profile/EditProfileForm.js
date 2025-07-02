@@ -242,18 +242,52 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       return;
     }
 
+    // Double confirmation for account deletion
+    const firstConfirm = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (!firstConfirm) return;
+
+    const secondConfirm = window.confirm(
+      "This will permanently delete all your data. Are you absolutely sure?"
+    );
+    if (!secondConfirm) return;
+
     try {
+      // First delete the Firestore document
       await deleteDoc(doc(db, "Users", user.uid));
+      console.log("User document deleted from Firestore.");
+
+      // Then delete the Firebase Auth user
       await deleteUser(user);
-      await signOut(auth);
-      console.log("User account deleted successfully and logged out.");
+      console.log("User account deleted from Firebase Auth.");
+
+      // Clear any local storage
+      localStorage.removeItem("editProfileForm");
+      
       alert(
-        "Your account has been deleted. You will be redirected to the homepage."
+        "Your account has been deleted successfully. You will be redirected to the homepage."
       );
-      window.location.href = "/"; // Redirect to homepage after logout
+      
+      // Redirect to homepage
+      window.location.href = "/";
     } catch (error) {
       console.error("Error deleting account:", error);
-      alert("Failed to delete account. Please try again.");
+      
+      // Handle specific Firebase Auth errors
+      if (error.code === 'auth/requires-recent-login') {
+        alert(
+          "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again."
+        );
+      } else if (error.code === 'auth/user-not-found') {
+        alert("User account not found. You may have already been logged out.");
+        window.location.href = "/";
+      } else {
+        alert(
+          "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + 
+          (error.message || "Unknown error")
+        );
+      }
     }
   };
 
