@@ -328,6 +328,7 @@ function AddEvent() {
         await setDoc(eventRef, {
           ...eventData,
           date: timestamp,
+          createdBy: auth.currentUser.uid,
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           createdBy: eventData.committee,
