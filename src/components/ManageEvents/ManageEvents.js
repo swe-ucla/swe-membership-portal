@@ -184,14 +184,22 @@ const ManageEvents = () => {
   };
 
   const handleEditEvent = (event) => {
-    // Convert Firestore timestamp to format for date input (YYYY-MM-DD)
+    // Convert Firestore timestamp to format for date input (YYYY-MM-DDTHH:MM)
     const eventDate = event.date.toDate();
-    const formattedDate = eventDate.toISOString().split("T")[0];
+    // Convert to local timezone string for datetime-local input
+    const year = eventDate.getFullYear();
+    const month = String(eventDate.getMonth() + 1).padStart(2, '0');
+    const day = String(eventDate.getDate()).padStart(2, '0');
+    const hours = String(eventDate.getHours()).padStart(2, '0');
+    const minutes = String(eventDate.getMinutes()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    const formattedTime = `${hours}:${minutes}`; 
 
     // Store the event data in localStorage for the edit page to access
     const eventForEdit = {
       ...event,
       date: formattedDate,
+      startTime: formattedTime,
       isEditing: true,
     };
 
@@ -221,12 +229,12 @@ const ManageEvents = () => {
 
           if (userSnap.exists()) {
             const userData = userSnap.data();
-            const updatedEvents = (userData.attendedEvents || []).filter(
-              (id) => id !== event.id
-            );
-            await setDoc(userRef, {
-              ...userData,
+            const updatedEvents = (userData.attendedEvents || []).filter(id => id !== event.id);
+            const updatedRsvpEvents = (userData.rsvpEvents || []).filter(id => id !== event.id);
+            await setDoc(userRef, { 
+              ...userData, 
               attendedEvents: updatedEvents,
+              rsvpEvents: updatedRsvpEvents
             });
           }
         });
@@ -288,7 +296,14 @@ const ManageEvents = () => {
         {events.map((event) => (
           <tr key={event.id}>
             <td>{event.name}</td>
-            <td>{event.date.toDate().toLocaleDateString()}</td>
+            <td>
+              {event.date.toDate().toLocaleDateString()}<br />
+              {event.date.toDate().toLocaleTimeString('en-US', { 
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })}
+            </td>
             <td>{event.createdBy}</td>
             <td>{event.location}</td>
             <td>{event.attendees ? event.attendees.length : 0}</td>

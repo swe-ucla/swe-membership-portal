@@ -78,7 +78,9 @@ function Register() {
           lastName: lname,
           photo: "",
           swePoints: 10,
-          isAdmin: isAdmin
+          isAdmin: isAdmin,
+          attendedEvents: [],
+          rsvpEvents: []
         });
       }
   
