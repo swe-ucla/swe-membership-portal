@@ -3,6 +3,7 @@ import { db, auth } from "../firebase";
 import { collection, getDocs, query, orderBy, doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
+import { FaRegClock } from "react-icons/fa";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -92,6 +93,14 @@ function UpcomingEvents() {
     return dateObj.toLocaleDateString(); // Format as regular date otherwise
   };
   
+  // Format time ("14:30" -> "2:30 PM")
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "";
+    const [hour, minute] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(Number(hour), Number(minute));
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  };
 
   const handleSignUpClick = (eventId) => {
     navigate(`/eventsignin/${eventId}`); // Navigate to the event signing page with event ID
@@ -234,7 +243,11 @@ function UpcomingEvents() {
               key={event.id}
               className={`event-card ${isToday(event.date) ? "today-event" : ""}`}
             >
-              <h4>{event.name}</h4>
+              <div className="event-card-photo-area">
+                <div className="event-card-photo">
+                  <img src={event.photo ? event.photo : process.env.PUBLIC_URL + '/swe-favicon.png'} alt={event.name + ' event'} />
+                </div>
+              </div>
               {formatDate(event.date) && (
                 <div
                   className={`event-date-badge ${isToday(event.date) ? "today-badge" : ""}`}
@@ -242,7 +255,22 @@ function UpcomingEvents() {
                   {formatDate(event.date)}
                 </div>
               )}
-
+              {/* Event name and time tag in a flex row */}
+              <div className="event-title-row">
+                <h4>{event.name}</h4>
+                {(event.startTime || event.endTime) && (
+                  <div className="event-time-tag event-time-inline">
+                    <FaRegClock />
+                    <span>{
+                      event.startTime && event.endTime
+                        ? `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
+                        : event.startTime
+                          ? `${formatTime(event.startTime)}`
+                          : ''
+                    }</span>
+                  </div>
+                )}
+              </div>
               <div className="event-card-content">
                 <div className="event-detail">
                   <strong>Location:</strong>
@@ -268,7 +296,7 @@ function UpcomingEvents() {
 
                 {isAdmin && event.attendanceCode && (
                   <div className="event-detail">
-                    <strong>Attendance Code:</strong>
+                    <strong>Attendance Code: </strong>
                     <span>{event.attendanceCode}</span>
                   </div>
                 )}
