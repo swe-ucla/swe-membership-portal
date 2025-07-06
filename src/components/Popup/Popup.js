@@ -5,6 +5,7 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confi
   const [isFadingOut, setIsFadingOut] = useState(false);
   const onCloseRef = useRef(onClose);
   const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
+  const popupRef = useRef(null);
 
   // Update the ref when onClose changes
   useEffect(() => {
@@ -45,6 +46,20 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confi
     }
   }, [isOpen]);
 
+  // Auto-scroll popup into view when it opens
+  useEffect(() => {
+    if (isOpen && popupRef.current) {
+      // Small delay to ensure the popup is rendered
+      setTimeout(() => {
+        popupRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        });
+      }, 100);
+    }
+  }, [isOpen]);
+
   // Cleanup timers on unmount
   useEffect(() => {
     return () => {
@@ -71,6 +86,7 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confi
 
   return (
     <div
+      ref={popupRef}
       className={`popup-overlay ${isFadingOut ? 'fade-out' : 'fade-in'}`}
       onClick={toast ? undefined : handleClose}
     >
