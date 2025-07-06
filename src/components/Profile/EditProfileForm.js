@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteUser, signOut } from "firebase/auth";
+import Popup from "../Popup/Popup";
 import "./Profile.css";
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
@@ -81,6 +82,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -225,10 +227,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       await updateDoc(userRef, updatedFormData);
       console.log("Profile updated successfully.");
       onUpdate(updatedFormData);
-      alert("Profile updated successfully.");
+      setPopup({ isOpen: true, message: "Profile updated successfully.", toast: true });
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again later.");
+      setPopup({ isOpen: true, message: "Failed to update profile. Please try again later.", toast: false });
     } finally {
       setIsSubmitting(false);
     }
@@ -265,9 +267,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       // Clear any local storage
       localStorage.removeItem("editProfileForm");
       
-      alert(
-        "Your account has been deleted successfully. You will be redirected to the homepage."
-      );
+      setPopup({ isOpen: true, message: "Your account has been deleted successfully. You will be redirected to the homepage.", toast: true });
       
       // Redirect to homepage
       window.location.href = "/";
@@ -276,23 +276,25 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       
       // Handle specific Firebase Auth errors
       if (error.code === 'auth/requires-recent-login') {
-        alert(
-          "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again."
-        );
+        setPopup({ isOpen: true, message: "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again.", toast: false });
       } else if (error.code === 'auth/user-not-found') {
-        alert("User account not found. You may have already been logged out.");
+        setPopup({ isOpen: true, message: "User account not found. You may have already been logged out.", toast: false });
         window.location.href = "/";
       } else {
-        alert(
-          "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + 
-          (error.message || "Unknown error")
-        );
+        setPopup({ isOpen: true, message: "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + (error.message || "Unknown error"), toast: false });
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
+    <>
+      <Popup
+        isOpen={popup.isOpen}
+        onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+        message={popup.message}
+        toast={popup.toast}
+      />
+      <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
       <div className="form-group">
         <label>
           Upload Profile Picture:
@@ -416,6 +418,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         </button>
       </div>
     </form>
+    </>
   );
 };
 
