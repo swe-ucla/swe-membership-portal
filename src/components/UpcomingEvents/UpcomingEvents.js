@@ -4,6 +4,7 @@ import { collection, getDocs, query, orderBy, doc, getDoc, setDoc } from "fireba
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
 import { FaRegClock } from "react-icons/fa";
+import Popup from "../Popup/Popup";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -13,6 +14,7 @@ function UpcomingEvents() {
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
   const [rsvpEvents, setRsvpEvents] = useState([]);
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -107,10 +109,16 @@ function UpcomingEvents() {
   };
 
   const handleCancelRegistration = async (eventId, points) => {
-    const confirmCancel = window.confirm(
-      `Are you sure you want to cancel your registration?\nYou will lose any SWE points that you earned from this event.`
-    );
-    if (!confirmCancel) return;
+    setPopup({
+      isOpen: true,
+      message: `Are you sure you want to cancel your registration?\nYou will lose any SWE points that you earned from this event.`,
+      toast: false,
+      confirm: true,
+      onConfirm: () => performCancelRegistration(eventId, points)
+    });
+  };
+
+  const performCancelRegistration = async (eventId, points) => {
   
     const userId = auth.currentUser?.uid;
     if (!userId) return;
@@ -226,7 +234,8 @@ function UpcomingEvents() {
   }, []);
 
   return (
-    <div className="events-container">
+    <>
+      <div className="events-container">
       <div className="events-header">
         <h2 className="events-title">Upcoming Events</h2>
       </div>
@@ -364,7 +373,16 @@ function UpcomingEvents() {
           <p>No upcoming events.</p>
         </div>
       )}
+      <Popup
+        isOpen={popup.isOpen}
+        message={popup.message}
+        toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+        onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+      />
     </div>
+    </>
   );
 }
 

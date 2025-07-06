@@ -11,7 +11,7 @@ const EventSignin = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [responses, setResponses] = useState({}); // Store question responses
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -286,7 +286,9 @@ const EventSignin = () => {
         isOpen={popup.isOpen}
         message={popup.message}
         toast={popup.toast}
-        onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+        onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
       />
     </div>
     </>

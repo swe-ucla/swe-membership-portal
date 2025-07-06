@@ -1,30 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './Popup.css';
 
-const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000 }) => {
+const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confirm = false, onConfirm }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const onCloseRef = useRef(onClose);
+  const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
 
+  // Update the ref when onClose changes
   useEffect(() => {
-    if (isOpen && toast) {
-      const fadeOutTimer = setTimeout(() => { setIsFadingOut(true); }, duration); // Start fade out
-      const closeTimer = setTimeout(() => { onClose(); }, duration + 300); // Close popup after fade out
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
-      return () => {
-        clearTimeout(fadeOutTimer);
-        clearTimeout(closeTimer);
-      };
+  useEffect(() => {    
+    // Clear any existing timers
+    if (timersRef.current.fadeOutTimer) {
+      clearTimeout(timersRef.current.fadeOutTimer);
+      timersRef.current.fadeOutTimer = null;
     }
-  }, [isOpen, toast, duration, onClose]);
+    if (timersRef.current.closeTimer) {
+      clearTimeout(timersRef.current.closeTimer);
+      timersRef.current.closeTimer = null;
+    }
+    
+    if (isOpen && toast && !confirm) {
+      setIsFadingOut(false);
+      timersRef.current.fadeOutTimer = setTimeout(() => { setIsFadingOut(true); }, duration); // Start fade out
+      timersRef.current.closeTimer = setTimeout(() => { onCloseRef.current(); }, duration + 300); // Close popup after fade out
+    }
+  }, [isOpen, toast, confirm]); // Removed duration from dependencies
 
   useEffect(() => {
     if (!isOpen) {
       setIsFadingOut(false); // Reset fade-out state when popup is closed
+      
+      // Clear timers when popup is closed
+      if (timersRef.current.fadeOutTimer) {
+        clearTimeout(timersRef.current.fadeOutTimer);
+        timersRef.current.fadeOutTimer = null;
+      }
+      if (timersRef.current.closeTimer) {
+        clearTimeout(timersRef.current.closeTimer);
+        timersRef.current.closeTimer = null;
+      }
     }
   }, [isOpen]);
 
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (timersRef.current.fadeOutTimer) {
+        clearTimeout(timersRef.current.fadeOutTimer);
+      }
+      if (timersRef.current.closeTimer) {
+        clearTimeout(timersRef.current.closeTimer);
+      }
+    };
+  }, []);
+
   const handleClose = () => {
     setIsFadingOut(true); // Start fade out
-    setTimeout(() => { onClose(); }, 300); // Close popup after fade out
+    setTimeout(() => { onCloseRef.current(); }, 300); // Close popup after fade out
+  };
+
+  const handleConfirm = () => {
+    if (onConfirm) onConfirm();
+    handleClose();
   };
 
   if (!isOpen) return null;
@@ -43,6 +83,12 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000 }) => 
         </div>
         <div className="popup-content">
           <p className="popup-message">{message}</p>
+          {confirm && (
+            <div className="popup-actions">
+              <button className="popup-btn popup-btn-cancel" onClick={handleClose}>Cancel</button>
+              <button className="popup-btn popup-btn-confirm" onClick={handleConfirm}>Confirm</button>
+            </div>
+          )}
         </div>
       </div>
     </div>

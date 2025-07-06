@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebase";
 import {
   collection,
@@ -22,7 +22,11 @@ const ManageEvents = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+
+  const handlePopupClose = useCallback(() => {
+    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  }, []);
 
   const navigate = useNavigate();
   const auth = getAuth();
@@ -212,14 +216,16 @@ const ManageEvents = () => {
   const deleteEvent = async (event) => {
     if (deleteLoading) return;
 
-    if (
-      !window.confirm(
-        `Are you sure you want to delete "${event.name}"? This action cannot be undone.`
-      )
-    ) {
-      return;
-    }
+    setPopup({
+      isOpen: true,
+      message: `Are you sure you want to delete "${event.name}"? This action cannot be undone.`,
+      toast: false,
+      confirm: true,
+      onConfirm: () => performDeleteEvent(event)
+    });
+  };
 
+  const performDeleteEvent = async (event) => {
     setDeleteLoading(true);
 
     try {
@@ -252,10 +258,10 @@ const ManageEvents = () => {
       setPastEvents((prev) => prev.filter((e) => e.id !== event.id));
       setUpcomingEvents((prev) => prev.filter((e) => e.id !== event.id));
 
-      setPopup({ isOpen: true, message: `"${event.name}" has been successfully deleted.`, toast: true });
+      setPopup({ isOpen: true, message: `"${event.name}" has been successfully deleted.`, toast: true, confirm: false, onConfirm: null });
     } catch (error) {
       console.error("Error deleting event:", error);
-      setPopup({ isOpen: true, message: `Error deleting event: ${error.message}`, toast: false });
+      setPopup({ isOpen: true, message: `Error deleting event: ${error.message}`, toast: false, confirm: false, onConfirm: null });
     } finally {
       setDeleteLoading(false);
     }
@@ -398,7 +404,9 @@ const ManageEvents = () => {
         isOpen={popup.isOpen}
         message={popup.message}
         toast={popup.toast}
-        onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+        onClose={handlePopupClose}
       />
     </div>
   );

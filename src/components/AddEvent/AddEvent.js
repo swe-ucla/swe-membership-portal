@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -15,7 +15,11 @@ function AddEvent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+
+  const handlePopupClose = useCallback(() => {
+    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  }, []);
 
   const pad = (n) => n.toString().padStart(2, "0");
   const now = new Date(Date.now());
@@ -367,6 +371,7 @@ function AddEvent() {
         });
 
         setPopup({ isOpen: true, message: "Event updated successfully!", toast: true });
+        setTimeout(() => { navigate("/manageevents"); }, 3000);
       } else {
         // Create new event
         const newEventId = `${Date.now()}`;
@@ -390,9 +395,10 @@ function AddEvent() {
         });
 
         setPopup({ isOpen: true, message: "Event created successfully!", toast: true });
+        setTimeout(() => { navigate("/manageevents"); }, 3000);
       }
 
-      // Reset form and navigate back
+      // Reset form
       setEventData({
         name: "",
         date: "",
@@ -409,7 +415,6 @@ function AddEvent() {
       });
       setPhotoPreview(null);
       setUseCustomCode(false);
-      navigate("/manageevents");
     } catch (error) {
       console.error(
         `Error ${isEditMode ? "updating" : "creating"} event:`,
@@ -468,9 +473,11 @@ function AddEvent() {
     <div className="add-event-container">
       <Popup
         isOpen={popup.isOpen}
-        onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+        onClose={handlePopupClose}
         message={popup.message}
         toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
       />
       <h2 className="add-event-title">
         {isEditMode ? "Edit Event" : "Add Event"}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { saveAs } from "file-saver";
@@ -11,7 +11,7 @@ const PastEvents = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -225,7 +225,9 @@ const PastEvents = () => {
           isOpen={popup.isOpen} 
           message={popup.message} 
           toast={popup.toast}
-          onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+          confirm={popup.confirm}
+          onConfirm={popup.onConfirm}
+          onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
         />
     </div>
   );

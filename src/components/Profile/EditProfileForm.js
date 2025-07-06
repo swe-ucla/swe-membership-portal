@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { deleteUser, signOut } from "firebase/auth";
+import { deleteUser } from "firebase/auth";
 import Popup from "../Popup/Popup";
 import "./Profile.css";
 
@@ -82,8 +82,13 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const formRef = useRef(null);
+
+  const handlePopupClose = useCallback(() => {
+    console.log("handlePopupClose called");
+    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  }, []);
 
   useEffect(() => {
     // Update formData when userDetails changes (on initial load or updates)
@@ -226,15 +231,20 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       const userRef = doc(db, "Users", user.uid);
       await updateDoc(userRef, updatedFormData);
       console.log("Profile updated successfully.");
-      onUpdate(updatedFormData);
-      setPopup({ isOpen: true, message: "Profile updated successfully.", toast: true });
+      console.log("Setting popup to show success message");
+      setPopup({ isOpen: true, message: "Profile updated successfully.", toast: true, confirm: false, onConfirm: null });
+      
+      // Delay the onUpdate call to prevent immediate re-render
+      setTimeout(() => {
+        onUpdate(updatedFormData);
+        localStorage.removeItem("editProfileForm");
+      }, 3500); // Wait for popup to close first
     } catch (error) {
       console.error("Error updating profile:", error);
       setPopup({ isOpen: true, message: "Failed to update profile. Please try again later.", toast: false });
     } finally {
       setIsSubmitting(false);
     }
-    localStorage.removeItem("editProfileForm");
   };
 
   const handleDeleteAccount = async () => {
@@ -244,16 +254,31 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       return;
     }
 
-    // Double confirmation for account deletion
-    const firstConfirm = window.confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-    if (!firstConfirm) return;
+    // First confirmation
+    setPopup({
+      isOpen: true,
+      message: "Are you sure you want to delete your account? This action cannot be undone.",
+      toast: false,
+      confirm: true,
+      onConfirm: () => {
+        // Second confirmation
+        setPopup({
+          isOpen: true,
+          message: "This will permanently delete all your data. Are you absolutely sure?",
+          toast: false,
+          confirm: true,
+          onConfirm: performDeleteAccount
+        });
+      }
+    });
+  };
 
-    const secondConfirm = window.confirm(
-      "This will permanently delete all your data. Are you absolutely sure?"
-    );
-    if (!secondConfirm) return;
+  const performDeleteAccount = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No authenticated user found.");
+      return;
+    }
 
     try {
       // First delete the Firestore document
@@ -267,21 +292,21 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       // Clear any local storage
       localStorage.removeItem("editProfileForm");
       
-      setPopup({ isOpen: true, message: "Your account has been deleted successfully. You will be redirected to the homepage.", toast: true });
+      setPopup({ isOpen: true, message: "Your account has been deleted successfully. You will be redirected to the homepage.", toast: true, confirm: false, onConfirm: null });
       
-      // Redirect to homepage
-      window.location.href = "/";
+      // Redirect to homepage after popup shows
+      setTimeout(() => { window.location.href = "/"; }, 3000);
     } catch (error) {
       console.error("Error deleting account:", error);
       
       // Handle specific Firebase Auth errors
       if (error.code === 'auth/requires-recent-login') {
-        setPopup({ isOpen: true, message: "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again.", toast: false });
+        setPopup({ isOpen: true, message: "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again.", toast: false, confirm: false, onConfirm: null });
       } else if (error.code === 'auth/user-not-found') {
-        setPopup({ isOpen: true, message: "User account not found. You may have already been logged out.", toast: false });
-        window.location.href = "/";
+        setPopup({ isOpen: true, message: "User account not found. You may have already been logged out.", toast: false, confirm: false, onConfirm: null });
+        setTimeout(() => { window.location.href = "/"; }, 3000);
       } else {
-        setPopup({ isOpen: true, message: "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + (error.message || "Unknown error"), toast: false });
+        setPopup({ isOpen: true, message: "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + (error.message || "Unknown error"), toast: false, confirm: false, onConfirm: null });
       }
     }
   };
@@ -290,9 +315,11 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     <>
       <Popup
         isOpen={popup.isOpen}
-        onClose={() => setPopup({ isOpen: false, message: "", toast: false })}
+        onClose={handlePopupClose}
         message={popup.message}
         toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
       />
       <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
       <div className="form-group">
@@ -384,7 +411,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         </label>
         <input
           type="number"
-          inputmode="numeric"
+          inputMode="numeric"
           name="memberId"
           value={formData.memberId}
           onChange={handleChange}
