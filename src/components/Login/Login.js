@@ -16,27 +16,44 @@ function Login() {
   const [showResetForm, setShowResetForm] = useState(false);
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isGoogleSignIn, setIsGoogleSignIn] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    setEmailError("");
+    setPasswordError("");
+
+    let hasError = false;
+    if (!email) {
+      setEmailError("Please enter your email.");
+      hasError = true;
+    }
+    if (!password) {
+      setPasswordError("Please enter a password.");
+      hasError = true;
+    }
+    if (hasError) return;
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in Successfully");
       navigate("/");
     } catch (error) {
-      console.log(error.code);
+      console.log("Full error object:", error);
+      console.log("Error code:", error.code);
+      console.log("Error message:", error.message);
 
-      // Set specific error message for wrong password
-      if (error.code === "auth/wrong-password") {
-        setErrorMessage("Incorrect password. Please try again.");
-      } else if (error.code === "auth/user-not-found") {
-        setErrorMessage("No account exists with this email address.");
+      // Handle Firebase authentication errors
+      if (error.code === "auth/invalid-credential") {
+        setErrorMessage("Invalid email or password.");
       } else if (error.code === "auth/invalid-email") {
-        setErrorMessage("Please enter a valid email address.");
+        setEmailError("Please enter a valid email address.");
+      } else if (error.code === "auth/missing-password") {
+        setPasswordError("Please enter a password.");
       } else if (error.code === "auth/too-many-requests") {
         setErrorMessage(
           "Too many failed login attempts. Please try again later."
@@ -47,7 +64,6 @@ function Login() {
         );
       }
 
-      // Can keep toast notifications if desired
       toast.error("Login failed", {
         position: "top-center",
       });
@@ -113,22 +129,34 @@ function Login() {
               <label>Email address</label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control${emailError ? ' error-input' : ''}`}
                 placeholder="Enter email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError("");
+                }}
               />
+              {emailError && (
+                <div className="input-error">{emailError}</div>
+              )}
             </div>
 
             <div className="mb-3">
               <label>Password</label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control${passwordError ? ' error-input' : ''}`}
                 placeholder="Enter password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
               />
+              {passwordError && (
+                <div className="input-error">{passwordError}</div>
+              )}
             </div>
 
             <div className="d-grid">
