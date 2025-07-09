@@ -73,6 +73,7 @@ function AddEvent() {
           endTime: parsedData.endTime || "",
           location: parsedData.location || "",
           committee: parsedData.createdBy || "",
+          author: parsedData.createdByUser || "",
           description: parsedData.description || "",
           attendanceCode: parsedData.attendanceCode || "",
           points: parsedData.points || 1,
@@ -123,6 +124,7 @@ function AddEvent() {
           endTime: data.endTime || "",
           location: data.location || "",
           committee: data.createdBy || "",
+          author: data.createdByUser || "",
           description: data.description || "",
           attendanceCode: data.attendanceCode || "",
           points: data.points || 1,
@@ -319,6 +321,7 @@ function AddEvent() {
           endTime: eventData.endTime,
           location: eventData.location,
           createdBy: eventData.committee,
+          createdByUser: auth.currentUser.uid,
           description: eventData.description,
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
@@ -337,6 +340,7 @@ function AddEvent() {
           ...eventData,
           date: timestamp,
           createdBy: eventData.committee,
+          createdByUser: auth.currentUser.uid,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
@@ -359,6 +363,7 @@ function AddEvent() {
         points: 1,
         questions: [],
         photo: null,
+        author: "",
       });
       setPhotoPreview(null);
       setUseCustomCode(false);
