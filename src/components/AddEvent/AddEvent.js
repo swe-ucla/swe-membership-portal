@@ -10,13 +10,18 @@ const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
 
 function AddEvent() {
-  const [userDetails, setUserDetails] = useState(null);
+  const [, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
+
+  const pad = (n) => n.toString().padStart(2, "0");
+  const now = new Date(Date.now());
+  const todayDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
   const [eventData, setEventData] = useState({
     name: "",
-    date: "",
+    date: "", // This will be just the date (YYYY-MM-DD)
     startTime: "",
     endTime: "",
     location: "",
@@ -25,6 +30,7 @@ function AddEvent() {
     attendanceCode: "",
     points: 1,
     questions: [],
+    signInOpensHoursBefore: 1, // default 1 hour before
     photo: null,
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
@@ -37,7 +43,7 @@ function AddEvent() {
   const [loading, setLoading] = useState(true);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const [committees, setCommittees] = useState([
+  const committees = [
     "Evening with Industry",
     "Dev",
     "Technical",
@@ -46,7 +52,7 @@ function AddEvent() {
     "Internal Affairs",
     "Advocacy",
     "General",
-  ]);
+  ];
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,16 +112,34 @@ function AddEvent() {
     try {
       const eventRef = doc(db, "events", id);
       const eventSnap = await getDoc(eventRef);
+    const fetchEventData = async (id) => {
+      try {
+        const eventRef = doc(db, "events", id);
+        const eventSnap = await getDoc(eventRef);
 
-      if (eventSnap.exists()) {
-        const data = eventSnap.data();
+        if (eventSnap.exists()) {
+          const data = eventSnap.data();
 
-        // Format date for HTML date input
-        let formattedDate = "";
-        if (data.date) {
-          const date = data.date.toDate();
-          formattedDate = date.toISOString().split("T")[0];
-        }
+          // Format date and time separately
+          let formattedDate = "";
+          let extractedStartTime = "";
+          let extractedEndTime = "";
+          
+          if (data.date) {
+            const date = data.date.toDate();
+            // Extract just the date part
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+            
+            // Extract time from the stored date if startTime isn't separate
+            if (!data.startTime) {
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              extractedStartTime = `${hours}:${minutes}`;
+            }
+          }
 
         setEventData({
           name: data.name || "",
@@ -131,6 +155,20 @@ function AddEvent() {
           questions: data.questions || [],
           photo: data.photo || null,
         });
+          setEventData({
+            name: data.name || "",
+            date: formattedDate,
+            startTime: data.startTime || extractedStartTime,
+            endTime: data.endTime || extractedEndTime,
+            location: data.location || "",
+            committee: data.createdBy || "",
+            description: data.description || "",
+            attendanceCode: data.attendanceCode || "",
+            points: data.points || 1,
+            questions: data.questions || [],
+            signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
+            photo: data.photo || null,
+          });
 
         // Show preview if photo is a URL
         if (data.photo && typeof data.photo === "string") {
@@ -138,38 +176,115 @@ function AddEvent() {
         } else {
           setPhotoPreview(null);
         }
+          // Show preview if photo is a URL
+          if (data.photo && typeof data.photo === 'string') {
+            setPhotoPreview(data.photo);
+          } else {
+            setPhotoPreview(null);
+          }
 
-        setUseCustomCode(!!data.attendanceCode);
-      } else {
-        alert("Event not found!");
-        navigate("/manageevents");
-      }
-    } catch (error) {
-      console.error("Error fetching event data:", error);
-      alert("Failed to load event data.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUserData = async () => {
-    setLoading(true);
-    auth.onAuthStateChanged(async (user) => {
-      if (user && user.uid) {
-        const docRef = doc(db, "Users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserDetails(docSnap.data());
-          const userData = docSnap.data();
-          setIsAdmin(userData.isAdmin || false);
+          setUseCustomCode(!!data.attendanceCode);
+        } else {
+          alert("Event not found!");
+          navigate("/manageevents");
         }
-      } else {
-        navigate("/login");
-        setUserDetails(null);
+      } catch (error) {
+        console.error("Error fetching event data:", error);
+        alert("Failed to load event data.");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
-  };
+    };
+
+    const fetchUserData = async () => {
+      setLoading(true);
+      auth.onAuthStateChanged(async (user) => {
+        if (user && user.uid) {
+          const docRef = doc(db, "Users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserDetails(docSnap.data());
+            const userData = docSnap.data();
+            setIsAdmin(userData.isAdmin || false);
+          }
+        } else {
+          navigate("/login");
+          setUserDetails(null);
+        }
+        setLoading(false);
+      });
+    };
+
+    const fetchData = async () => {
+      // Check if we're in edit mode by looking at the URL query params
+      const params = new URLSearchParams(location.search);
+      const editId = params.get("edit");
+
+      if (editId) {
+        setIsEditMode(true);
+        setEventId(editId);
+
+        // Try to get event data from localStorage first (it was set in ManageEvents.js)
+        const storedEventData = localStorage.getItem("editEventData");
+        if (storedEventData) {
+          const parsedData = JSON.parse(storedEventData);
+
+          // Format date separately from time
+          let formattedDate = "";
+          let extractedStartTime = "";
+          if (parsedData.date) {
+            if (typeof parsedData.date === 'string' && parsedData.date.includes('T')) {
+              // If it's a datetime string, split it
+              const [datePart, timePart] = parsedData.date.split('T');
+              formattedDate = datePart;
+              extractedStartTime = timePart || parsedData.startTime || "";
+            } else {
+              formattedDate = parsedData.date;
+              extractedStartTime = parsedData.startTime || "";
+            }
+          }
+
+          // Initialize form with the event data
+          setEventData({
+            name: parsedData.name || "",
+            date: formattedDate,
+            startTime: extractedStartTime,
+            endTime: parsedData.endTime || "",
+            location: parsedData.location || "",
+            committee: parsedData.createdBy || "",
+            description: parsedData.description || "",
+            attendanceCode: parsedData.attendanceCode || "",
+            points: parsedData.points || 1,
+            questions: parsedData.questions || [],
+            signInOpensHoursBefore: parsedData.signInOpensHoursBefore || 1,
+            photo: parsedData.photo || null,
+          });
+
+          // Show preview if photo is a URL
+          if (parsedData.photo && typeof parsedData.photo === 'string') {
+            setPhotoPreview(parsedData.photo);
+          } else {
+            setPhotoPreview(null);
+          }
+
+          // Set custom code checkbox
+          setUseCustomCode(!!parsedData.attendanceCode);
+
+          // Clear localStorage after using it
+          localStorage.removeItem("editEventData");
+        } else {
+          // If not in localStorage, fetch from Firestore
+          await fetchEventData(editId);
+        }
+      }
+
+      await fetchUserData();
+    };
+
+    fetchData();
+  }, [location.search, navigate]);
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -264,6 +379,7 @@ function AddEvent() {
       !eventData.committee
     ) {
       alert("Please fill in all required fields.");
+      console.log("missing fields: ", eventData);
       return;
     }
 
@@ -325,6 +441,7 @@ function AddEvent() {
           description: eventData.description,
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
+          signInOpensHoursBefore: eventData.signInOpensHoursBefore,
           questions: eventData.questions,
           photo: photoURL,
           lastUpdated: new Date().toISOString(),
@@ -337,13 +454,21 @@ function AddEvent() {
         const eventRef = doc(db, "events", newEventId);
 
         await setDoc(eventRef, {
-          ...eventData,
+          name: eventData.name,
           date: timestamp,
           createdBy: eventData.committee,
           createdByUser: auth.currentUser.uid,
+          startTime: eventData.startTime,
+          endTime: eventData.endTime,
+          location: eventData.location,
+          committee: eventData.committee,
+          description: eventData.description,
+          createdBy: auth.currentUser.uid,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
+          signInOpensHoursBefore: eventData.signInOpensHoursBefore,
+          questions: eventData.questions,
           photo: photoURL,
         });
 
@@ -354,7 +479,7 @@ function AddEvent() {
       setEventData({
         name: "",
         date: "",
-        startTime: "00:00",
+        startTime: "",
         endTime: "",
         location: "",
         committee: "",
@@ -362,6 +487,7 @@ function AddEvent() {
         attendanceCode: "",
         points: 1,
         questions: [],
+        signInOpensHoursBefore: 1,
         photo: null,
         author: "",
       });
@@ -476,7 +602,7 @@ function AddEvent() {
             name="date"
             value={eventData.date}
             onChange={handleInputChange}
-            min={new Date().toISOString().split("T")[0]} // Restrict selecting past dates
+            min={todayDate} // Restrict selecting past dates
             required
           />
         </div>
@@ -548,7 +674,27 @@ function AddEvent() {
             value={eventData.points}
             onChange={handleInputChange}
           />
-          <span className="points-display">{eventData.points} points</span>
+          <span className="slider-display">{eventData.points} points</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Sign In Opens:</label>
+          <input
+            type="range"
+            name="signInOpensHoursBefore"
+            min="1"
+            max="24"
+            value={eventData.signInOpensHoursBefore}
+            onChange={e =>
+              setEventData(prev => ({
+                ...prev,
+                signInOpensHoursBefore: Number(e.target.value),
+              }))
+            }
+          />
+          <span className="slider-display">
+            {eventData.signInOpensHoursBefore} hour(s) before event
+          </span>
         </div>
 
         <div className="form-group">

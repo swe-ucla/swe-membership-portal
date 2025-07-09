@@ -45,7 +45,8 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
           photo: user.photoURL || "",
           swePoints: 0,
           isAdmin: false,
-          attendedEvents: []
+          attendedEvents: [],
+          rsvpEvents: []
         });
       }
 
