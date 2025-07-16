@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
+import Popup from "../Popup/Popup";
 import "./AddEvent.css";
 
 // Add Cloudinary constants
@@ -14,6 +15,11 @@ function AddEvent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+
+  const handlePopupClose = useCallback(() => {
+    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  }, []);
 
   const pad = (n) => n.toString().padStart(2, "0");
   const now = new Date(Date.now());
@@ -111,12 +117,12 @@ function AddEvent() {
 
           setUseCustomCode(!!data.attendanceCode);
         } else {
-          alert("Event not found!");
-          navigate("/manageevents");
+          setPopup({ isOpen: true, message: "Event not found!", toast: true });
+          setTimeout(() => navigate("/manageevents"), 3000);
         }
       } catch (error) {
         console.error("Error fetching event data:", error);
-        alert("Failed to load event data.");
+        setPopup({ isOpen: true, message: "Failed to load event data.", toast: true });
       } finally {
         setLoading(false);
       }
@@ -219,7 +225,7 @@ function AddEvent() {
     if (name === "description") {
       const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount > 180) {
-        alert("Description cannot exceed 180 words.");
+        setPopup({ isOpen: true, message: "Description cannot exceed 180 words.", toast: true });
         return;
       }
     }
@@ -262,7 +268,7 @@ function AddEvent() {
         type === "dropdown") &&
       options.every((opt) => opt.trim() === "")
     ) {
-      alert("Please fill in at least one option.");
+      setPopup({ isOpen: true, message: "Please fill in at least one option.", toast: true });
       return;
     }
 
@@ -304,7 +310,7 @@ function AddEvent() {
       !eventData.location ||
       !eventData.committee
     ) {
-      alert("Please fill in all required fields.");
+      setPopup({ isOpen: true, message: "Please fill in all required fields.", toast: true });
       console.log("missing fields: ", eventData);
       return;
     }
@@ -321,7 +327,7 @@ function AddEvent() {
         : (isEditMode && eventData.attendanceCode) || generateAttendanceCode();
 
       if (useCustomCode && attendanceCode.length !== 6) {
-        alert("Custom attendance code must be exactly 6 letters.");
+        setPopup({ isOpen: true, message: "Custom attendance code must be exactly 6 letters.", toast: true });
         return;
       }
 
@@ -336,7 +342,7 @@ function AddEvent() {
           body: formData,
         });
         if (!response.ok) {
-          alert("Failed to upload event photo.");
+          setPopup({ isOpen: true, message: "Failed to upload event photo.", toast: true });
           return;
         }
         const data = await response.json();
@@ -364,7 +370,8 @@ function AddEvent() {
           lastUpdated: new Date().toISOString(),
         });
 
-        alert("Event updated successfully!");
+        setPopup({ isOpen: true, message: "Event updated successfully!", toast: true });
+        setTimeout(() => { navigate("/manageevents"); }, 3000);
       } else {
         // Create new event
         const newEventId = `${Date.now()}`;
@@ -387,10 +394,11 @@ function AddEvent() {
           photo: photoURL,
         });
 
-        alert("Event created successfully!");
+        setPopup({ isOpen: true, message: "Event created successfully!", toast: true });
+        setTimeout(() => { navigate("/manageevents"); }, 3000);
       }
 
-      // Reset form and navigate back
+      // Reset form
       setEventData({
         name: "",
         date: "",
@@ -407,17 +415,12 @@ function AddEvent() {
       });
       setPhotoPreview(null);
       setUseCustomCode(false);
-      navigate("/manageevents");
     } catch (error) {
       console.error(
         `Error ${isEditMode ? "updating" : "creating"} event:`,
         error
       );
-      alert(
-        `Failed to ${
-          isEditMode ? "update" : "create"
-        } the event. Try again later.`
-      );
+      setPopup({ isOpen: true, message: `Failed to ${isEditMode ? "update" : "create"} the event. Try again later.`, toast: true });
     }
   };
 
@@ -468,6 +471,14 @@ function AddEvent() {
 
   return (
     <div className="add-event-container">
+      <Popup
+        isOpen={popup.isOpen}
+        onClose={handlePopupClose}
+        message={popup.message}
+        toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+      />
       <h2 className="add-event-title">
         {isEditMode ? "Edit Event" : "Add Event"}
       </h2>

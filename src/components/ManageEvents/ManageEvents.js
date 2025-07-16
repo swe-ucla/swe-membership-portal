@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebase";
 import {
   collection,
@@ -11,6 +11,7 @@ import {
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Popup from "../Popup/Popup";
 import "./ManageEvents.css";
 
 const ManageEvents = () => {
@@ -21,6 +22,11 @@ const ManageEvents = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+
+  const handlePopupClose = useCallback(() => {
+    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  }, []);
 
   const navigate = useNavigate();
   const auth = getAuth();
@@ -106,14 +112,14 @@ const ManageEvents = () => {
 
   const exportToCSV = async (event) => {
     if (!event.attendees || event.attendees.length === 0) {
-      alert("No attendees to export.");
+      setPopup({ isOpen: true, message: "No attendees to export.", toast: false });
       return;
     }
 
     const users = await fetchUserDetails(event.attendees);
 
     if (users.length === 0) {
-      alert("No valid users to export.");
+      setPopup({ isOpen: true, message: "No valid users to export.", toast: false });
       return;
     }
 
@@ -162,7 +168,7 @@ const ManageEvents = () => {
 
   const copyEmailsToClipboard = async (event) => {
     if (!event.attendees || event.attendees.length === 0) {
-      alert("No attendees to copy.");
+      setPopup({ isOpen: true, message: "No attendees to copy.", toast: false });
       return;
     }
 
@@ -170,16 +176,16 @@ const ManageEvents = () => {
     const emails = users.map((user) => user.email).join(", ");
 
     if (emails.length === 0) {
-      alert("No valid emails to copy.");
+      setPopup({ isOpen: true, message: "No valid emails to copy.", toast: false });
       return;
     }
 
     navigator.clipboard
       .writeText(emails)
-      .then(() => alert("Emails copied to clipboard!"))
+      .then(() => setPopup({ isOpen: true, message: "Emails copied to clipboard!", toast: true }))
       .catch((err) => {
         console.error("Failed to copy emails:", err);
-        alert("Failed to copy emails. Please try again.");
+        setPopup({ isOpen: true, message: "Failed to copy emails. Please try again.", toast: false });
       });
   };
 
@@ -210,14 +216,16 @@ const ManageEvents = () => {
   const deleteEvent = async (event) => {
     if (deleteLoading) return;
 
-    if (
-      !window.confirm(
-        `Are you sure you want to delete "${event.name}"? This action cannot be undone.`
-      )
-    ) {
-      return;
-    }
+    setPopup({
+      isOpen: true,
+      message: `Are you sure you want to delete "${event.name}"? This action cannot be undone.`,
+      toast: false,
+      confirm: true,
+      onConfirm: () => performDeleteEvent(event)
+    });
+  };
 
+  const performDeleteEvent = async (event) => {
     setDeleteLoading(true);
 
     try {
@@ -250,10 +258,10 @@ const ManageEvents = () => {
       setPastEvents((prev) => prev.filter((e) => e.id !== event.id));
       setUpcomingEvents((prev) => prev.filter((e) => e.id !== event.id));
 
-      alert(`"${event.name}" has been successfully deleted.`);
+      setPopup({ isOpen: true, message: `"${event.name}" has been successfully deleted.`, toast: true, confirm: false, onConfirm: null });
     } catch (error) {
       console.error("Error deleting event:", error);
-      alert(`Error deleting event: ${error.message}`);
+      setPopup({ isOpen: true, message: `Error deleting event: ${error.message}`, toast: false, confirm: false, onConfirm: null });
     } finally {
       setDeleteLoading(false);
     }
@@ -391,6 +399,15 @@ const ManageEvents = () => {
           )}
         </div>
       </div>
+
+      <Popup
+        isOpen={popup.isOpen}
+        message={popup.message}
+        toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+        onClose={handlePopupClose}
+      />
     </div>
   );
 };

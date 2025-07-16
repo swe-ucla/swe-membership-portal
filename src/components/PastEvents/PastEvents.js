@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Popup from "../Popup/Popup";
 
 const PastEvents = () => {
   const [pastEvents, setPastEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -98,14 +100,14 @@ const PastEvents = () => {
   // Export full attendee details for an event
   const exportToCSV = async (event) => {
     if (!event.attendees || event.attendees.length === 0) {
-      alert("No attendees to export.");
+      setPopup({ isOpen: true, message: "No attendees to export.", toast: false });
       return;
     }
   
     const users = await fetchUserDetails(event.attendees);
   
     if (users.length === 0) {
-      alert("No valid users to export.");
+      setPopup({ isOpen: true, message: "No valid users to export.", toast: false });
       return;
     }
   
@@ -160,7 +162,7 @@ const PastEvents = () => {
 
   const copyEmailsToClipboard = async (event) => {
     if (!event.attendees || event.attendees.length === 0) {
-      alert("No attendees to copy.");
+      setPopup({ isOpen: true, message: "No attendees to copy.", toast: false });
       return;
     }
 
@@ -168,14 +170,15 @@ const PastEvents = () => {
     const emails = users.map((user) => user.email).join(", ");
 
     if (emails.length === 0) {
-      alert("No valid emails to copy.");
+      setPopup({ isOpen: true, message: "No valid emails to copy.", toast: false });
       return;
     }
 
     navigator.clipboard.writeText(emails).then(() => {
-      alert("Emails copied to clipboard!");
+      setPopup({ isOpen: true, message: "Emails copied to clipboard!", toast: true });
     }).catch((err) => {
       console.error("Failed to copy emails:", err);
+      setPopup({ isOpen: true, message: "Failed to copy emails. Try again later.", toast: false });
     });
   };
 
@@ -218,6 +221,14 @@ const PastEvents = () => {
           </tbody>
         </table>
       )}
+              <Popup 
+          isOpen={popup.isOpen} 
+          message={popup.message} 
+          toast={popup.toast}
+          confirm={popup.confirm}
+          onConfirm={popup.onConfirm}
+          onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+        />
     </div>
   );
 };

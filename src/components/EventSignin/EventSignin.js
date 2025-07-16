@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
+import Popup from "../Popup/Popup";
 
 const EventSignin = () => {
   const { eventID } = useParams();
@@ -10,6 +11,7 @@ const EventSignin = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [responses, setResponses] = useState({}); // Store question responses
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,7 +91,7 @@ const EventSignin = () => {
           const rsvpEvents = userData.rsvpEvents || [];
 
           if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
-            alert("Please complete your profile before signing in.");
+            setPopup({ isOpen: true, message: "Please complete your profile before signing in.", toast: false });
             navigate("/profile");
             return;
           }
@@ -128,7 +130,8 @@ const EventSignin = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <>
+      <div className="container mt-4">
       <h1>Event Signin</h1>
       {event ? (
         <div>
@@ -279,7 +282,16 @@ const EventSignin = () => {
       ) : (
         <p>Loading event...</p>
       )}
+      <Popup
+        isOpen={popup.isOpen}
+        message={popup.message}
+        toast={popup.toast}
+        confirm={popup.confirm}
+        onConfirm={popup.onConfirm}
+        onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+      />
     </div>
+    </>
   );
 };
 
