@@ -8,6 +8,7 @@ import Popup from "../Popup/Popup";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(true);
@@ -15,6 +16,8 @@ function UpcomingEvents() {
   const [isSignedIn, setIsSignedIn] = useState([]);
   const [rsvpEvents, setRsvpEvents] = useState([]);
   const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  const [selectedCommittee, setSelectedCommittee] = useState("");
+  const [committees, setCommittees] = useState([]);
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -62,8 +65,18 @@ function UpcomingEvents() {
         eventDate.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00 to ignore the time part
         return eventDate >= today; // Only keep events that are today or in the future
+      }).sort((a, b) => {
+        const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+        const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+        return dateA - dateB; // Sort by date ascending (soonest first)
       });
+      
       setEvents(futureEvents);
+      setFilteredEvents(futureEvents);
+      
+      // Extract unique committees
+      const uniqueCommittees = [...new Set(futureEvents.map(event => event.createdBy).filter(Boolean))];
+      setCommittees(uniqueCommittees);
 
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -233,11 +246,31 @@ function UpcomingEvents() {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    if (selectedCommittee === "") {
+      setFilteredEvents(events);
+    } else {
+      setFilteredEvents(events.filter(event => event.createdBy === selectedCommittee));
+    }
+  }, [selectedCommittee, events]);
+
   return (
     <>
       <div className="events-container">
       <div className="events-header">
         <h2 className="events-title">Upcoming Events</h2>
+        <div className="committee-filter">
+          <select 
+            value={selectedCommittee} 
+            onChange={(e) => setSelectedCommittee(e.target.value)}
+            className="form-select"
+          >
+            <option value="">All Committees</option>
+            {committees.map(committee => (
+              <option key={committee} value={committee}>{committee}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? (
@@ -245,9 +278,9 @@ function UpcomingEvents() {
           <div className="loading-spinner"></div>
           <p>Loading events...</p>
         </div>
-      ) : events.length > 0 ? (
+      ) : filteredEvents.length > 0 ? (
         <div className="event-cards-container">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <div
               key={event.id}
               className={`event-card ${isToday(event.date) ? "today-event" : ""}`}
