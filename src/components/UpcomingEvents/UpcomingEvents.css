@@ -28,6 +28,29 @@
     margin: 0 auto 1.5rem;
   }
   
+  .committee-filter {
+    display: flex;
+    align-items: center;
+  }
+  
+  .committee-filter .form-select {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--color-purple-light);
+    border-radius: 8px;
+    background: white;
+    color: var(--color-purple-dark);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 180px;
+  }
+  
+  .committee-filter .form-select:focus {
+    outline: none;
+    border-color: var(--color-purple-medium);
+    box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.1);
+  }
+  
   .events-title {
     font-size: 2rem;
     font-weight: 700;
