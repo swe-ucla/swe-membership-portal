@@ -81,6 +81,8 @@ function AddEvent() {
     // Check if we're in edit mode by looking at the URL query params
     const params = new URLSearchParams(location.search);
     const editId = params.get("edit");
+<<<<<<< HEAD
+=======
 
     if (editId) {
       setIsEditMode(true);
@@ -110,6 +112,108 @@ function AddEvent() {
         // Show preview if photo is a URL
         if (parsedData.photo && typeof parsedData.photo === "string") {
           setPhotoPreview(parsedData.photo);
+        } else {
+          setPhotoPreview(null);
+        }
+
+        // Set custom code checkbox
+        setUseCustomCode(!!parsedData.attendanceCode);
+
+        // Clear localStorage after using it
+        localStorage.removeItem("editEventData");
+      } else {
+        // If not in localStorage, fetch from Firestore
+        fetchEventData(editId);
+      }
+    }
+
+    fetchUserData();
+  }, [location.search]);
+
+  const fetchEventData = async (id) => {
+    try {
+      const eventRef = doc(db, "events", id);
+      const eventSnap = await getDoc(eventRef);
+    const fetchEventData = async (id) => {
+      try {
+        const eventRef = doc(db, "events", id);
+        const eventSnap = await getDoc(eventRef);
+>>>>>>> 64813559551773f5afd18ab2dd125797fecc0df3
+
+    if (editId) {
+      setIsEditMode(true);
+      setEventId(editId);
+
+      // Try to get event data from localStorage first (it was set in ManageEvents.js)
+      const storedEventData = localStorage.getItem("editEventData");
+      if (storedEventData) {
+        const parsedData = JSON.parse(storedEventData);
+
+<<<<<<< HEAD
+        // Initialize form with the event data
+        setEventData({
+          name: parsedData.name || "",
+          date: parsedData.date || "",
+          startTime: parsedData.startTime || "",
+          endTime: parsedData.endTime || "",
+          location: parsedData.location || "",
+          committee: parsedData.createdBy || "",
+          author: parsedData.createdByUser || "",
+          description: parsedData.description || "",
+          attendanceCode: parsedData.attendanceCode || "",
+          points: parsedData.points || 1,
+          questions: parsedData.questions || [],
+          photo: parsedData.photo || null,
+        });
+
+        // Show preview if photo is a URL
+        if (parsedData.photo && typeof parsedData.photo === "string") {
+          setPhotoPreview(parsedData.photo);
+=======
+        setEventData({
+          name: data.name || "",
+          date: formattedDate,
+          startTime: data.startTime || "",
+          endTime: data.endTime || "",
+          location: data.location || "",
+          committee: data.createdBy || "",
+          author: data.createdByUser || "",
+          description: data.description || "",
+          attendanceCode: data.attendanceCode || "",
+          points: data.points || 1,
+          questions: data.questions || [],
+          photo: data.photo || null,
+        });
+          setEventData({
+            name: data.name || "",
+            date: formattedDate,
+            startTime: data.startTime || extractedStartTime,
+            endTime: data.endTime || extractedEndTime,
+            location: data.location || "",
+            committee: data.createdBy || "",
+            description: data.description || "",
+            attendanceCode: data.attendanceCode || "",
+            points: data.points || 1,
+            questions: data.questions || [],
+            signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
+            photo: data.photo || null,
+          });
+
+        // Show preview if photo is a URL
+        if (data.photo && typeof data.photo === "string") {
+          setPhotoPreview(data.photo);
+        } else {
+          setPhotoPreview(null);
+        }
+          // Show preview if photo is a URL
+          if (data.photo && typeof data.photo === 'string') {
+            setPhotoPreview(data.photo);
+          } else {
+            setPhotoPreview(null);
+          }
+
+          setUseCustomCode(!!data.attendanceCode);
+>>>>>>> 64813559551773f5afd18ab2dd125797fecc0df3
         } else {
           setPhotoPreview(null);
         }
@@ -413,6 +517,8 @@ function AddEvent() {
         await setDoc(eventRef, {
           name: eventData.name,
           date: timestamp,
+          createdBy: eventData.committee,
+          createdByUser: auth.currentUser.uid,
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           location: eventData.location,
