@@ -11,8 +11,8 @@ import {
 // import { ToastContainer } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
-import Login from "./components/Login/Login";
-import Register from "./components/Login/Register";
+// import Login from "./components/Login/Login";
+// import Register from "./components/Login/Register";
 import Profile from "./components/Profile/Profile";
 import Home from "./components/Home/Home";
 import AddEvent from "./components/AddEvent/AddEvent";
@@ -22,6 +22,7 @@ import NavBar from "./components/NavBar/NavBar";
 import Leaderboard from "./components/Leaderboard/Leaderboard";
 import ManageEvents from "./components/ManageEvents/ManageEvents";
 import ContactUs from "./components/ContactUs/ContactUs"
+import Onboarding from "./components/Onboarding/Onboarding";
 
 // 🧠 A wrapper component to access `useLocation`
 function AppWrapper() {
@@ -34,8 +35,8 @@ function AppWrapper() {
       {!hideNavBar && <NavBar />}
       <Routes>
         <Route path="/" element={<UpcomingEvents />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Onboarding />} />
+        <Route path="/register" element={<Onboarding />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/addevent" element={<AddEvent />} />
