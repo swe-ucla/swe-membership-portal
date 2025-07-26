@@ -170,7 +170,10 @@ function Onboarding() {
           <div>
             {form === 'login' && (
               <form onSubmit={handleLogin}>
-                <h3>Login</h3>
+                <h3>Welcome Back!</h3>
+                <p className="forgot-password text-right">
+                  Don't have an account yet? <a href="#" onClick={() => setForm('register')}>Sign up now</a>
+                </p>
                 {errorMessage && !isGoogleSignIn && (
                   <div className="alert alert-danger" role="alert">{errorMessage}</div>
                 )}
@@ -201,16 +204,13 @@ function Onboarding() {
                     }}
                   />
                   {passwordError && <div className="input-error">{passwordError}</div>}
+                  <div className="forgot-password-right">
+                    <a href="#" onClick={toggleResetForm}>Forgot password?</a>
+                  </div>
                 </div>
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary">Submit</button>
                 </div>
-                <div className="forgot-password text-right mt-2">
-                  <a href="#" onClick={toggleResetForm}>Forgot password?</a>
-                </div>
-                <p className="forgot-password text-right">
-                  New user? <a href="#" onClick={() => setForm('register')}>Register Here</a>
-                </p>
                 <SignInwithGoogle 
                   onGoogleSignInStart={() => {
                     setIsGoogleSignIn(true);
@@ -222,7 +222,10 @@ function Onboarding() {
             )}
             {form === 'register' && (
               <form onSubmit={handleRegister}>
-                <h3>Sign Up</h3>
+                <h3>Create your account</h3>
+                <p className="forgot-password text-right">
+                  Already registered? <a href="#" onClick={() => setForm('login')}>Login</a>
+                </p>
                 <div className="mb-3">
                   <label>First name</label>
                   <input
@@ -268,10 +271,6 @@ function Onboarding() {
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary">Sign Up</button>
                 </div>
-                <p className="forgot-password text-right">
-                  Already registered? <a href="#" onClick={() => setForm('login')}>Login</a>
-                </p>
-                <div className="divider"><span>OR</span></div>
                 <SignInwithGoogle onGoogleSignInStart={() => { setIsGoogleSignIn(true); setErrorMessage(""); }} onGoogleSignInEnd={() => setIsGoogleSignIn(false)} />
               </form>
             )}
@@ -296,7 +295,7 @@ function Onboarding() {
                     <div className="d-grid">
                       <button type="submit" className="btn btn-primary">Send Reset Link</button>
                     </div>
-                    <div className="back-to-login text-right mt-2">
+                    <div className="back-to-login">
                       Back to <a href="#" onClick={() => setForm('login')}>Login</a>
                     </div>
                   </form>
