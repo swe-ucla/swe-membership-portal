@@ -281,7 +281,6 @@ function Onboarding() {
                   <form onSubmit={handleForgotPassword}>
                     <h3>Reset Password</h3>
                     <div className="mb-3">
-                      <label>Email address</label>
                       <input
                         type="email"
                         className="form-control"
@@ -298,7 +297,7 @@ function Onboarding() {
                       <button type="submit" className="btn btn-primary">Send Reset Link</button>
                     </div>
                     <div className="back-to-login text-right mt-2">
-                      <a href="#" onClick={() => setForm('login')}>Back to Login</a>
+                      Back to <a href="#" onClick={() => setForm('login')}>Login</a>
                     </div>
                   </form>
                 ) : (
