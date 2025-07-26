@@ -8,7 +8,7 @@ import { setDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
-const BEAR_BANNER = process.env.PUBLIC_URL + '/bear-banner.svg';
+const BEAR_BANNER = process.env.PUBLIC_URL + '/onboarding-banner.svg';
 
 const adminEmails = [
   "ewi.swe.ucla@gmail.com",
