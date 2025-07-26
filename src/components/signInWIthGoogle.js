@@ -105,11 +105,7 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
         className="google-signin-button"
         onClick={googleLogin}
       >
-        <img 
-          src={require("../google.png")} 
-          alt="Google sign-in" 
-          className="google-icon"
-        />
+        <div className="google-icon"></div>
         <span>Sign in with Google</span>
       </button>
     </div>
