@@ -272,7 +272,7 @@ function Onboarding() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className="form-control"
+                    className="register-form-control"
                     placeholder="First name"
                     onChange={(e) => setFname(e.target.value)}
                     required
@@ -281,7 +281,7 @@ function Onboarding() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className="form-control"
+                    className="register-form-control"
                     placeholder="Last name"
                     onChange={(e) => setLname(e.target.value)}
                   />
