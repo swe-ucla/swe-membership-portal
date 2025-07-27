@@ -144,7 +144,7 @@ input.register-form-control {
   border: 1px solid #d1d5db;
   border-radius: 15px;
   padding: 16px 24px;
-  margin-bottom: 0px;
+  margin-bottom: 20px;
   background-color: #fff;
   transition: var(--transition);
   font-size: 0.95rem;

@@ -585,6 +585,7 @@ function AddEvent() {
             <label className="form-label">Start Time:</label>
             <input
               type="time"
+              style={{ minWidth: "0" }}
               name="startTime"
               value={eventData.startTime}
               onChange={handleInputChange}
@@ -595,6 +596,7 @@ function AddEvent() {
           <div style={{ flex: 1 }}>
             <label className="form-label">End Time:</label>
             <input
+              style={{ minWidth: "0" }}
               type="time"
               name="endTime"
               value={eventData.endTime}
@@ -758,7 +760,7 @@ function AddEvent() {
           <div className="add-question-form">
             <input
               type="text"
-              className="form-control"
+              /*className="form-control"*/
               placeholder="Enter new question"
               value={newQuestion.text}
               onChange={(e) =>
@@ -769,6 +771,8 @@ function AddEvent() {
               <label>Question Type:</label>
               <select
                 className="form-control"
+                type="text"
+                style={{ width: "100%", minWidth: "0", maxWidth: "none" }}
                 value={newQuestion.type}
                 onChange={(e) =>
                   setNewQuestion((prev) => ({

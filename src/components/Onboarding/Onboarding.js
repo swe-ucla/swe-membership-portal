@@ -230,6 +230,7 @@ function Onboarding() {
                     className={`form-control${
                       passwordError ? " error-input" : ""
                     }`}
+                    style={{ marginBottom: "20px" }}
                     placeholder="Enter password"
                     value={password}
                     onChange={(e) => {
@@ -274,6 +275,7 @@ function Onboarding() {
                     type="text"
                     className="register-form-control"
                     placeholder="First name"
+                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setFname(e.target.value)}
                     required
                   />
@@ -283,6 +285,7 @@ function Onboarding() {
                     type="text"
                     className="register-form-control"
                     placeholder="Last name"
+                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setLname(e.target.value)}
                   />
                 </div>
