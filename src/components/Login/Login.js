@@ -72,7 +72,7 @@ function Login() {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    setErrorMessage("")
+    setErrorMessage("");
 
     if (!resetEmail) {
       setErrorMessage("Please enter your email address");
@@ -108,7 +108,7 @@ function Login() {
   const toggleResetForm = () => {
     setShowResetForm(!showResetForm);
     setResetLinkSent(false);
-    setErrorMessage(""); 
+    setErrorMessage("");
     setResetEmail(email); // Pre-fill with the login email if available
   };
 
@@ -126,10 +126,9 @@ function Login() {
             )}
 
             <div className="mb-3">
-              <label>Email address</label>
               <input
                 type="email"
-                className={`form-control${emailError ? ' error-input' : ''}`}
+                className={`form-control${emailError ? " error-input" : ""}`}
                 placeholder="Enter email"
                 value={email}
                 onChange={(e) => {
@@ -137,16 +136,13 @@ function Login() {
                   if (emailError) setEmailError("");
                 }}
               />
-              {emailError && (
-                <div className="input-error">{emailError}</div>
-              )}
+              {emailError && <div className="input-error">{emailError}</div>}
             </div>
 
             <div className="mb-3">
-              <label>Password</label>
               <input
                 type="password"
-                className={`form-control${passwordError ? ' error-input' : ''}`}
+                className={`form-control${passwordError ? " error-input" : ""}`}
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => {
@@ -172,11 +168,11 @@ function Login() {
             <p className="forgot-password text-right">
               New user? <a href="/register">Register Here</a>
             </p>
-            <SignInwithGoogle 
+            <SignInwithGoogle
               onGoogleSignInStart={() => {
                 setIsGoogleSignIn(true);
                 setErrorMessage(""); // Clear any existing error message
-              }} 
+              }}
               onGoogleSignInEnd={() => setIsGoogleSignIn(false)}
             />
           </form>
@@ -193,7 +189,6 @@ function Login() {
                 )}
 
                 <div className="mb-3">
-                  <label>Email address</label>
                   <input
                     type="email"
                     className="form-control"

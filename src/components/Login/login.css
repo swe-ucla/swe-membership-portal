@@ -1,19 +1,27 @@
 /* Updated Login/Register CSS with clean minimal theme - Complete Rewrite */
 :root {
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
-  --color-pink: #E85F7A;
-  --color-pink-dark: #890C50;
-  --color-background: #F5F7FA;
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #6677ca;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
   --border-radius-lg: 12px;
   --border-radius-md: 8px;
   --border-radius-sm: 6px;
   --box-shadow: 0 4px 20px rgba(69, 37, 162, 0.1);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  
-  --primary-gradient: linear-gradient(135deg, var(--color-purple-dark), var(--color-purple-medium));
-  --secondary-gradient: linear-gradient(135deg, var(--color-purple-medium), var(--color-pink));
+
+  --primary-gradient: linear-gradient(
+    135deg,
+    var(--color-purple-dark),
+    var(--color-purple-medium)
+  );
+  --secondary-gradient: linear-gradient(
+    135deg,
+    var(--color-purple-medium),
+    var(--color-pink)
+  );
   --accent-color: var(--color-purple-medium);
   --text-color: #333;
   --light-text: #fff;
@@ -27,7 +35,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
   background-color: var(--bg-color);
   margin: 0;
   padding: 0;
@@ -45,7 +54,7 @@ body {
 }
 
 .auth-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
@@ -131,7 +140,7 @@ body {
 
 /* Hide labels - use placeholders only */
 label {
-  display: none !important;
+  /*display: none !important;*/
 }
 
 /* Form inputs */
@@ -330,7 +339,7 @@ label {
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid #e1e5e9;
 }
@@ -368,7 +377,7 @@ label {
 .auth-inner [class*="signin-google"]:hover {
   background: #f8f9fa !important;
   border-color: #d1d5db !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -431,7 +440,7 @@ label {
     padding: 30px 25px;
     margin: 20px;
   }
-  
+
   .auth-inner h3 {
     font-size: 1.5rem;
   }
