@@ -1,16 +1,4 @@
-:root {
-    --color-purple-dark: #4525A2;
-    --color-purple-medium: #6677CA;
-    --color-purple-light: #A6A7E3;
-    --color-pink: #E85F7A;
-    --color-pink-dark: #890C50;
-    --color-background: #F5F7FA;
-    --border-radius-lg: 20px;
-    --border-radius-md: 15px;
-    --border-radius-sm: 12px;
-    --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
-}
+/* ContactUs.css - uses shared variables from styles/variables.css */
 
 /* Container with your specified styling */
 .contact-container {
@@ -214,9 +202,8 @@
     /* From your auth CSS */
 }
 
-.btn-primary {
-    background: #E85F7A;
-    /* Exact color-pink value */
+.contact-form .btn-primary {
+    background: var(--color-pink) !important;
     color: white;
     border: none;
     border-radius: var(--border-radius-sm);
@@ -231,19 +218,18 @@
     margin-bottom: 20px;
 }
 
-.btn-primary:hover {
-    background: #890C50;
-    /* Exact color-pink-dark value */
+.contact-form .btn-primary:hover {
+    background: var(--color-pink-dark) !important;
     transform: translateY(-3px);
     box-shadow: 0 7px 20px rgba(137, 12, 80, 0.4);
 }
 
-.btn-primary:active {
+.contact-form .btn-primary:active {
     transform: translateY(1px);
     box-shadow: 0 3px 10px rgba(137, 12, 80, 0.3);
 }
 
-.btn-primary:disabled {
+.contact-form .btn-primary:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;

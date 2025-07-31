@@ -1,44 +1,9 @@
-/* Updated Login/Register CSS with clean minimal theme - Complete Rewrite */
-:root {
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
-  --color-pink: #E85F7A;
-  --color-pink-dark: #890C50;
-  --color-background: #F5F7FA;
-  --border-radius-lg: 12px;
-  --border-radius-md: 8px;
-  --border-radius-sm: 6px;
-  --box-shadow: 0 4px 20px rgba(69, 37, 162, 0.1);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  
-  --primary-gradient: linear-gradient(135deg, var(--color-purple-dark), var(--color-purple-medium));
-  --secondary-gradient: linear-gradient(135deg, var(--color-purple-medium), var(--color-pink));
-  --accent-color: var(--color-purple-medium);
-  --text-color: #333;
-  --light-text: #fff;
-  --bg-color: var(--color-background);
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --input-bg: rgba(255, 255, 255, 0.9);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  background-color: var(--bg-color);
-  margin: 0;
-  padding: 0;
-}
-
+/* Login Component Styles */
 .auth-wrapper {
-  width: 100%;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   background: var(--primary-gradient);
   position: relative;
   overflow: hidden;
@@ -47,23 +12,12 @@ body {
 .auth-wrapper::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
   width: 200%;
   height: 200%;
   background: var(--secondary-gradient);
   animation: rotate 15s linear infinite;
   opacity: 0.4;
   z-index: 0;
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .auth-inner {
@@ -80,7 +34,6 @@ body {
   margin: 20px;
 }
 
-/* Logo styling */
 .auth-logo {
   text-align: center;
   margin-bottom: 30px;
@@ -101,7 +54,6 @@ body {
   transform: scale(1.02);
 }
 
-/* Headings */
 .auth-inner h3 {
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
@@ -129,71 +81,108 @@ body {
   text-decoration: underline;
 }
 
-/* Hide labels - use placeholders only */
 label {
   display: none !important;
 }
 
-/* Form inputs */
-.form-control {
-  border: 1px solid #d1d5db;
-  border-radius: 15px;
-  padding: 16px 24px;
-  margin-bottom: 20px;
-  background-color: #fff;
-  transition: var(--transition);
-  font-size: 0.95rem;
-  width: 100%;
-  max-width: 650px;
-  min-width: 500px;
-  box-sizing: border-box;
-  font-family: inherit;
+.auth-inner .form-control,
+.auth-inner input[type="text"],
+.auth-inner input[type="email"],
+.auth-inner input[type="password"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 15px !important;
+  padding: 16px 24px !important;
+  margin-bottom: 20px !important;
+  background-color: #fff !important;
+  transition: var(--transition) !important;
+  font-size: 0.95rem !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  min-width: 500px !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
 }
 
-.form-control:focus {
-  border-color: var(--color-purple-medium);
-  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1);
-  outline: none;
-  background-color: #fff;
+.auth-inner .form-control:focus,
+.auth-inner input[type="text"]:focus,
+.auth-inner input[type="email"]:focus,
+.auth-inner input[type="password"]:focus {
+  border-color: var(--color-purple-medium) !important;
+  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1) !important;
+  outline: none !important;
+  background-color: #fff !important;
 }
 
-.form-control::placeholder {
+.auth-inner .form-control::placeholder,
+.auth-inner input[type="text"]::placeholder,
+.auth-inner input[type="email"]::placeholder,
+.auth-inner input[type="password"]::placeholder {
   color: #9ca3af;
   font-weight: 400;
 }
 
-/* Primary button */
-.btn-primary {
-  background: var(--accent-color);
+.register-form-control {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 15px !important;
+  padding: 16px 24px !important;
+  margin-bottom: 20px !important;
+  background-color: #fff !important;
+  transition: var(--transition) !important;
+  font-size: 0.95rem !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  min-width: 500px !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+.register-form-control:focus {
+  border-color: var(--color-purple-medium) !important;
+  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1) !important;
+  outline: none !important;
+  background-color: #fff !important;
+}
+
+.register-form-control::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.auth-inner .btn-primary {
+  background: var(--color-purple-medium);
   border: none;
-  border-radius: 25px;
-  padding: 12px 24px;
+  border-radius: 50px;
+  padding: 12px 50px;
   color: var(--light-text);
   font-weight: 500;
   font-size: 0.9rem;
   transition: var(--transition);
   cursor: pointer;
   margin: 10px auto 25px auto;
-  width: auto;
-  min-width: 120px;
-  max-width: 200px;
+  width: 320px;
   display: block;
   box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(102, 119, 202, 0.25);
   font-family: inherit;
+  white-space: nowrap;
 }
 
-.btn-primary:hover {
+.auth-inner .btn-primary:hover {
   background: var(--color-purple-dark);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 119, 202, 0.25);
 }
 
-.btn-primary:active {
+.auth-inner .btn-primary:active {
   transform: translateY(0px);
 }
 
-/* Forgot password link */
 .forgot-password {
   text-align: center;
   margin-top: -5px;
@@ -208,19 +197,7 @@ label {
   color: var(--text-color);
 }
 
-.forgot-password a {
-  color: var(--color-purple-medium);
-  text-decoration: none;
-  font-weight: 400;
-  font-size: 0.9rem;
-  transition: var(--transition);
-}
-
-.forgot-password a:hover {
-  color: var(--color-purple-dark);
-  text-decoration: underline;
-}
-
+.forgot-password a,
 .forgot-password-right a {
   color: var(--color-purple-medium);
   text-decoration: none;
@@ -229,12 +206,12 @@ label {
   transition: var(--transition);
 }
 
+.forgot-password a:hover,
 .forgot-password-right a:hover {
   color: var(--color-purple-dark);
   text-decoration: underline;
 }
 
-/* Back to login link */
 .back-to-login {
   text-align: center;
   margin-top: 15px;
@@ -254,7 +231,6 @@ label {
   text-decoration: underline;
 }
 
-/* New user text */
 .auth-inner .new-user {
   text-align: center;
   margin-bottom: 25px;
@@ -272,22 +248,6 @@ label {
   text-decoration: underline;
 }
 
-/* Google Sign-in Styles */
-/* Hide any other Google sign-in buttons that might be rendered */
-.auth-inner > *:not(.google-signin-container) button[class*="google"],
-.auth-inner > *:not(.google-signin-container) [class*="google-signin"],
-.auth-inner > *:not(.google-signin-container) [class*="signin-google"],
-.auth-inner button:not(.google-signin-button)[class*="google"],
-.auth-inner [class*="google"]:not(.google-signin-button):not(.google-icon),
-.auth-inner [class*="gsi"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  position: absolute !important;
-  left: -9999px !important;
-}
-
-/* Ensure our custom Google button is always visible and styled correctly */
 .google-signin-container {
   margin-top: 20px;
   text-align: center;
@@ -307,7 +267,7 @@ label {
   border: 1px solid #d1d5db !important;
   border-radius: 15px !important;
   cursor: pointer !important;
-  transition: all 0.3s ease !important;
+  transition: var(--transition) !important;
   font-size: 0.95rem !important;
   font-weight: 400 !important;
   color: var(--text-color) !important;
@@ -316,6 +276,13 @@ label {
   position: relative !important;
   z-index: 11 !important;
   margin: 0 auto !important;
+}
+
+.google-signin-button:hover {
+  background: #f8f9fa !important;
+  border-color: #d1d5db !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  transform: translateY(-1px) !important;
 }
 
 .divider {
@@ -339,43 +306,7 @@ label {
   padding: 0 15px;
 }
 
-.google-signin-button,
-.auth-inner button[class*="google"],
-.auth-inner [class*="google-signin"],
-.auth-inner [class*="signin-google"] {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  max-width: 650px !important;
-  min-width: 500px !important;
-  padding: 16px 24px !important;
-  background: white !important;
-  border: 1px solid #d1d5db !important;
-  border-radius: 15px !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  font-size: 0.95rem !important;
-  font-weight: 400 !important;
-  color: var(--text-color) !important;
-  box-sizing: border-box !important;
-  font-family: inherit !important;
-}
-
-.google-signin-button:hover,
-.auth-inner button[class*="google"]:hover,
-.auth-inner [class*="google-signin"]:hover,
-.auth-inner [class*="signin-google"]:hover {
-  background: #f8f9fa !important;
-  border-color: #d1d5db !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-  transform: translateY(-1px) !important;
-}
-
-.google-icon,
-.auth-inner button[class*="google"] img,
-.auth-inner [class*="google-signin"] img,
-.auth-inner [class*="signin-google"] img {
+.google-icon {
   width: 20px !important;
   height: 20px !important;
   margin-right: 12px !important;
@@ -385,23 +316,6 @@ label {
   background-position: center !important;
 }
 
-/* Error messages */
-.text-danger,
-.input-error {
-  color: var(--color-pink);
-  font-size: 0.85rem;
-  margin-top: -15px;
-  margin-bottom: 15px;
-  margin-left: 2px;
-  padding: 0;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  line-height: 1.3;
-  display: block;
-}
-
-/* Decorative elements - more subtle */
 .auth-decoration {
   position: absolute;
   border-radius: 50%;
@@ -424,7 +338,6 @@ label {
   left: -40px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 576px) {
   .auth-inner {
     width: 90%;
