@@ -400,7 +400,7 @@ function UpcomingEvents() {
                     )
                   )}
                   <button
-                    onClick={() => handleRSVP(event.id)}
+                    onClick={() => handleMoreInfo(event)}
                     className="btn btn-event"
                   >
                     MORE INFO
