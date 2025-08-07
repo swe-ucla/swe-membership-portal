@@ -315,7 +315,9 @@ function UpcomingEvents() {
                 </div>
               )}
               
-              <h4>{event.name}</h4>
+              <div className="event-title-row">
+                <h4>{event.name}</h4>
+              </div>
               
               <div className="event-card-content">
                 <div className="event-detail">
@@ -339,16 +341,6 @@ function UpcomingEvents() {
                   <MaterialSymbol icon="location_on"/>
                   <span>{event.location}</span>
                 </div>
-
-                {/* {isUserRegistered(event.id) && (
-                  <div className="event-registration-status">
-                    {hasUserSignedIn(event.id) ? (
-                      <span>SIGNED IN</span>
-                    ) : (
-                      <span>RESERVED</span>
-                    )}
-                  </div>
-                )} */}
 
                 <div className="event-card-footer">
                   {isSignInOpen(event) ? (

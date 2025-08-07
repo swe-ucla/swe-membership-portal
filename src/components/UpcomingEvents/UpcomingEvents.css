@@ -481,14 +481,12 @@
   
   .event-card-photo {
     width: 100%;
-    background: #fafafe;
-    border-bottom: 1.5px solid #e0e0fe;
+    background: none;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    border-top-left-radius: var(--border-radius-md);
-    border-top-right-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-lg);
     position: relative;
   }
   
@@ -496,7 +494,6 @@
     width: 100%;
     max-height: 180px;
     object-fit: cover;
-    border-radius: var(--border-radius-lg);
     display: block;
   }
   
@@ -531,17 +528,10 @@
     justify-content: space-between;
     gap: 0.7rem;
     margin: 0;
-    /* padding: 0.7rem 1.2rem 0.7rem 1.2rem; */
-    padding: 0 1.2rem;
-    background: linear-gradient(135deg, var(--color-purple-dark), var(--color-purple-medium));
-    border-bottom: 1.5px solid #e0e0fe;
-}
+    padding: 0 1.2rem 0rem 0rem;
+  }
   
   .event-title-row h4 {
-    background: none;
-    color: white;
-    padding: 1rem 0;
-    margin: 0;
     font-size: 1.3rem;
     font-weight: 700;
     white-space: nowrap;
