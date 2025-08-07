@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
 import { FaRegClock } from "react-icons/fa";
 import Popup from "../Popup/Popup";
+import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -18,6 +19,7 @@ function UpcomingEvents() {
   const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const [selectedCommittee, setSelectedCommittee] = useState("");
   const [committees, setCommittees] = useState([]);
+  const [eventDetailsPopup, setEventDetailsPopup] = useState({ isOpen: false, event: null });
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -241,6 +243,14 @@ function UpcomingEvents() {
     }
   };
 
+  const handleMoreInfo = (event) => {
+    setEventDetailsPopup({ isOpen: true, event });
+  };
+
+  const closeEventDetailsPopup = () => {
+    setEventDetailsPopup({ isOpen: false, event: null });
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchEvents();
@@ -344,57 +354,70 @@ function UpcomingEvents() {
                 )}
 
                 <div className="event-card-footer">
-                  {isSignInOpen(event) ? (
-                    // Sign-in period is open
-                    hasUserSignedIn(event.id) ? (
+                  <div className="event-buttons-row">
+                    <div className="event-primary-action">
+                      {isSignInOpen(event) ? (
+                        // Sign-in period is open
+                        hasUserSignedIn(event.id) ? (
+                          <button
+                            onClick={() => handleCancelRegistration(event.id, event.points || 0)}
+                            className="btn btn-danger"
+                          >
+                            Cancel Registration
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleSignUpClick(event.id)}
+                            className="btn btn-secondary"
+                          >
+                            Sign In to Earn {event.points || 0} Point(s)
+                          </button>
+                        )
+                      ) : isRSVPOpen(event) ? (
+                        // RSVP period is open
+                        isUserRegistered(event.id) ? (
+                          <button
+                            onClick={() => handleCancelRegistration(event.id, 0)}
+                            className="btn btn-danger"
+                          >
+                            Cancel RSVP
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleRSVP(event.id)}
+                            className="btn btn-secondary"
+                          >
+                            RSVP
+                          </button>
+                        )
+                      ) : (
+                        // Event is in the future but registration is closed, or event is past
+                        isUserRegistered(event.id) ? (
+                          <button
+                            onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
+                            className="btn btn-danger"
+                          >
+                            Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
+                          </button>
+                        ) : (
+                          <span>
+                            {new Date() > (event.date?.toDate ? event.date.toDate() : new Date(event.date)) 
+                              ? 'Event has passed' 
+                              : 'Registration closed'}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    <div className="event-secondary-action">
+                      {/* COMMENT - this will need to be removed in the future */}
                       <button
-                        onClick={() => handleCancelRegistration(event.id, event.points || 0)}
-                        className="btn btn-danger"
+                        className="btn btn-outline-secondary"
+                        onClick={() => handleMoreInfo(event)}
                       >
-                        Cancel Registration
+                        More Info
                       </button>
-                    ) : (
-                      <button
-                        onClick={() => handleSignUpClick(event.id)}
-                        className="btn btn-secondary"
-                      >
-                        Sign In to Earn {event.points || 0} Point(s)
-                      </button>
-                    )
-                  ) : isRSVPOpen(event) ? (
-                    // RSVP period is open
-                    isUserRegistered(event.id) ? (
-                      <button
-                        onClick={() => handleCancelRegistration(event.id, 0)}
-                        className="btn btn-danger"
-                      >
-                        Cancel RSVP
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleRSVP(event.id)}
-                        className="btn btn-secondary"
-                      >
-                        RSVP
-                      </button>
-                    )
-                  ) : (
-                    // Event is in the future but registration is closed, or event is past
-                    isUserRegistered(event.id) ? (
-                      <button
-                        onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
-                        className="btn btn-danger"
-                      >
-                        Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
-                      </button>
-                    ) : (
-                      <span>
-                        {new Date() > (event.date?.toDate ? event.date.toDate() : new Date(event.date)) 
-                          ? 'Event has passed' 
-                          : 'Registration closed'}
-                      </span>
-                    )
-                  )}
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -413,6 +436,12 @@ function UpcomingEvents() {
         confirm={popup.confirm}
         onConfirm={popup.onConfirm}
         onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+      />
+      <EventDetailsPopup
+        isOpen={eventDetailsPopup.isOpen}
+        event={eventDetailsPopup.event}
+        onClose={closeEventDetailsPopup}
+        isAdmin={isAdmin}
       />
     </div>
     </>
