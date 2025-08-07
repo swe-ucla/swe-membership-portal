@@ -3,7 +3,8 @@ import { db, auth } from "../firebase";
 import { collection, getDocs, query, orderBy, doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
-import { FaRegClock } from "react-icons/fa";
+import { MaterialSymbol } from 'react-material-symbols';
+import 'react-material-symbols/rounded';
 import Popup from "../Popup/Popup";
 
 function UpcomingEvents() {
@@ -43,7 +44,6 @@ function UpcomingEvents() {
       }
     });
   };
-  
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -105,7 +105,11 @@ function UpcomingEvents() {
     if (isToday(timestamp)) {
       return "Today";
     }
-    return dateObj.toLocaleDateString(); // Format as regular date otherwise
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
   
   // Format time ("14:30" -> "2:30 PM")
@@ -290,75 +294,65 @@ function UpcomingEvents() {
                   <img src={event.photo ? event.photo : process.env.PUBLIC_URL + '/swe-favicon.png'} alt={event.name + ' event'} />
                 </div>
               </div>
-              {formatDate(event.date) && (
-                <div
-                  className={`event-date-badge ${isToday(event.date) ? "today-badge" : ""}`}
-                >
-                  {formatDate(event.date)}
+
+              <div className="event-points-badge">
+                {event.points} pts
+              </div>
+
+              {isToday(event.date) && (
+                <div className="today-badge">
+                  HAPPENING TODAY
                 </div>
               )}
-              {/* Event name and time tag in a flex row */}
-              <div className="event-title-row">
-                <h4>{event.name}</h4>
-                {(event.startTime || event.endTime) && (
-                  <div className="event-time-tag event-time-inline">
-                    <FaRegClock />
-                    <span>{
-                      event.startTime && event.endTime
-                        ? `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
-                        : event.startTime
-                          ? `${formatTime(event.startTime)}`
-                          : ''
-                    }</span>
-                  </div>
-                )}
-              </div>
+              
+              <h4>{event.name}</h4>
+              
               <div className="event-card-content">
                 <div className="event-detail">
-                  <strong>Location:</strong>
+                  <MaterialSymbol icon="calendar_clock"/>
+                  <div className="event-date-time">
+                    {formatDate(event.date)}
+                    {(event.startTime || event.endTime) && (
+                      <>
+                        {" | "}
+                        {event.startTime && event.endTime
+                          ? `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
+                          : event.startTime
+                            ? `${formatTime(event.startTime)}`
+                            : ''}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="event-detail">
+                  <MaterialSymbol icon="location_on"/>
                   <span>{event.location}</span>
                 </div>
 
-                <div className="event-detail">
-                  <strong>Committee:</strong>
-                  <span>{event.createdBy} Committee</span>
-                </div>
-
-                {event.description && <p>{event.description}</p>}
-
-                {isUserRegistered(event.id) && (
+                {/* {isUserRegistered(event.id) && (
                   <div className="event-registration-status">
                     {hasUserSignedIn(event.id) ? (
-                      <span>Signed in ({event.points || 0} point(s) earned)</span>
+                      <span>SIGNED IN</span>
                     ) : (
-                      <span>RSVP received (no points earned)</span>
+                      <span>RESERVED</span>
                     )}
                   </div>
-                )}
-
-                {isAdmin && event.attendanceCode && (
-                  <div className="event-detail">
-                    <strong>Attendance Code: </strong>
-                    <span>{event.attendanceCode}</span>
-                  </div>
-                )}
+                )} */}
 
                 <div className="event-card-footer">
                   {isSignInOpen(event) ? (
                     // Sign-in period is open
                     hasUserSignedIn(event.id) ? (
-                      <button
-                        onClick={() => handleCancelRegistration(event.id, event.points || 0)}
-                        className="btn btn-danger"
-                      >
-                        Cancel Registration
+                      <button className="btn btn-sign-in">
+                        SIGNED IN
                       </button>
                     ) : (
                       <button
                         onClick={() => handleSignUpClick(event.id)}
-                        className="btn btn-secondary"
+                        className="btn btn-sign-in"
                       >
-                        Sign In to Earn {event.points || 0} Point(s)
+                        SIGN IN
                       </button>
                     )
                   ) : isRSVPOpen(event) ? (
@@ -366,14 +360,14 @@ function UpcomingEvents() {
                     isUserRegistered(event.id) ? (
                       <button
                         onClick={() => handleCancelRegistration(event.id, 0)}
-                        className="btn btn-danger"
+                        className="btn btn-event"
                       >
-                        Cancel RSVP
+                        CANCEL RSVP
                       </button>
                     ) : (
                       <button
                         onClick={() => handleRSVP(event.id)}
-                        className="btn btn-secondary"
+                        className="btn btn-event"
                       >
                         RSVP
                       </button>
@@ -383,7 +377,7 @@ function UpcomingEvents() {
                     isUserRegistered(event.id) ? (
                       <button
                         onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
-                        className="btn btn-danger"
+                        className="btn btn-event-danger"
                       >
                         Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
                       </button>
@@ -395,8 +389,13 @@ function UpcomingEvents() {
                       </span>
                     )
                   )}
+                  <button
+                    onClick={() => handleRSVP(event.id)}
+                    className="btn btn-event"
+                  >
+                    MORE INFO
+                  </button>
                 </div>
-
               </div>
             </div>
           ))}
