@@ -2,7 +2,7 @@ import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import './EventDetailsPopup.css';
 
-const EventDetailsPopup = ({ isOpen, onClose, event }) => {
+const EventDetailsPopup = ({ isOpen, onClose, event, isAdmin = false }) => {
   if (!isOpen || !event) return null;
 
   const formatDate = (timestamp) => {
@@ -74,7 +74,7 @@ const EventDetailsPopup = ({ isOpen, onClose, event }) => {
             </div>
           </div>
 
-          {event.attendanceCode && (
+          {event.attendanceCode && isAdmin && (
             <div className="event-detail-row">
               <strong>Attendance Code:</strong> {event.attendanceCode}
             </div>

@@ -441,6 +441,7 @@ function UpcomingEvents() {
         isOpen={eventDetailsPopup.isOpen}
         event={eventDetailsPopup.event}
         onClose={closeEventDetailsPopup}
+        isAdmin={isAdmin}
       />
     </div>
     </>
