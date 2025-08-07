@@ -6,6 +6,7 @@ import "./UpcomingEvents.css";
 import { MaterialSymbol } from 'react-material-symbols';
 import 'react-material-symbols/rounded';
 import Popup from "../Popup/Popup";
+import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -19,6 +20,7 @@ function UpcomingEvents() {
   const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
   const [selectedCommittee, setSelectedCommittee] = useState("");
   const [committees, setCommittees] = useState([]);
+  const [eventDetailsPopup, setEventDetailsPopup] = useState({ isOpen: false, event: null });
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -245,6 +247,14 @@ function UpcomingEvents() {
     }
   };
 
+  const handleMoreInfo = (event) => {
+    setEventDetailsPopup({ isOpen: true, event });
+  };
+
+  const closeEventDetailsPopup = () => {
+    setEventDetailsPopup({ isOpen: false, event: null });
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchEvents();
@@ -412,6 +422,12 @@ function UpcomingEvents() {
         confirm={popup.confirm}
         onConfirm={popup.onConfirm}
         onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+      />
+      <EventDetailsPopup
+        isOpen={eventDetailsPopup.isOpen}
+        event={eventDetailsPopup.event}
+        onClose={closeEventDetailsPopup}
+        isAdmin={isAdmin}
       />
     </div>
     </>
