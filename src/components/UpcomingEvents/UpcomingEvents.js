@@ -104,9 +104,6 @@ function UpcomingEvents() {
     if (!timestamp) return null;
   
     const dateObj = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    if (isToday(timestamp)) {
-      return "Today";
-    }
     return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -321,7 +318,7 @@ function UpcomingEvents() {
               
               <div className="event-card-content">
                 <div className="event-detail">
-                  <MaterialSymbol icon="calendar_clock"/>
+                  <MaterialSymbol icon="calendar_clock" size={24}/>
                   <div className="event-date-time">
                     {formatDate(event.date)}
                     {(event.startTime || event.endTime) && (
@@ -338,7 +335,7 @@ function UpcomingEvents() {
                 </div>
 
                 <div className="event-detail">
-                  <MaterialSymbol icon="location_on"/>
+                  <MaterialSymbol icon="location_on" size={24}/>
                   <span>{event.location}</span>
                 </div>
 
