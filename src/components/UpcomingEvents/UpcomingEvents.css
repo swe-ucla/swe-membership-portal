@@ -239,11 +239,23 @@
     padding: 0.3rem 0.8rem;
   }
 
-  .btn-sign-in {
+  .btn-event:hover {
+    scale: 1.05;
+    border: 2px solid white;
+  }
+
+  .btn-sign-in,
+  .btn-signed-in-badge,
+  .btn-sign-in:hover,
+  .btn-signed-in-badge:hover {
     color: white;
     border-radius: var(--border-radius-md);
     background-color: var(--color-purple-light);
     padding: 0.3rem 0.8rem;
+  }
+
+  .btn-sign-in:hover {
+    scale: 1.05;
   }
 
   .btn-event-danger {

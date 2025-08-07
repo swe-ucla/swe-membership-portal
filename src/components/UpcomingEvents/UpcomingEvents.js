@@ -344,7 +344,7 @@ function UpcomingEvents() {
                   {isSignInOpen(event) ? (
                     // Sign-in period is open
                     hasUserSignedIn(event.id) ? (
-                      <button className="btn btn-sign-in">
+                      <button className="btn btn-signed-in-badge">
                         SIGNED IN
                       </button>
                     ) : (
