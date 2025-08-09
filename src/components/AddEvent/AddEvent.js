@@ -314,7 +314,8 @@ function AddEvent() {
       !eventData.date ||
       !eventData.startTime ||
       !eventData.location ||
-      !eventData.committee
+      !eventData.committee ||
+      !eventData.description
     ) {
       setPopup({
         isOpen: true,
@@ -418,6 +419,7 @@ function AddEvent() {
           location: eventData.location,
           createdBy: eventData.committee,
           createdByUser: auth.currentUser.uid,
+          description: eventData.description,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
