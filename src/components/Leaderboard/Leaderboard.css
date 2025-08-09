@@ -1,11 +1,11 @@
 /* Leaderboard.css with modern purple theme */
 :root {
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
-  --color-pink: #E85F7A;
-  --color-pink-dark: #890C50;
-  --color-background: #F5F7FA;
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #895fd8;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
   --border-radius-lg: 20px;
   --border-radius-md: 15px;
   --border-radius-sm: 12px;
@@ -13,13 +13,19 @@
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+.leaderboard-background-container {
+  background-image: url("/public/assets/leaderboard-background.svg");
+  background-size: cover;
+  background-position: center;
+  margin: none;
+}
+
 .leaderboard-container {
-  max-width: 1000px;
+  max-width: 50%;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #ffffff;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--box-shadow);
+  background-color: white;
+  border: 1px solid red;
 }
 
 .leaderboard-title {
@@ -27,8 +33,7 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  color: var(--color-purple-dark);
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  color: var(--color-purple-medium);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -45,9 +50,16 @@
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
   border-radius: 50%;
-  border-top-color: var(--color-purple-dark);
+  border-top-color: var(--color-purple-medium);
   animation: spin 1s ease-in-out infinite;
   margin: 0 auto 1rem;
+}
+
+.leaderboard-header-divider {
+  width: 100%;
+  margin: auto;
+  background-color: #b4b4b4;
+  height: 2px;
 }
 
 @keyframes spin {
@@ -61,14 +73,12 @@
   width: 100%;
   border-radius: var(--border-radius-md);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(69, 37, 162, 0.08);
 }
 
 .leaderboard-header {
+  color: var(--color-purple-medium);
   display: grid;
   grid-template-columns: 80px 1fr 120px;
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
-  color: white;
   font-weight: 600;
   padding: 1rem;
 }
@@ -113,6 +123,32 @@
   border-radius: 50%;
   background-color: #f0f0f0;
   color: #333;
+}
+
+/* Medal icons for top 3 */
+
+.leaderboard-item:nth-child(1) .rank-number {
+  background-image: url("/public/assets/leaderboard-gold-medal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+  color: transparent;
+}
+
+.leaderboard-item:nth-child(2) .rank-number {
+  background-image: url("/public/assets/leaderboard-silver-medal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+  color: transparent;
+}
+
+.leaderboard-item:nth-child(3) .rank-number {
+  background-image: url("/public/assets/leaderboard-bronze-medal.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+  color: transparent;
 }
 
 .name-column {
@@ -174,6 +210,8 @@
   padding-right: 2rem;
   font-weight: 700;
   color: var(--color-purple-dark);
+  font-weight: 600;
+  font-size: 1.2rem;
 }
 
 .points-value {
@@ -181,33 +219,33 @@
   font-size: 1.2rem;
 }
 
-
 /* Responsive styles */
 @media (max-width: 768px) {
   .leaderboard-container {
     margin: 1rem;
     padding: 1rem;
   }
-  
+
   .leaderboard-title {
     font-size: 1.5rem;
     margin-top: 1rem;
   }
-  
-  .leaderboard-header, .leaderboard-row {
+
+  .leaderboard-header,
+  .leaderboard-row {
     grid-template-columns: 60px 1fr 90px;
     padding: 0.75rem;
   }
-  
+
   .user-avatar {
     width: 30px;
     height: 30px;
   }
-  
+
   .user-name {
     font-size: 0.9rem;
   }
-  
+
   .points-value {
     font-size: 1rem;
   }
@@ -217,8 +255,9 @@
   .user-major {
     display: none;
   }
-  
-  .leaderboard-header, .leaderboard-row {
+
+  .leaderboard-header,
+  .leaderboard-row {
     grid-template-columns: 50px 1fr 80px;
     padding: 0.75rem 0.5rem;
   }
