@@ -3,7 +3,8 @@ import { db, auth } from "../firebase";
 import { collection, getDocs, query, orderBy, doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
-import { FaRegClock } from "react-icons/fa";
+import { MaterialSymbol } from 'react-material-symbols';
+import 'react-material-symbols/rounded';
 import Popup from "../Popup/Popup";
 import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 
@@ -45,7 +46,6 @@ function UpcomingEvents() {
       }
     });
   };
-  
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -104,10 +104,11 @@ function UpcomingEvents() {
     if (!timestamp) return null;
   
     const dateObj = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    if (isToday(timestamp)) {
-      return "Today";
-    }
-    return dateObj.toLocaleDateString(); // Format as regular date otherwise
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
   
   // Format time ("14:30" -> "2:30 PM")
@@ -300,126 +301,100 @@ function UpcomingEvents() {
                   <img src={event.photo ? event.photo : process.env.PUBLIC_URL + '/swe-favicon.png'} alt={event.name + ' event'} />
                 </div>
               </div>
-              {formatDate(event.date) && (
-                <div
-                  className={`event-date-badge ${isToday(event.date) ? "today-badge" : ""}`}
-                >
-                  {formatDate(event.date)}
+
+              <div className="event-points-badge">
+                {event.points} pts
+              </div>
+
+              {isToday(event.date) && (
+                <div className="today-badge">
+                  HAPPENING TODAY
                 </div>
               )}
-              {/* Event name and time tag in a flex row */}
+              
               <div className="event-title-row">
                 <h4>{event.name}</h4>
-                {(event.startTime || event.endTime) && (
-                  <div className="event-time-tag event-time-inline">
-                    <FaRegClock />
-                    <span>{
-                      event.startTime && event.endTime
-                        ? `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
-                        : event.startTime
-                          ? `${formatTime(event.startTime)}`
-                          : ''
-                    }</span>
-                  </div>
-                )}
               </div>
+              
               <div className="event-card-content">
                 <div className="event-detail">
-                  <strong>Location:</strong>
+                  <MaterialSymbol icon="calendar_clock" size={24}/>
+                  <div className="event-date-time">
+                    {formatDate(event.date)}
+                    {(event.startTime || event.endTime) && (
+                      <>
+                        {" | "}
+                        {event.startTime && event.endTime
+                          ? `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
+                          : event.startTime
+                            ? `${formatTime(event.startTime)}`
+                            : ''}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="event-detail">
+                  <MaterialSymbol icon="location_on" size={24}/>
                   <span>{event.location}</span>
                 </div>
 
-                <div className="event-detail">
-                  <strong>Committee:</strong>
-                  <span>{event.createdBy} Committee</span>
-                </div>
-
-                {event.description && <p>{event.description}</p>}
-
-                {isUserRegistered(event.id) && (
-                  <div className="event-registration-status">
-                    {hasUserSignedIn(event.id) ? (
-                      <span>Signed in ({event.points || 0} point(s) earned)</span>
-                    ) : (
-                      <span>RSVP received (no points earned)</span>
-                    )}
-                  </div>
-                )}
-
-                {isAdmin && event.attendanceCode && (
-                  <div className="event-detail">
-                    <strong>Attendance Code: </strong>
-                    <span>{event.attendanceCode}</span>
-                  </div>
-                )}
-
                 <div className="event-card-footer">
-                  <div className="event-buttons-row">
-                    <div className="event-primary-action">
-                      {isSignInOpen(event) ? (
-                        // Sign-in period is open
-                        hasUserSignedIn(event.id) ? (
-                          <button
-                            onClick={() => handleCancelRegistration(event.id, event.points || 0)}
-                            className="btn btn-danger"
-                          >
-                            Cancel Registration
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleSignUpClick(event.id)}
-                            className="btn btn-secondary"
-                          >
-                            Sign In to Earn {event.points || 0} Point(s)
-                          </button>
-                        )
-                      ) : isRSVPOpen(event) ? (
-                        // RSVP period is open
-                        isUserRegistered(event.id) ? (
-                          <button
-                            onClick={() => handleCancelRegistration(event.id, 0)}
-                            className="btn btn-danger"
-                          >
-                            Cancel RSVP
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleRSVP(event.id)}
-                            className="btn btn-secondary"
-                          >
-                            RSVP
-                          </button>
-                        )
-                      ) : (
-                        // Event is in the future but registration is closed, or event is past
-                        isUserRegistered(event.id) ? (
-                          <button
-                            onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
-                            className="btn btn-danger"
-                          >
-                            Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
-                          </button>
-                        ) : (
-                          <span>
-                            {new Date() > (event.date?.toDate ? event.date.toDate() : new Date(event.date)) 
-                              ? 'Event has passed' 
-                              : 'Registration closed'}
-                          </span>
-                        )
-                      )}
-                    </div>
-                    <div className="event-secondary-action">
-                      {/* COMMENT - this will need to be removed in the future */}
-                      <button
-                        className="btn btn-outline-secondary"
-                        onClick={() => handleMoreInfo(event)}
-                      >
-                        More Info
+                  {isSignInOpen(event) ? (
+                    // Sign-in period is open
+                    hasUserSignedIn(event.id) ? (
+                      <button className="btn btn-signed-in-badge">
+                        SIGNED IN
                       </button>
-                    </div>
-                  </div>
+                    ) : (
+                      <button
+                        onClick={() => handleSignUpClick(event.id)}
+                        className="btn btn-sign-in"
+                      >
+                        SIGN IN
+                      </button>
+                    )
+                  ) : isRSVPOpen(event) ? (
+                    // RSVP period is open
+                    isUserRegistered(event.id) ? (
+                      <button
+                        onClick={() => handleCancelRegistration(event.id, 0)}
+                        className="btn btn-event"
+                      >
+                        CANCEL RSVP
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleRSVP(event.id)}
+                        className="btn btn-event"
+                      >
+                        RSVP
+                      </button>
+                    )
+                  ) : (
+                    // Event is in the future but registration is closed, or event is past
+                    isUserRegistered(event.id) ? (
+                      <button
+                        onClick={() => handleCancelRegistration(event.id, hasUserSignedIn(event.id) ? event.points || 0 : 0)}
+                        className="btn btn-event-danger"
+                      >
+                        Cancel {hasUserSignedIn(event.id) ? 'Registration' : 'RSVP'}
+                      </button>
+                    ) : (
+                      <span>
+                        {new Date() > (event.date?.toDate ? event.date.toDate() : new Date(event.date)) 
+                          ? 'Event has passed' 
+                          : 'Registration closed'}
+                      </span>
+                    )
+                  )}
+                  <button
+                    onClick={() => handleMoreInfo(event)}
+                    className="btn btn-event"
+                  >
+                    MORE INFO
+                  </button>
                 </div>
-
               </div>
             </div>
           ))}
