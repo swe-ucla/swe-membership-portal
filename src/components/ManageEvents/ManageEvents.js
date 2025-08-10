@@ -337,7 +337,7 @@ const ManageEvents = () => {
                 Copy Emails
               </button>
 
-              {auth.currentUser?.uid === event.createdBy ? (
+              {auth.currentUser?.uid === event.createdByUser ? (
                 <button
                   className="btn-delete"
                   onClick={() => deleteEvent(event)}

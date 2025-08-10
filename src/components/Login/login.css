@@ -1,4 +1,47 @@
-/* Login Component Styles */
+/* Updated Login/Register CSS with clean minimal theme - Complete Rewrite */
+:root {
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #6677ca;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
+  --border-radius-lg: 12px;
+  --border-radius-md: 8px;
+  --border-radius-sm: 6px;
+  --box-shadow: 0 4px 20px rgba(69, 37, 162, 0.1);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  --primary-gradient: linear-gradient(
+    135deg,
+    var(--color-purple-dark),
+    var(--color-purple-medium)
+  );
+  --secondary-gradient: linear-gradient(
+    135deg,
+    var(--color-purple-medium),
+    var(--color-pink)
+  );
+  --accent-color: var(--color-purple-medium);
+  --text-color: #333;
+  --light-text: #fff;
+  --bg-color: var(--color-background);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --input-bg: rgba(255, 255, 255, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
+  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
+}
+
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
@@ -10,7 +53,7 @@
 }
 
 .auth-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 200%;
   height: 200%;
@@ -81,75 +124,33 @@
   text-decoration: underline;
 }
 
-label {
-  display: none !important;
+/* Form inputs */
+.form-control,
+input.register-form-control {
+  border: 1px solid #d1d5db;
+  border-radius: 15px;
+  padding: 16px 24px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  transition: var(--transition);
+  font-size: 0.95rem;
+  width: 100%;
+  max-width: 650px;
+  min-width: 500px;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-.auth-inner .form-control,
-.auth-inner input[type="text"],
-.auth-inner input[type="email"],
-.auth-inner input[type="password"] {
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-  border: 1px solid #d1d5db !important;
-  border-radius: 15px !important;
-  padding: 16px 24px !important;
-  margin-bottom: 20px !important;
-  background-color: #fff !important;
-  transition: var(--transition) !important;
-  font-size: 0.95rem !important;
-  width: 100% !important;
-  max-width: 650px !important;
-  min-width: 500px !important;
-  box-sizing: border-box !important;
-  font-family: inherit !important;
+.form-control:focus,
+input.register-form-control:focus {
+  border-color: var(--color-purple-medium);
+  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1);
+  outline: none;
+  background-color: #fff;
 }
 
-.auth-inner .form-control:focus,
-.auth-inner input[type="text"]:focus,
-.auth-inner input[type="email"]:focus,
-.auth-inner input[type="password"]:focus {
-  border-color: var(--color-purple-medium) !important;
-  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1) !important;
-  outline: none !important;
-  background-color: #fff !important;
-}
-
-.auth-inner .form-control::placeholder,
-.auth-inner input[type="text"]::placeholder,
-.auth-inner input[type="email"]::placeholder,
-.auth-inner input[type="password"]::placeholder {
-  color: #9ca3af;
-  font-weight: 400;
-}
-
-.register-form-control {
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-  border: 1px solid #d1d5db !important;
-  border-radius: 15px !important;
-  padding: 16px 24px !important;
-  margin-bottom: 20px !important;
-  background-color: #fff !important;
-  transition: var(--transition) !important;
-  font-size: 0.95rem !important;
-  width: 100% !important;
-  max-width: 650px !important;
-  min-width: 500px !important;
-  box-sizing: border-box !important;
-  font-family: inherit !important;
-}
-
-.register-form-control:focus {
-  border-color: var(--color-purple-medium) !important;
-  box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1) !important;
-  outline: none !important;
-  background-color: #fff !important;
-}
-
-.register-form-control::placeholder {
+.form-control::placeholder,
+input.register-form-control::placeholder {
   color: #9ca3af;
   font-weight: 400;
 }
@@ -297,7 +298,7 @@ label {
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid #e1e5e9;
 }
@@ -306,7 +307,43 @@ label {
   padding: 0 15px;
 }
 
-.google-icon {
+.google-signin-button,
+.auth-inner button[class*="google"],
+.auth-inner [class*="google-signin"],
+.auth-inner [class*="signin-google"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  min-width: 500px !important;
+  padding: 16px 24px !important;
+  background: white !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 15px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  font-size: 0.95rem !important;
+  font-weight: 400 !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+.google-signin-button:hover,
+.auth-inner button[class*="google"]:hover,
+.auth-inner [class*="google-signin"]:hover,
+.auth-inner [class*="signin-google"]:hover {
+  background: #f8f9fa !important;
+  border-color: #d1d5db !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+.google-icon,
+.auth-inner button[class*="google"] img,
+.auth-inner [class*="google-signin"] img,
+.auth-inner [class*="signin-google"] img {
   width: 20px !important;
   height: 20px !important;
   margin-right: 12px !important;
@@ -344,7 +381,7 @@ label {
     padding: 30px 25px;
     margin: 20px;
   }
-  
+
   .auth-inner h3 {
     font-size: 1.5rem;
   }

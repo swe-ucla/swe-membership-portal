@@ -15,15 +15,29 @@ function AddEvent() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  const [popup, setPopup] = useState({
+    isOpen: false,
+    message: "",
+    toast: false,
+    confirm: false,
+    onConfirm: null,
+  });
 
   const handlePopupClose = useCallback(() => {
-    setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+    setPopup({
+      isOpen: false,
+      message: "",
+      toast: false,
+      confirm: false,
+      onConfirm: null,
+    });
   }, []);
 
   const pad = (n) => n.toString().padStart(2, "0");
   const now = new Date(Date.now());
-  const todayDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const todayDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+    now.getDate()
+  )}`;
 
   const [eventData, setEventData] = useState({
     name: "",
@@ -64,159 +78,143 @@ function AddEvent() {
   const location = useLocation();
 
   useEffect(() => {
-    const fetchEventData = async (id) => {
-      try {
-        const eventRef = doc(db, "events", id);
-        const eventSnap = await getDoc(eventRef);
+    // Check if we're in edit mode by looking at the URL query params
+    const params = new URLSearchParams(location.search);
+    const editId = params.get("edit");
 
-        if (eventSnap.exists()) {
-          const data = eventSnap.data();
+    if (editId) {
+      setIsEditMode(true);
+      setEventId(editId);
 
-          // Format date and time separately
-          let formattedDate = "";
-          let extractedStartTime = "";
-          let extractedEndTime = "";
-          
-          if (data.date) {
-            const date = data.date.toDate();
-            // Extract just the date part
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            formattedDate = `${year}-${month}-${day}`;
-            
-            // Extract time from the stored date if startTime isn't separate
-            if (!data.startTime) {
-              const hours = String(date.getHours()).padStart(2, '0');
-              const minutes = String(date.getMinutes()).padStart(2, '0');
-              extractedStartTime = `${hours}:${minutes}`;
-            }
-          }
+      // Try to get event data from localStorage first (it was set in ManageEvents.js)
+      const storedEventData = localStorage.getItem("editEventData");
+      if (storedEventData) {
+        const parsedData = JSON.parse(storedEventData);
 
-          setEventData({
-            name: data.name || "",
-            date: formattedDate,
-            startTime: data.startTime || extractedStartTime,
-            endTime: data.endTime || extractedEndTime,
-            location: data.location || "",
-            committee: data.createdBy || "",
-            description: data.description || "",
-            attendanceCode: data.attendanceCode || "",
-            points: data.points || 1,
-            questions: data.questions || [],
-            signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
-            photo: data.photo || null,
-          });
+        // Initialize form with the event data
+        setEventData({
+          name: parsedData.name || "",
+          date: parsedData.date || "",
+          startTime: parsedData.startTime || "",
+          endTime: parsedData.endTime || "",
+          location: parsedData.location || "",
+          committee: parsedData.createdBy || "",
+          author: parsedData.createdByUser || "",
+          description: parsedData.description || "",
+          attendanceCode: parsedData.attendanceCode || "",
+          points: parsedData.points || 1,
+          questions: parsedData.questions || [],
+          photo: parsedData.photo || null,
+        });
 
-          // Show preview if photo is a URL
-          if (data.photo && typeof data.photo === 'string') {
-            setPhotoPreview(data.photo);
-          } else {
-            setPhotoPreview(null);
-          }
-
-          setUseCustomCode(!!data.attendanceCode);
+        // Show preview if photo is a URL
+        if (parsedData.photo && typeof parsedData.photo === "string") {
+          setPhotoPreview(parsedData.photo);
         } else {
-          setPopup({ isOpen: true, message: "Event not found!", toast: true });
-          setTimeout(() => navigate("/manageevents"), 3000);
+          setPhotoPreview(null);
         }
-      } catch (error) {
-        console.error("Error fetching event data:", error);
-        setPopup({ isOpen: true, message: "Failed to load event data.", toast: true });
-      } finally {
-        setLoading(false);
+
+        // Set custom code checkbox
+        setUseCustomCode(!!parsedData.attendanceCode);
+
+        // Clear localStorage after using it
+        localStorage.removeItem("editEventData");
+      } else {
+        // If not in localStorage, fetch from Firestore
+        fetchEventData(editId);
       }
-    };
+    }
 
-    const fetchUserData = async () => {
-      setLoading(true);
-      auth.onAuthStateChanged(async (user) => {
-        if (user && user.uid) {
-          const docRef = doc(db, "Users", user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setUserDetails(docSnap.data());
-            const userData = docSnap.data();
-            setIsAdmin(userData.isAdmin || false);
+    fetchUserData();
+  }, [location.search]);
+
+  const fetchEventData = async (id) => {
+    try {
+      const eventRef = doc(db, "events", id);
+      const eventSnap = await getDoc(eventRef);
+
+      if (eventSnap.exists()) {
+        const data = eventSnap.data();
+
+        // Format date and time separately
+        let formattedDate = "";
+        let extractedStartTime = "";
+        let extractedEndTime = "";
+
+        if (data.date) {
+          const date = data.date.toDate();
+          // Extract just the date part
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          formattedDate = `${year}-${month}-${day}`;
+
+          // Extract time from the stored date if startTime isn't separate
+          if (!data.startTime) {
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            extractedStartTime = `${hours}:${minutes}`;
           }
-        } else {
-          navigate("/login");
-          setUserDetails(null);
         }
-        setLoading(false);
+
+        setEventData({
+          name: data.name || "",
+          date: formattedDate,
+          startTime: data.startTime || extractedStartTime,
+          endTime: data.endTime || extractedEndTime,
+          location: data.location || "",
+          committee: data.createdBy || "",
+          author: data.createdByUser || "",
+          description: data.description || "",
+          attendanceCode: data.attendanceCode || "",
+          points: data.points || 1,
+          questions: data.questions || [],
+          signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
+          photo: data.photo || null,
+        });
+
+        // Show preview if photo is a URL
+        if (data.photo && typeof data.photo === "string") {
+          setPhotoPreview(data.photo);
+        } else {
+          setPhotoPreview(null);
+        }
+
+        setUseCustomCode(!!data.attendanceCode);
+      } else {
+        setPopup({ isOpen: true, message: "Event not found!", toast: true });
+        setTimeout(() => navigate("/manageevents"), 3000);
+      }
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+      setPopup({
+        isOpen: true,
+        message: "Failed to load event data.",
+        toast: true,
       });
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchData = async () => {
-      // Check if we're in edit mode by looking at the URL query params
-      const params = new URLSearchParams(location.search);
-      const editId = params.get("edit");
-
-      if (editId) {
-        setIsEditMode(true);
-        setEventId(editId);
-
-        // Try to get event data from localStorage first (it was set in ManageEvents.js)
-        const storedEventData = localStorage.getItem("editEventData");
-        if (storedEventData) {
-          const parsedData = JSON.parse(storedEventData);
-
-          // Format date separately from time
-          let formattedDate = "";
-          let extractedStartTime = "";
-          if (parsedData.date) {
-            if (typeof parsedData.date === 'string' && parsedData.date.includes('T')) {
-              // If it's a datetime string, split it
-              const [datePart, timePart] = parsedData.date.split('T');
-              formattedDate = datePart;
-              extractedStartTime = timePart || parsedData.startTime || "";
-            } else {
-              formattedDate = parsedData.date;
-              extractedStartTime = parsedData.startTime || "";
-            }
-          }
-
-          // Initialize form with the event data
-          setEventData({
-            name: parsedData.name || "",
-            date: formattedDate,
-            startTime: extractedStartTime,
-            endTime: parsedData.endTime || "",
-            location: parsedData.location || "",
-            committee: parsedData.createdBy || "",
-            description: parsedData.description || "",
-            attendanceCode: parsedData.attendanceCode || "",
-            points: parsedData.points || 1,
-            questions: parsedData.questions || [],
-            signInOpensHoursBefore: parsedData.signInOpensHoursBefore || 1,
-            photo: parsedData.photo || null,
-          });
-
-          // Show preview if photo is a URL
-          if (parsedData.photo && typeof parsedData.photo === 'string') {
-            setPhotoPreview(parsedData.photo);
-          } else {
-            setPhotoPreview(null);
-          }
-
-          // Set custom code checkbox
-          setUseCustomCode(!!parsedData.attendanceCode);
-
-          // Clear localStorage after using it
-          localStorage.removeItem("editEventData");
-        } else {
-          // If not in localStorage, fetch from Firestore
-          await fetchEventData(editId);
+  const fetchUserData = async () => {
+    setLoading(true);
+    auth.onAuthStateChanged(async (user) => {
+      if (user && user.uid) {
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserDetails(docSnap.data());
+          const userData = docSnap.data();
+          setIsAdmin(userData.isAdmin || false);
         }
+      } else {
+        navigate("/login");
+        setUserDetails(null);
       }
-
-      await fetchUserData();
-    };
-
-    fetchData();
-  }, [location.search, navigate]);
-
-
+      setLoading(false);
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -225,7 +223,11 @@ function AddEvent() {
     if (name === "description") {
       const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount > 180) {
-        setPopup({ isOpen: true, message: "Description cannot exceed 180 words.", toast: true });
+        setPopup({
+          isOpen: true,
+          message: "Description cannot exceed 180 words.",
+          toast: true,
+        });
         return;
       }
     }
@@ -268,7 +270,11 @@ function AddEvent() {
         type === "dropdown") &&
       options.every((opt) => opt.trim() === "")
     ) {
-      setPopup({ isOpen: true, message: "Please fill in at least one option.", toast: true });
+      setPopup({
+        isOpen: true,
+        message: "Please fill in at least one option.",
+        toast: true,
+      });
       return;
     }
 
@@ -310,7 +316,11 @@ function AddEvent() {
       !eventData.location ||
       !eventData.committee
     ) {
-      setPopup({ isOpen: true, message: "Please fill in all required fields.", toast: true });
+      setPopup({
+        isOpen: true,
+        message: "Please fill in all required fields.",
+        toast: true,
+      });
       console.log("missing fields: ", eventData);
       return;
     }
@@ -319,7 +329,15 @@ function AddEvent() {
       // Combine date and startTime for event timestamp
       const [year, month, day] = eventData.date.split("-");
       const [startHours = 0, startMinutes = 0] = eventData.startTime.split(":");
-      const eventStartDate = new Date(year, month - 1, day, startHours, startMinutes, 0, 0);
+      const eventStartDate = new Date(
+        year,
+        month - 1,
+        day,
+        startHours,
+        startMinutes,
+        0,
+        0
+      );
       const timestamp = Timestamp.fromDate(eventStartDate);
 
       let attendanceCode = useCustomCode
@@ -327,7 +345,11 @@ function AddEvent() {
         : (isEditMode && eventData.attendanceCode) || generateAttendanceCode();
 
       if (useCustomCode && attendanceCode.length !== 6) {
-        setPopup({ isOpen: true, message: "Custom attendance code must be exactly 6 letters.", toast: true });
+        setPopup({
+          isOpen: true,
+          message: "Custom attendance code must be exactly 6 letters.",
+          toast: true,
+        });
         return;
       }
 
@@ -342,7 +364,11 @@ function AddEvent() {
           body: formData,
         });
         if (!response.ok) {
-          setPopup({ isOpen: true, message: "Failed to upload event photo.", toast: true });
+          setPopup({
+            isOpen: true,
+            message: "Failed to upload event photo.",
+            toast: true,
+          });
           return;
         }
         const data = await response.json();
@@ -361,6 +387,7 @@ function AddEvent() {
           endTime: eventData.endTime,
           location: eventData.location,
           createdBy: eventData.committee,
+          createdByUser: auth.currentUser.uid,
           description: eventData.description,
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
@@ -370,8 +397,14 @@ function AddEvent() {
           lastUpdated: new Date().toISOString(),
         });
 
-        setPopup({ isOpen: true, message: "Event updated successfully!", toast: true });
-        setTimeout(() => { navigate("/manageevents"); }, 3000);
+        setPopup({
+          isOpen: true,
+          message: "Event updated successfully!",
+          toast: true,
+        });
+        setTimeout(() => {
+          navigate("/manageevents");
+        }, 3000);
       } else {
         // Create new event
         const newEventId = `${Date.now()}`;
@@ -383,9 +416,8 @@ function AddEvent() {
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           location: eventData.location,
-          committee: eventData.committee,
-          description: eventData.description,
-          createdBy: auth.currentUser.uid,
+          createdBy: eventData.committee,
+          createdByUser: auth.currentUser.uid,
           createdAt: new Date().toISOString(),
           attendanceCode: attendanceCode,
           points: Number(eventData.points),
@@ -394,8 +426,14 @@ function AddEvent() {
           photo: photoURL,
         });
 
-        setPopup({ isOpen: true, message: "Event created successfully!", toast: true });
-        setTimeout(() => { navigate("/manageevents"); }, 3000);
+        setPopup({
+          isOpen: true,
+          message: "Event created successfully!",
+          toast: true,
+        });
+        setTimeout(() => {
+          navigate("/manageevents");
+        }, 3000);
       }
 
       // Reset form
@@ -412,6 +450,7 @@ function AddEvent() {
         questions: [],
         signInOpensHoursBefore: 1,
         photo: null,
+        author: "",
       });
       setPhotoPreview(null);
       setUseCustomCode(false);
@@ -420,7 +459,13 @@ function AddEvent() {
         `Error ${isEditMode ? "updating" : "creating"} event:`,
         error
       );
-      setPopup({ isOpen: true, message: `Failed to ${isEditMode ? "update" : "create"} the event. Try again later.`, toast: true });
+      setPopup({
+        isOpen: true,
+        message: `Failed to ${
+          isEditMode ? "update" : "create"
+        } the event. Try again later.`,
+        toast: true,
+      });
     }
   };
 
@@ -495,8 +540,15 @@ function AddEvent() {
         </div>
 
         <div className="form-group event-photo-upload">
-          <label className="form-label" style={{ marginBottom: '0.4rem', display: 'block' }}>Event Photo:</label>
-          <label htmlFor="event-photo-input" className="upload-label">Choose Photo</label>
+          <label
+            className="form-label"
+            style={{ marginBottom: "0.4rem", display: "block" }}
+          >
+            Event Photo:
+          </label>
+          <label htmlFor="event-photo-input" className="upload-label">
+            Choose Photo
+          </label>
           <input
             id="event-photo-input"
             type="file"
@@ -508,10 +560,7 @@ function AddEvent() {
           )}
           {photoPreview && (
             <div className="event-photo-preview">
-              <img
-                src={photoPreview}
-                alt="Event Preview"
-              />
+              <img src={photoPreview} alt="Event Preview" />
             </div>
           )}
         </div>
@@ -528,11 +577,15 @@ function AddEvent() {
           />
         </div>
 
-        <div className="form-group" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+        <div
+          className="form-group"
+          style={{ display: "flex", gap: "1rem", alignItems: "flex-end" }}
+        >
           <div style={{ flex: 1 }}>
             <label className="form-label">Start Time:</label>
             <input
               type="time"
+              style={{ minWidth: "0" }}
               name="startTime"
               value={eventData.startTime}
               onChange={handleInputChange}
@@ -543,6 +596,7 @@ function AddEvent() {
           <div style={{ flex: 1 }}>
             <label className="form-label">End Time:</label>
             <input
+              style={{ minWidth: "0" }}
               type="time"
               name="endTime"
               value={eventData.endTime}
@@ -603,8 +657,8 @@ function AddEvent() {
             min="1"
             max="24"
             value={eventData.signInOpensHoursBefore}
-            onChange={e =>
-              setEventData(prev => ({
+            onChange={(e) =>
+              setEventData((prev) => ({
                 ...prev,
                 signInOpensHoursBefore: Number(e.target.value),
               }))
@@ -706,7 +760,7 @@ function AddEvent() {
           <div className="add-question-form">
             <input
               type="text"
-              className="form-control"
+              /*className="form-control"*/
               placeholder="Enter new question"
               value={newQuestion.text}
               onChange={(e) =>
@@ -717,6 +771,8 @@ function AddEvent() {
               <label>Question Type:</label>
               <select
                 className="form-control"
+                type="text"
+                style={{ width: "100%", minWidth: "0", maxWidth: "none" }}
                 value={newQuestion.type}
                 onChange={(e) =>
                   setNewQuestion((prev) => ({

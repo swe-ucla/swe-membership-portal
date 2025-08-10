@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import './Onboarding.css';
-import '../Login/login.css';
-import SignInwithGoogle from '../signInWIthGoogle';
-import { auth, db } from '../firebase';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import "./Onboarding.css";
+import "../Login/login.css";
+import SignInwithGoogle from "../signInWIthGoogle";
+import { auth, db } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const BEAR_BANNER = process.env.PUBLIC_URL + '/onboarding-banner.svg';
+const BEAR_BANNER = process.env.PUBLIC_URL + "/onboarding-banner.svg";
 
 const adminEmails = [
   "ewi.swe.ucla@gmail.com",
@@ -30,7 +34,7 @@ const adminEmails = [
 ];
 
 function Onboarding() {
-  const [form, setForm] = useState('login'); // 'login' | 'register' | 'forgot'
+  const [form, setForm] = useState("login"); // 'login' | 'register' | 'forgot'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
@@ -71,9 +75,13 @@ function Onboarding() {
       } else if (error.code === "auth/missing-password") {
         setPasswordError("Please enter a password.");
       } else if (error.code === "auth/too-many-requests") {
-        setErrorMessage("Too many failed login attempts. Please try again later.");
+        setErrorMessage(
+          "Too many failed login attempts. Please try again later."
+        );
       } else {
-        setErrorMessage("An error occurred. Please check your email and password.");
+        setErrorMessage(
+          "An error occurred. Please check your email and password."
+        );
       }
       toast.error("Login failed", { position: "top-center" });
     }
@@ -83,22 +91,28 @@ function Onboarding() {
   const handleEmailChange = (e) => {
     const inputEmail = e.target.value;
     setEmail(inputEmail);
-    if (form === 'register' && inputEmail && !inputEmail.endsWith('g.ucla.edu')) {
-      setError('Email must end with g.ucla.edu');
+    if (
+      form === "register" &&
+      inputEmail &&
+      !inputEmail.endsWith("g.ucla.edu")
+    ) {
+      setError("Email must end with g.ucla.edu");
       return;
     } else {
-      setError('');
+      setError("");
     }
   };
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!email.endsWith('g.ucla.edu')) {
-      setError('Email must end with g.ucla.edu');
+    if (!email.endsWith("g.ucla.edu")) {
+      setError("Email must end with g.ucla.edu");
       return;
     }
     if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
-      toast.error('Password must be at least 6 characters long', { position: "top-center" });
+      setPasswordError("Password must be at least 6 characters long");
+      toast.error("Password must be at least 6 characters long", {
+        position: "top-center",
+      });
       return;
     }
     try {
@@ -114,14 +128,19 @@ function Onboarding() {
           swePoints: 10,
           isAdmin: isAdmin,
           attendedEvents: [],
-          rsvpEvents: []
+          rsvpEvents: [],
         });
       }
       navigate("/profile");
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        setError('This email is already registered. Please use a different email or log in.');
-        toast.error('This email is already registered. Please use a different email or log in.', { position: "top-center" });
+      if (error.code === "auth/email-already-in-use") {
+        setError(
+          "This email is already registered. Please use a different email or log in."
+        );
+        toast.error(
+          "This email is already registered. Please use a different email or log in.",
+          { position: "top-center" }
+        );
       } else {
         toast.error(error.message, { position: "top-center" });
       }
@@ -133,7 +152,9 @@ function Onboarding() {
     setErrorMessage("");
     if (!resetEmail) {
       setErrorMessage("Please enter your email address");
-      toast.error("Please enter your email address", { position: "top-center" });
+      toast.error("Please enter your email address", {
+        position: "top-center",
+      });
       return;
     }
     try {
@@ -154,7 +175,7 @@ function Onboarding() {
 
   const toggleResetForm = (e) => {
     e.preventDefault();
-    setForm(form === 'forgot' ? 'login' : 'forgot');
+    setForm(form === "forgot" ? "login" : "forgot");
     setResetEmail(email);
     setResetLinkSent(false);
     setErrorMessage("");
@@ -164,24 +185,34 @@ function Onboarding() {
     <div className="onboarding-split-layout">
       <div className="onboarding-left-panel">
         <div>
-          <div style={{ textAlign: 'center', marginBottom: '20px'}}>
-            <img src={process.env.PUBLIC_URL + '/purple-swe-logo.svg'} alt="SWE Logo" style={{ height: '80px' }} />
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <img
+              src={process.env.PUBLIC_URL + "/purple-swe-logo.svg"}
+              alt="SWE Logo"
+              style={{ height: "80px" }}
+            />
           </div>
           <div>
-            {form === 'login' && (
+            {form === "login" && (
               <form onSubmit={handleLogin}>
                 <h3>Welcome Back!</h3>
                 <p className="forgot-password text-right">
-                  Don't have an account yet? <a href="#" onClick={() => setForm('register')}>Sign up now</a>
+                  Don't have an account yet?{" "}
+                  <a href="#" onClick={() => setForm("register")}>
+                    Sign up now
+                  </a>
                 </p>
                 {errorMessage && !isGoogleSignIn && (
-                  <div className="alert alert-danger" role="alert">{errorMessage}</div>
+                  <div className="alert alert-danger" role="alert">
+                    {errorMessage}
+                  </div>
                 )}
                 <div className="mb-3">
-                  <label>Email address</label>
                   <input
                     type="email"
-                    className={`form-control${emailError ? ' error-input' : ''}`}
+                    className={`form-control${
+                      emailError ? " error-input" : ""
+                    }`}
                     placeholder="Enter email"
                     value={email}
                     onChange={(e) => {
@@ -189,13 +220,17 @@ function Onboarding() {
                       if (emailError) setEmailError("");
                     }}
                   />
-                  {emailError && <div className="input-error">{emailError}</div>}
+                  {emailError && (
+                    <div className="input-error">{emailError}</div>
+                  )}
                 </div>
                 <div className="mb-3">
-                  <label>Password</label>
                   <input
                     type="password"
-                    className={`form-control${passwordError ? ' error-input' : ''}`}
+                    className={`form-control${
+                      passwordError ? " error-input" : ""
+                    }`}
+                    style={{ marginBottom: "20px" }}
                     placeholder="Enter password"
                     value={password}
                     onChange={(e) => {
@@ -203,50 +238,58 @@ function Onboarding() {
                       if (passwordError) setPasswordError("");
                     }}
                   />
-                  {passwordError && <div className="input-error">{passwordError}</div>}
+                  {passwordError && (
+                    <div className="input-error">{passwordError}</div>
+                  )}
                   <div className="forgot-password-right">
-                    <a href="#" onClick={toggleResetForm}>Forgot password?</a>
+                    <a href="#" onClick={toggleResetForm}>
+                      Forgot password?
+                    </a>
                   </div>
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-primary">Submit</button>
+                  <button type="submit" className="btn btn-primary">
+                    Submit
+                  </button>
                 </div>
-                <SignInwithGoogle 
+                <SignInwithGoogle
                   onGoogleSignInStart={() => {
                     setIsGoogleSignIn(true);
                     setErrorMessage("");
-                  }} 
+                  }}
                   onGoogleSignInEnd={() => setIsGoogleSignIn(false)}
                 />
               </form>
             )}
-            {form === 'register' && (
+            {form === "register" && (
               <form onSubmit={handleRegister}>
                 <h3>Create your account</h3>
                 <p className="forgot-password text-right">
-                  Already registered? <a href="#" onClick={() => setForm('login')}>Login</a>
+                  Already registered?{" "}
+                  <a href="#" onClick={() => setForm("login")}>
+                    Login
+                  </a>
                 </p>
                 <div className="mb-3">
-                  <label>First name</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="register-form-control"
                     placeholder="First name"
+                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setFname(e.target.value)}
                     required
                   />
                 </div>
                 <div className="mb-3">
-                  <label>Last name</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="register-form-control"
                     placeholder="Last name"
+                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setLname(e.target.value)}
                   />
                 </div>
                 <div className="mb-3">
-                  <label>Email address</label>
                   <input
                     type="email"
                     className="form-control"
@@ -258,23 +301,35 @@ function Onboarding() {
                   {error && <div className="text-danger">{error}</div>}
                 </div>
                 <div className="mb-3">
-                  <label>Password</label>
                   <input
                     type="password"
                     className="form-control"
                     placeholder="Enter password"
-                    onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setPasswordError("");
+                    }}
                     required
                   />
-                  {passwordError && <div className="text-danger">{passwordError}</div>}
+                  {passwordError && (
+                    <div className="text-danger">{passwordError}</div>
+                  )}
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-primary">Sign Up</button>
+                  <button type="submit" className="btn btn-primary">
+                    Sign Up
+                  </button>
                 </div>
-                <SignInwithGoogle onGoogleSignInStart={() => { setIsGoogleSignIn(true); setErrorMessage(""); }} onGoogleSignInEnd={() => setIsGoogleSignIn(false)} />
+                <SignInwithGoogle
+                  onGoogleSignInStart={() => {
+                    setIsGoogleSignIn(true);
+                    setErrorMessage("");
+                  }}
+                  onGoogleSignInEnd={() => setIsGoogleSignIn(false)}
+                />
               </form>
             )}
-            {form === 'forgot' && (
+            {form === "forgot" && (
               <div>
                 {!resetLinkSent ? (
                   <form onSubmit={handleForgotPassword}>
@@ -290,13 +345,20 @@ function Onboarding() {
                       />
                     </div>
                     {errorMessage && (
-                      <div className="alert alert-danger" role="alert">{errorMessage}</div>
+                      <div className="alert alert-danger" role="alert">
+                        {errorMessage}
+                      </div>
                     )}
                     <div className="d-grid">
-                      <button type="submit" className="btn btn-primary">Send Reset Link</button>
+                      <button type="submit" className="btn btn-primary">
+                        Send Reset Link
+                      </button>
                     </div>
                     <div className="back-to-login">
-                      Back to <a href="#" onClick={() => setForm('login')}>Login</a>
+                      Back to{" "}
+                      <a href="#" onClick={() => setForm("login")}>
+                        Login
+                      </a>
                     </div>
                   </form>
                 ) : (
@@ -304,11 +366,22 @@ function Onboarding() {
                     <h3>Check Your Email</h3>
                     <div className="alert alert-success">
                       <p>We've sent a password reset link to:</p>
-                      <p className="email-sent"><strong>{resetEmail}</strong></p>
-                      <p>Please check your inbox and follow the instructions to reset your password.</p>
+                      <p className="email-sent">
+                        <strong>{resetEmail}</strong>
+                      </p>
+                      <p>
+                        Please check your inbox and follow the instructions to
+                        reset your password.
+                      </p>
                     </div>
                     <div className="d-grid mt-3">
-                      <a href="#" onClick={() => setForm('login')} className="btn btn-primary">Back to Login</a>
+                      <a
+                        href="#"
+                        onClick={() => setForm("login")}
+                        className="btn btn-primary"
+                      >
+                        Back to Login
+                      </a>
                     </div>
                   </div>
                 )}
