@@ -310,6 +310,10 @@ function UpcomingEvents() {
   useEffect(() => {
     fetchUserData();
     fetchEvents();
+    document.body.classList.add('events-page');
+    return () => {
+      document.body.classList.remove('events-page');
+    };
   }, []);
 
   useEffect(() => {

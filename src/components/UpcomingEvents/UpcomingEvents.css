@@ -1,26 +1,95 @@
-/* UpcomingEvents page styles - preserving original structure with updated styling */
+/* UpcomingEvents.css - uses shared variables from styles/variables.css */
+
+/* Background layering 
+   - SVG stars + bear/moon live on ::after so it spans the whole scrollable area
+*/
+
+/* Remove all margins and padding to eliminate white gaps */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Apply background only when events page is active */
+body.events-page {
+  background: linear-gradient(180deg, #230F55 0%, #3F2188 25%, #5635A8 50%, #9066F7 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Decorative elements that grow with content */
+body.events-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/public/BackgroundOnly.svg');
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100vw auto;
+  pointer-events: none;
+  z-index: -1;
+  min-height: 100%;
+}
+
+.App {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 :root {
-  --color-purple-dark: #4525a2;
-  --color-purple-medium: #6677ca;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
+  --color-purple-dark: #4525A2;
+  --color-purple-medium: #6677CA;
+  --color-purple-light: #A6A7E3;
+  --color-pink: #E85F7A;
+  --color-pink-dark: #890C50;
+  --color-background: #F5F7FA;
   --border-radius-lg: 20px;
   --border-radius-md: 15px;
   --border-radius-sm: 12px;
   --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  
+  --bg-safe-top: 2in;        /* keep stars visible at top */
+  --bg-art-bottom: 820px;    /* reserved space for bear + moon at bottom */
+  --bg-safe-bottom: var(--bg-art-bottom);
 }
 
 .events-container {
   min-height: 100vh;
   padding: 1.5rem;
+  /* transparent so SVG shows; gradient is drawn via ::before */
+  background-color: transparent !important;
   color: white;
-  /*TODO: replace after background is implemented*/
-  /*background-color: var(--color-background);*/
-  background-color: var(--color-purple-dark);
+  /* push cards down so stars show; keep them above bottom art */
+  padding-top: var(--bg-safe-top);
+  padding-bottom: var(--bg-safe-bottom);
+  position: relative; /* anchor ::before/::after layers */
+  /* Force full viewport width and remove gaps */
+  width: 100vw;
+  margin: 0;
+  margin-left: calc(-50vw + 50%);
+  box-sizing: border-box;
 }
+
+/* Remove container background since it's now on body */
+.events-container::after {
+  display: none;
+}
+
+/* Remove gradient overlay */
+.events-container::before {
+  display: none;
+}
+
+/* Ensure all page content (cards, header, etc.) is above the bg layers */
+.events-container > * { position: relative; z-index: 2; }
 
 .events-header {
   display: flex;
@@ -37,33 +106,36 @@
 
 .committee-filter .form-select {
   padding: 0.5rem 1rem;
-  border: 2px solid var(--color-purple-light);
+  border: 1.5px solid white;
   border-radius: 8px;
-  background: white;
-  color: var(--color-purple-dark);
+  background: transparent;
+  color: white;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
   min-width: 180px;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="white" d="M6 9L1.5 4.5h9L6 9z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  padding-right: 2.5rem;
 }
 
 .committee-filter .form-select:focus {
   outline: none;
-  border-color: var(--color-purple-medium);
-  box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.1);
+  border-color: white;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.committee-filter .form-select option {
+  background: var(--color-purple-dark);
+  color: white;
 }
 
 .events-title {
   font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: white;
   margin-bottom: 1rem;
 }
 
@@ -84,6 +156,8 @@
   margin-bottom: 1.2rem;
   position: relative;
 }
+
+
 
 /* Fix for the title and date overlap */
 .event-card h4 {
@@ -154,7 +228,7 @@
 .event-date-time {
   display: inline-flex;
   align-items: center;
-
+  
   padding: 0.12rem 0.6rem 0.12rem 0rem;
   margin: 0.1rem 0 0.2rem 0;
   width: fit-content;
@@ -168,10 +242,10 @@
 
 /* Today badge styling */
 /* .today-badge {
-    background: var(--color-purple-light) !important;
-    color: white !important;
-    font-weight: 700;
-  } */
+  background: var(--color-purple-light) !important;
+  color: white !important;
+  font-weight: 700;
+} */
 
 /* Completely remove the Today indicator overlay */
 .today-event::before {
@@ -237,11 +311,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
   color: white;
   box-shadow: 0 4px 12px rgba(69, 37, 162, 0.2);
 }
@@ -291,11 +361,7 @@
 }
 
 .btn-add-event {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
   color: white;
   border: none;
   padding: 10px 20px;
@@ -358,11 +424,7 @@
 
 /* Alternative header layout if using flexbox structure */
 .event-header {
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-dark),
-    var(--color-purple-medium)
-  );
+  background: linear-gradient(135deg, var(--color-purple-dark), var(--color-purple-medium));
   color: white;
   padding: 1rem;
   position: relative;
@@ -436,40 +498,40 @@ input[type="time"]:focus {
 @media (max-width: 768px) {
   .events-container {
     padding: 1rem;
+    padding-top: calc(var(--bg-safe-top) - 0.4in); /* slightly closer on phones */
   }
-
+  
   .event-cards-container {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-
+  
   .event-card {
     margin-bottom: 1rem;
   }
-
+  
   .event-card h4 {
     font-size: 1.2rem;
     padding: 0.8rem;
     padding-right: 100px; /* Slightly smaller padding for mobile */
   }
-
+  
   .event-card-content {
     padding: 1rem;
   }
-
+  
   .event-date-badge {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
     top: 0.6rem;
     right: 0.6rem;
   }
-
-  .loading-message,
-  .empty-message {
+  
+  .loading-message, .empty-message {
     padding: 2rem;
     margin: 2rem auto;
   }
-
+  
   .form-row {
     flex-direction: column;
     gap: 0;
@@ -481,12 +543,12 @@ input[type="time"]:focus {
   .event-cards-container {
     display: block;
   }
-
+  
   .event-card h4 {
     padding-right: 90px;
     font-size: 1.1rem;
   }
-
+  
   .event-detail strong {
     min-width: 80px;
   }
@@ -521,7 +583,7 @@ input[type="time"]:focus {
   bottom: 1rem;
   background: white;
   color: var(--color-purple-dark);
-  box-shadow: 0 2px 8px rgba(69, 37, 162, 0.1);
+  box-shadow: 0 2px 8px rgba(69, 37, 162, 0.10);
   border: 1.5px solid #e0e0fe;
   border-radius: 999px;
   padding: 0.18rem 0.9rem 0.18rem 0.7rem;

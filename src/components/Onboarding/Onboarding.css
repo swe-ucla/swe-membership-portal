@@ -1,7 +1,7 @@
 .onboarding-container {
   display: flex;
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--color-background);
 }
 
 .onboarding-left {
@@ -27,7 +27,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #4525A2;
+  color: var(--color-purple-dark);
   text-align: center;
 }
 
@@ -41,16 +41,16 @@
 .onboarding-toggle button {
   background: none;
   border: none;
-  color: #6677CA;
+  color: var(--color-purple-medium);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   padding: 0 8px;
-  transition: color 0.2s;
+  transition: var(--transition);
 }
 
 .onboarding-toggle button:hover {
-  color: #E85F7A;
+  color: var(--color-pink);
   text-decoration: underline;
 }
 

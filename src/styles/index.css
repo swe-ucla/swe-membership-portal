@@ -1,0 +1,5 @@
+/* Main styles entry point - imports all shared styles */
+@import './variables.css';
+@import './buttons.css';
+@import './forms.css';
+@import './animations.css';
