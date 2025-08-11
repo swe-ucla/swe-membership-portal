@@ -3,6 +3,9 @@ import { db, auth } from "../firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
+import goldMedal from "../../assets/leaderboard-gold-medal.svg";
+import silverMedal from "../../assets/leaderboard-silver-medal.svg";
+import bronzeMedal from "../../assets/leaderboard-bronze-medal.svg";
 
 function Leaderboard() {
   const [users, setUsers] = useState([]);
@@ -116,7 +119,27 @@ function Leaderboard() {
                 }`}
               >
                 <div className="rank-column">
-                  <span className="rank-number">{user.rank}</span>
+                  {user.rank === 1 ? (
+                    <img
+                      src={goldMedal}
+                      alt="Gold Medal"
+                      className="medal-icon"
+                    />
+                  ) : user.rank === 2 ? (
+                    <img
+                      src={silverMedal}
+                      alt="Silver Medal"
+                      className="medal-icon"
+                    />
+                  ) : user.rank === 3 ? (
+                    <img
+                      src={bronzeMedal}
+                      alt="Bronze Medal"
+                      className="medal-icon"
+                    />
+                  ) : (
+                    <span className="rank-number">{user.rank}</span>
+                  )}
                 </div>
                 <div className="name-column">
                   <div className="user-avatar">

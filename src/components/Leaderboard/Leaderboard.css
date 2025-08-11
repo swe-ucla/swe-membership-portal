@@ -13,19 +13,25 @@
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/*TODO: fix fit + sizing for responsive UI*/
 .leaderboard-background-container {
   background-image: url("/public/assets/leaderboard-background.svg");
   background-size: cover;
   background-position: center;
   margin: none;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0.000000001px solid white; /*fill the container*/
 }
 
 .leaderboard-container {
   max-width: 50%;
-  margin: 2rem auto;
+  margin: 30rem auto 2rem;
   padding: 2rem;
   background-color: white;
-  border: 1px solid red;
+  border-radius: 1rem;
 }
 
 .leaderboard-title {
@@ -114,6 +120,11 @@
   font-size: 1.2rem;
 }
 
+.medal-icon {
+  width: 36px;
+  height: 36px;
+}
+
 .rank-number {
   width: 36px;
   height: 36px;
@@ -121,34 +132,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: #f0f0f0;
+
   color: #333;
-}
-
-/* Medal icons for top 3 */
-
-.leaderboard-item:nth-child(1) .rank-number {
-  background-image: url("/public/assets/leaderboard-gold-medal.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px 24px;
-  color: transparent;
-}
-
-.leaderboard-item:nth-child(2) .rank-number {
-  background-image: url("/public/assets/leaderboard-silver-medal.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px 24px;
-  color: transparent;
-}
-
-.leaderboard-item:nth-child(3) .rank-number {
-  background-image: url("/public/assets/leaderboard-bronze-medal.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px 24px;
-  color: transparent;
 }
 
 .name-column {
@@ -224,6 +209,9 @@
   .leaderboard-container {
     margin: 1rem;
     padding: 1rem;
+    max-width: 80%;
+
+    padding: 2rem;
   }
 
   .leaderboard-title {
