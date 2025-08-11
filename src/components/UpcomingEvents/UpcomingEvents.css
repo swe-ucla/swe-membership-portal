@@ -13,12 +13,27 @@ body {
 
 /* Apply background only when events page is active */
 body.events-page {
+  background: linear-gradient(180deg, #230F55 0%, #3F2188 25%, #5635A8 50%, #9066F7 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Decorative elements that grow with content */
+body.events-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image: url('/public/BackgroundOnly.svg');
   background-repeat: no-repeat;
   background-position: 0 0;
-  background-size: 100vw 300vh;
-  background-attachment: scroll;
-  min-height: 300vh;
+  background-size: 100vw auto;
+  pointer-events: none;
+  z-index: -1;
+  min-height: 100%;
 }
 
 .App {
