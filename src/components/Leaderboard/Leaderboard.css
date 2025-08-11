@@ -1,12 +1,37 @@
-/* Leaderboard.css - uses shared variables from styles/variables.css */
+/* Leaderboard.css with modern purple theme */
+:root {
+  --color-purple-dark: #4525a2;
+  --color-purple-medium: #895fd8;
+  --color-purple-light: #a6a7e3;
+  --color-pink: #e85f7a;
+  --color-pink-dark: #890c50;
+  --color-background: #f5f7fa;
+  --border-radius-lg: 20px;
+  --border-radius-md: 15px;
+  --border-radius-sm: 12px;
+  --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/*TODO: fix fit + sizing for responsive UI*/
+.leaderboard-background-container {
+  background-image: url("/public/assets/leaderboard-background.svg");
+  background-size: cover;
+  background-position: center;
+  margin: none;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0.000000001px solid white; /*fill the container*/
+}
 
 .leaderboard-container {
-  max-width: 1000px;
-  margin: 2rem auto;
+  max-width: 50%;
+  margin: 30rem auto 2rem;
   padding: 2rem;
-  background-color: #ffffff;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--box-shadow);
+  background-color: white;
+  border-radius: 1rem;
 }
 
 .leaderboard-title {
@@ -14,8 +39,7 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 2rem;
-  color: var(--color-purple-dark);
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
+  color: var(--color-purple-medium);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -32,9 +56,16 @@
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
   border-radius: 50%;
-  border-top-color: var(--color-purple-dark);
+  border-top-color: var(--color-purple-medium);
   animation: spin 1s ease-in-out infinite;
   margin: 0 auto 1rem;
+}
+
+.leaderboard-header-divider {
+  width: 100%;
+  margin: auto;
+  background-color: #b4b4b4;
+  height: 2px;
 }
 
 @keyframes spin {
@@ -48,14 +79,12 @@
   width: 100%;
   border-radius: var(--border-radius-md);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(69, 37, 162, 0.08);
 }
 
 .leaderboard-header {
+  color: var(--color-purple-medium);
   display: grid;
   grid-template-columns: 80px 1fr 120px;
-  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
-  color: white;
   font-weight: 600;
   padding: 1rem;
 }
@@ -91,6 +120,11 @@
   font-size: 1.2rem;
 }
 
+.medal-icon {
+  width: 36px;
+  height: 36px;
+}
+
 .rank-number {
   width: 36px;
   height: 36px;
@@ -98,7 +132,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: #f0f0f0;
+
   color: #333;
 }
 
@@ -161,6 +195,8 @@
   padding-right: 2rem;
   font-weight: 700;
   color: var(--color-purple-dark);
+  font-weight: 600;
+  font-size: 1.2rem;
 }
 
 .points-value {
@@ -168,33 +204,36 @@
   font-size: 1.2rem;
 }
 
-
 /* Responsive styles */
 @media (max-width: 768px) {
   .leaderboard-container {
     margin: 1rem;
     padding: 1rem;
+    max-width: 80%;
+
+    padding: 2rem;
   }
-  
+
   .leaderboard-title {
     font-size: 1.5rem;
     margin-top: 1rem;
   }
-  
-  .leaderboard-header, .leaderboard-row {
+
+  .leaderboard-header,
+  .leaderboard-row {
     grid-template-columns: 60px 1fr 90px;
     padding: 0.75rem;
   }
-  
+
   .user-avatar {
     width: 30px;
     height: 30px;
   }
-  
+
   .user-name {
     font-size: 0.9rem;
   }
-  
+
   .points-value {
     font-size: 1rem;
   }
@@ -204,8 +243,9 @@
   .user-major {
     display: none;
   }
-  
-  .leaderboard-header, .leaderboard-row {
+
+  .leaderboard-header,
+  .leaderboard-row {
     grid-template-columns: 50px 1fr 80px;
     padding: 0.75rem 0.5rem;
   }
