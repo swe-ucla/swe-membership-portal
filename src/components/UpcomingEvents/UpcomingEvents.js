@@ -38,6 +38,10 @@ function UpcomingEvents() {
     isOpen: false,
     event: null,
   });
+  
+  // Page navigation state
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 9;
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -307,6 +311,20 @@ function UpcomingEvents() {
     setEventDetailsPopup({ isOpen: false, event: null });
   };
 
+  // Page navigation logic
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+
   useEffect(() => {
     fetchUserData();
     fetchEvents();
@@ -324,6 +342,8 @@ function UpcomingEvents() {
         events.filter((event) => event.createdBy === selectedCommittee)
       );
     }
+    // Reset to first page when filtering changes
+    setCurrentPage(1);
   }, [selectedCommittee, events]);
 
   return (
@@ -354,7 +374,7 @@ function UpcomingEvents() {
           </div>
         ) : filteredEvents.length > 0 ? (
           <div className="event-cards-container">
-            {filteredEvents.map((event) => (
+            {currentEvents.map((event) => (
               <div
                 key={event.id}
                 className={`event-card ${
@@ -477,9 +497,37 @@ function UpcomingEvents() {
               </div>
             ))}
           </div>
+          
         ) : (
           <div className="empty-message">
             <p>No upcoming events.</p>
+          </div>
+        )}
+        
+        {/* Page navigation buttons */}
+        {totalPages > 1 && (
+          <div className="page-nav-container">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="btn btn-page-nav"
+            >
+              <MaterialSymbol icon="arrow_back" size={20} />
+              PREVIOUS PAGE
+            </button>
+            
+            <span className="page-nav-info">
+              PAGE {currentPage} OF {totalPages}
+            </span>
+            
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="btn btn-page-nav"
+            >
+              NEXT PAGE
+              <MaterialSymbol icon="arrow_forward" size={20} />
+            </button>
           </div>
         )}
         <Popup
