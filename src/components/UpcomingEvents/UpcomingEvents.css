@@ -29,11 +29,13 @@ body.events-page::before {
   bottom: 0;
   background-image: url('/public/BackgroundOnly.svg');
   background-repeat: no-repeat;
-  background-position: 0 0;
+  background-position: 0 80%;
   background-size: 100vw auto;
   pointer-events: none;
   z-index: -1;
   min-height: 100%;
+  /* Ensure background extends to cover all content */
+  background-attachment: local;
 }
 
 .App {
@@ -69,13 +71,15 @@ body.events-page::before {
   color: white;
   /* push cards down so stars show; keep them above bottom art */
   padding-top: var(--bg-safe-top);
-  padding-bottom: var(--bg-safe-bottom);
+  padding-bottom: calc(var(--bg-safe-bottom) + 100px);
   position: relative; /* anchor ::before/::after layers */
   /* Force full viewport width and remove gaps */
   width: 100vw;
   margin: 0;
   margin-left: calc(-50vw + 50%);
   box-sizing: border-box;
+  /* Ensure container extends enough to show bear image on all pages */
+  min-height: calc(100vh + 500px);
 }
 
 /* Remove container background since it's now on body */

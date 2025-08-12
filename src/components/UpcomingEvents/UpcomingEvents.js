@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { db, auth } from "../firebase";
 import {
   collection,
@@ -42,6 +42,7 @@ function UpcomingEvents() {
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 9;
+  const eventsContainerRef = useRef(null);
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -319,10 +320,26 @@ function UpcomingEvents() {
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    // Auto scroll to top when changing pages
+    setTimeout(() => {
+      if (eventsContainerRef.current) {
+        eventsContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    }, 100);
   };
 
   const handlePrevPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 1));
+    // Auto scroll to top when changing pages
+    setTimeout(() => {
+      if (eventsContainerRef.current) {
+        eventsContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    }, 100);
   };
 
   useEffect(() => {
@@ -348,7 +365,7 @@ function UpcomingEvents() {
 
   return (
     <>
-      <div className="events-container">
+      <div className="events-container" ref={eventsContainerRef}>
         <div className="events-header">
           <h2 className="events-title">Upcoming Events</h2>
           <div className="committee-filter">
