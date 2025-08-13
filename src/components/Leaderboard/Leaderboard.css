@@ -117,12 +117,12 @@
 }
 
 .ellipsis {
-  color: #a0a0a0;
-  font-size: 1.8rem;
-  font-weight: 400;
+  color: #6c757d;
+  font-size: 1.4rem;
+  font-weight: 600;
   text-align: center;
   letter-spacing: 0.1em;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .leaderboard-row:hover {

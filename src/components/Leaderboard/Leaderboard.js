@@ -185,7 +185,7 @@ function Leaderboard() {
               <>
                 <div className="leaderboard-row ellipsis-row">
                   <div className="ellipsis-container">
-                    <span className="ellipsis">...</span>
+                    <span className="ellipsis">•••••</span>
                   </div>
                 </div>
                 {(() => {
