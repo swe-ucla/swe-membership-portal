@@ -98,6 +98,33 @@
   transition: var(--transition);
 }
 
+.ellipsis-row {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  min-height: 50px;
+  /* margin: 0.5rem 0; */
+}
+
+.ellipsis-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.ellipsis {
+  color: #6c757d;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.1em;
+  opacity: 1;
+}
+
 .leaderboard-row:hover {
   background-color: #f9f9ff;
 }
@@ -109,6 +136,7 @@
 .highlighted-row {
   background-color: #f5f0ff;
   border-left: 4px solid var(--color-purple-dark);
+  box-shadow: 0 2px 8px rgba(69, 37, 162, 0.1);
 }
 
 /* Column styles */
