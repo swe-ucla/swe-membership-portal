@@ -4,6 +4,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "./EditProfileForm";
 import './Profile.css';
+import { MaterialSymbol } from "react-material-symbols";
+import "react-material-symbols/rounded";
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -83,8 +85,7 @@ function Profile() {
           <EditProfileForm userDetails={userDetails} onUpdate={handleProfileUpdate} />
         ) : (
           <>
-            <div className="profile-section">
-              <h3 className="profile-header">Profile</h3>
+            <div className="profile-main-section">
               <div className="profile-picture-container">
                 {userDetails.profilePicture ? (
                   <img
@@ -96,37 +97,44 @@ function Profile() {
                   <div className="no-picture">No Profile Picture</div>
                 )}
               </div>
+
+              <div className="profile-basic-info">
+                <div className="profile-text-column">
+                  <h2 className="profile-header">{userDetails.firstName} {userDetails.lastName}</h2>
+                  <p className="profile-member-id">Member ID: {userDetails.memberId}</p>
+                  <p className="profile-major">
+                    <MaterialSymbol icon="circle" size={28} /> 
+                    {userDetails.major}
+                  </p>
+                  <p className="profile-year">
+                    <MaterialSymbol icon="school" size={28} className="year-icon" />
+                    {userDetails.year}
+                  </p>
+                </div>
+                <div className="profile-button-column">
+                  <button className="btn edit-profile-btn" onClick={() => setIsEditing(true)}>
+                    <MaterialSymbol icon="edit" size={24} />
+                    Edit Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <h2 className="profile-header">Statistics</h2>
+            <div className="profile-statistics-cards">
+              <div className="stat-card">
+                <MaterialSymbol icon="stars" size={28} className="stat-icon" />
+                <span className="stat-value">{Number(userDetails.swePoints) || 0} SWE Points</span>
+              </div>
+              <div className="stat-card">
+                <MaterialSymbol icon="social_leaderboard" size={28} className="stat-icon" />
+                <span className="stat-value">Rank #{Number(userDetails.rank) || 0}</span>
+              </div>
             </div>
 
-            <div className="profile-details">
-              <p className="profile-field">
-                <span className="field-label">Name:</span>
-                <span className="field-value">{userDetails.firstName} {userDetails.lastName}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">Email:</span>
-                <span className="field-value">{userDetails.email}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">Year:</span>
-                <span className="field-value">{userDetails.year}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">Major:</span>
-                <span className="field-value">{userDetails.major}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">Member ID:</span>
-                <span className="field-value">{userDetails.memberId}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">Bio:</span>
-                <span className="field-value">{userDetails.bio}</span>
-              </p>
-              <p className="profile-field">
-                <span className="field-label">#SWE Points:</span>
-                <span className="field-value">{Number(userDetails.swePoints) || 0}</span>
-              </p>
+            <h2 className="profile-header">Bio</h2>
+            <div className="bio-box">
+              {userDetails.bio ? userDetails.bio : "No bio added yet."}
             </div>
 
             {(!userDetails.year || !userDetails.major) && (
@@ -136,10 +144,7 @@ function Profile() {
             )}
 
             <div className="button-group">
-              <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
-                Edit Profile
-              </button>
-              <button className="btn btn-primary" onClick={handleLogout}>
+              <button className="btn logout-btn" onClick={handleLogout}>
                 Logout
               </button>
             </div>
