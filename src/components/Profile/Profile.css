@@ -41,7 +41,8 @@
 }
 
 .edit-profile-btn:hover {
-  background: var(--color-purple-light);
+  background: #895fd8;
+  box-shadow: 0 4px 0px #7D55CA;
   color: white;
 }
 
@@ -51,8 +52,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 2px solid #ddd;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0rem;
   gap: 2rem;
 }
 
@@ -83,6 +83,12 @@
   border: 3px solid #B48FEF;
   box-shadow: 0 4px 10px rgba(69, 37, 162, 0.15);
   font-size: 0.9rem;
+}
+
+.divider {
+  border: none;
+  border-bottom: 2px solid #7e7e7e;
+  margin: 1rem 0;
 }
 
 /* Profile Basic Info */
@@ -133,6 +139,19 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
+}
+
+.major-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.7rem;
+  width: 24px;
+  height: 24px;
+  margin-left: 2px;
+  margin-right: 2px;
+  vertical-align: middle; 
 }
 
 .year-icon {
@@ -193,7 +212,8 @@
 }
 
 .logout-btn:hover {
-  background: var(--color-purple-light);
+  background: #7D55CA;
+  box-shadow: 0 4px 0px #61429c;
   color: white;
 }
 
@@ -297,7 +317,24 @@
   margin-top: 0.25rem;
 }
 
-/* Warning Message */
+/* Warning Banner */
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FC5E5E80;
+  color: black;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.alert-icon {
+  color: #E13A3A;
+}
+
 .warning-message {
   color: #ff3860;
   background-color: #fde7e7;

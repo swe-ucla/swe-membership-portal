@@ -1,7 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Popup.css';
 
-const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confirm = false, onConfirm }) => {
+const Popup = ({ 
+  isOpen, 
+  onClose, 
+  message, 
+  toast = false, 
+  duration = 3000, 
+  confirm = false, 
+  onConfirm,
+  cancelText = "Cancel",
+  confirmText = "Confirm"
+}) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const onCloseRef = useRef(onClose);
   const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
@@ -91,7 +101,7 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confi
       onClick={toast ? undefined : handleClose}
     >
       <div
-        className={`popup ${toast ? 'popup-toast' : ''} ${isFadingOut ? 'fade-out' : 'fade-in'}`}
+        className={`popup ${toast ? 'popup-toast' : ''} ${confirm ? 'popup-confirm' : ''} ${isFadingOut ? 'fade-out' : 'fade-in'}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="popup-header">
@@ -101,8 +111,8 @@ const Popup = ({ isOpen, onClose, message, toast = false, duration = 3000, confi
           <p className="popup-message">{message}</p>
           {confirm && (
             <div className="popup-actions">
-              <button className="popup-btn popup-btn-cancel" onClick={handleClose}>Cancel</button>
-              <button className="popup-btn popup-btn-confirm" onClick={handleConfirm}>Confirm</button>
+              <button className="popup-btn popup-btn-cancel" onClick={handleClose}>{cancelText}</button>
+              <button className="popup-btn popup-btn-confirm" onClick={handleConfirm}>{confirmText}</button>
             </div>
           )}
         </div>

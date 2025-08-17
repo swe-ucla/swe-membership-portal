@@ -7,6 +7,8 @@ import './Profile.css';
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
 
+
+
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -103,7 +105,12 @@ function Profile() {
                   <h2 className="profile-header">{userDetails.firstName} {userDetails.lastName}</h2>
                   <p className="profile-member-id">Member ID: {userDetails.memberId}</p>
                   <p className="profile-major">
-                    <MaterialSymbol icon="circle" size={28} /> 
+                    {/* <MaterialSymbol icon="circle" size={28} />  */}
+                    <img
+                      src="/assets/bear-face-icon.svg"
+                      alt="Bear Icon" 
+                      className="major-icon"
+                    />
                     {userDetails.major}
                   </p>
                   <p className="profile-year">
@@ -119,6 +126,15 @@ function Profile() {
                 </div>
               </div>
             </div>
+            
+            {(!userDetails.year || !userDetails.major) && (
+              <div className="alert-banner">
+                <MaterialSymbol icon="error" size={20} className="alert-icon" />
+                <span>Your profile is missing information!</span>
+              </div>
+            )}
+            
+            <hr className="divider" />
             
             <h2 className="profile-header">Statistics</h2>
             <div className="profile-statistics-cards">
@@ -137,11 +153,7 @@ function Profile() {
               {userDetails.bio ? userDetails.bio : "No bio added yet."}
             </div>
 
-            {(!userDetails.year || !userDetails.major) && (
-              <p className="warning-message">
-                Please fill out the required fields marked with * in the Edit Profile page.
-              </p>
-            )}
+            
 
             <div className="button-group">
               <button className="btn logout-btn" onClick={handleLogout}>
