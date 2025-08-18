@@ -38,7 +38,7 @@ function UpcomingEvents() {
     isOpen: false,
     event: null,
   });
-  
+
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 9;
@@ -315,15 +315,18 @@ function UpcomingEvents() {
   // Page navigation logic
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const currentEvents = filteredEvents.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent
+  );
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
   const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
     // Auto scroll to top when changing pages
     setTimeout(() => {
       if (eventsContainerRef.current) {
-        eventsContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+        eventsContainerRef.current.scrollIntoView({ behavior: "smooth" });
       } else {
         window.scrollTo(0, 0);
       }
@@ -331,11 +334,11 @@ function UpcomingEvents() {
   };
 
   const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
     // Auto scroll to top when changing pages
     setTimeout(() => {
       if (eventsContainerRef.current) {
-        eventsContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+        eventsContainerRef.current.scrollIntoView({ behavior: "smooth" });
       } else {
         window.scrollTo(0, 0);
       }
@@ -345,9 +348,9 @@ function UpcomingEvents() {
   useEffect(() => {
     fetchUserData();
     fetchEvents();
-    document.body.classList.add('events-page');
+    document.body.classList.add("events-page");
     return () => {
-      document.body.classList.remove('events-page');
+      document.body.classList.remove("events-page");
     };
   }, []);
 
@@ -514,13 +517,12 @@ function UpcomingEvents() {
               </div>
             ))}
           </div>
-          
         ) : (
           <div className="empty-message">
             <p>No upcoming events.</p>
           </div>
         )}
-        
+
         {/* Page navigation buttons */}
         {totalPages > 1 && (
           <div className="page-nav-container">
@@ -532,11 +534,11 @@ function UpcomingEvents() {
               <MaterialSymbol icon="arrow_back" size={20} />
               PREVIOUS PAGE
             </button>
-            
+
             <span className="page-nav-info">
               PAGE {currentPage} OF {totalPages}
             </span>
-            
+
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
