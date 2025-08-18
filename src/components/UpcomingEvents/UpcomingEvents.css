@@ -16,7 +16,15 @@ body.events-page {
   background-image: url("/public/assets/eventspage-background.svg");
   background-repeat: no-repeat;
   position: relative;
+
+  background-size: cover;
+  background-position: center;
+  margin: none;
+  height: 100%;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  border: 0.000000001px solid white; /*fill the container*/
 }
 
 /* Decorative elements that grow with content */
@@ -514,9 +522,11 @@ input[type="time"]:focus {
 @media (max-width: 768px) {
   .events-container {
     padding: 1rem;
-    padding-top: calc(
-      var(--bg-safe-top) - 0.4in
-    ); /* slightly closer on phones */
+    margin-top: 3rem; /* slightly closer on phones */
+  }
+
+  .events-title {
+    font-size: 1.8rem;
   }
 
   .event-cards-container {
@@ -529,7 +539,7 @@ input[type="time"]:focus {
   }
 
   .event-card h4 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     padding: 0.8rem;
     padding-right: 100px; /* Slightly smaller padding for mobile */
   }
@@ -561,6 +571,10 @@ input[type="time"]:focus {
 @media (max-width: 400px) {
   .event-cards-container {
     display: block;
+  }
+
+  .events-title {
+    font-size: 1.3rem;
   }
 
   .event-card h4 {
