@@ -13,35 +13,28 @@ body {
 
 /* Apply background only when events page is active */
 body.events-page {
-  background-image: url("/public/assets/eventspage-background.svg");
-  background-repeat: no-repeat;
+  background: linear-gradient(180deg, #230F55 0%, #3F2188 25%, #5635A8 50%, #9066F7 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
   position: relative;
-
-  background-size: cover;
-  background-position: center;
-  margin: none;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0.000000001px solid white; /*fill the container*/
 }
 
 /* Decorative elements that grow with content */
 body.events-page::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-
+  background-image: url('/public/BackgroundOnly.svg');
   background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100vw auto; /* Change this line */
+  background-position: 0 80%;
+  background-size: 100vw auto;
   pointer-events: none;
   z-index: -1;
-  min-height: 100vh; /* Change this to viewport height instead of 100% */
+  min-height: 100%;
+  /* Ensure background extends to cover all content */
   background-attachment: local;
 }
 
@@ -53,40 +46,40 @@ body.events-page::before {
 }
 
 :root {
-  --color-purple-dark: #4525a2;
-  --color-purple-medium: #6677ca;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
+  --color-purple-dark: #4525A2;
+  --color-purple-medium: #6677CA;
+  --color-purple-light: #A6A7E3;
+  --color-pink: #E85F7A;
+  --color-pink-dark: #890C50;
+  --color-background: #F5F7FA;
   --border-radius-lg: 20px;
   --border-radius-md: 15px;
   --border-radius-sm: 12px;
   --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-  --bg-safe-top: 2in; /* keep stars visible at top */
-  --bg-art-bottom: 700px; /* reserved space for bear + moon at bottom */
+  
+  --bg-safe-top: 2in;        /* keep stars visible at top */
+  --bg-art-bottom: 820px;    /* reserved space for bear + moon at bottom */
   --bg-safe-bottom: var(--bg-art-bottom);
 }
 
 .events-container {
-  min-height: calc(
-    100vh + 1440px
-  ); /* Ensure container extends enough to show bear image on all pages */
+  min-height: 100vh;
   padding: 1.5rem;
   /* transparent so SVG shows; gradient is drawn via ::before */
   background-color: transparent !important;
   color: white;
   /* push cards down so stars show; keep them above bottom art */
-  padding-top: 0;
-  /*padding-bottom: calc(var(--bg-safe-bottom));*/
+  padding-top: var(--bg-safe-top);
+  padding-bottom: calc(var(--bg-safe-bottom) + 100px);
   position: relative; /* anchor ::before/::after layers */
   /* Force full viewport width and remove gaps */
   width: 100vw;
-  margin-top: 3rem;
+  margin: 0;
   margin-left: calc(-50vw + 50%);
   box-sizing: border-box;
+  /* Ensure container extends enough to show bear image on all pages */
+  min-height: calc(100vh + 500px);
 }
 
 /* Remove container background since it's now on body */
@@ -100,10 +93,7 @@ body.events-page::before {
 }
 
 /* Ensure all page content (cards, header, etc.) is above the bg layers */
-.events-container > * {
-  position: relative;
-  z-index: 2;
-}
+.events-container > * { position: relative; z-index: 2; }
 
 .events-header {
   display: flex;
@@ -170,6 +160,8 @@ body.events-page::before {
   margin-bottom: 1.2rem;
   position: relative;
 }
+
+
 
 /* Fix for the title and date overlap */
 .event-card h4 {
@@ -240,7 +232,7 @@ body.events-page::before {
 .event-date-time {
   display: inline-flex;
   align-items: center;
-
+  
   padding: 0.12rem 0.6rem 0.12rem 0rem;
   margin: 0.1rem 0 0.2rem 0;
   width: fit-content;
@@ -323,11 +315,7 @@ body.events-page::before {
 }
 
 .btn-primary {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
   color: white;
   box-shadow: 0 4px 12px rgba(69, 37, 162, 0.2);
 }
@@ -378,11 +366,7 @@ body.events-page::before {
 }
 
 .btn-add-event {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
   color: white;
   border: none;
   padding: 10px 20px;
@@ -445,11 +429,7 @@ body.events-page::before {
 
 /* Alternative header layout if using flexbox structure */
 .event-header {
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-dark),
-    var(--color-purple-medium)
-  );
+  background: linear-gradient(135deg, var(--color-purple-dark), var(--color-purple-medium));
   color: white;
   padding: 1rem;
   position: relative;
@@ -519,48 +499,44 @@ input[type="time"]:focus {
   background-color: white;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .events-container {
     padding: 1rem;
-    margin-top: 3rem; /* slightly closer on phones */
+    padding-top: calc(var(--bg-safe-top) - 0.4in); /* slightly closer on phones */
   }
-
-  .events-title {
-    font-size: 1.8rem;
-  }
-
+  
   .event-cards-container {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-
+  
   .event-card {
     margin-bottom: 1rem;
   }
-
+  
   .event-card h4 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     padding: 0.8rem;
     padding-right: 100px; /* Slightly smaller padding for mobile */
   }
-
+  
   .event-card-content {
     padding: 1rem;
   }
-
+  
   .event-date-badge {
     padding: 0.25rem 0.5rem;
     font-size: 0.8rem;
     top: 0.6rem;
     right: 0.6rem;
   }
-
-  .loading-message,
-  .empty-message {
+  
+  .loading-message, .empty-message {
     padding: 2rem;
     margin: 2rem auto;
   }
-
+  
   .form-row {
     flex-direction: column;
     gap: 0;
@@ -572,16 +548,12 @@ input[type="time"]:focus {
   .event-cards-container {
     display: block;
   }
-
-  .events-title {
-    font-size: 1.3rem;
-  }
-
+  
   .event-card h4 {
     padding-right: 90px;
     font-size: 1.1rem;
   }
-
+  
   .event-detail strong {
     min-width: 80px;
   }
@@ -616,7 +588,7 @@ input[type="time"]:focus {
   bottom: 1rem;
   background: white;
   color: var(--color-purple-dark);
-  box-shadow: 0 2px 8px rgba(69, 37, 162, 0.1);
+  box-shadow: 0 2px 8px rgba(69, 37, 162, 0.10);
   border: 1.5px solid #e0e0fe;
   border-radius: 999px;
   padding: 0.18rem 0.9rem 0.18rem 0.7rem;
@@ -663,7 +635,7 @@ input[type="time"]:focus {
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  margin-top: 0rem;
+  margin-top: 2rem;
   padding: 1rem;
 }
 
@@ -701,7 +673,7 @@ input[type="time"]:focus {
     flex-direction: column;
     gap: 1rem;
   }
-
+  
   .page-nav-info {
     order: -1;
   }
