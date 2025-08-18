@@ -28,7 +28,7 @@
 
 .leaderboard-container {
   max-width: 50%;
-  margin: 30rem auto 2rem;
+  margin: 23rem auto 2rem;
   padding: 2rem;
   background-color: white;
   border-radius: 1rem;
@@ -233,12 +233,20 @@
 }
 
 /* Responsive styles */
+@media (max-width: 1024px) {
+  .leaderboard-container {
+    padding: 1rem;
+    max-width: clamp(70%, 65%, 70%);
+    margin: 23rem auto 3rem;
+    padding: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .leaderboard-container {
-    margin: 1rem;
     padding: 1rem;
-    max-width: 80%;
-
+    max-width: clamp(90vw, 50%, 90vw);
+    margin: 22rem auto 3rem;
     padding: 2rem;
   }
 
