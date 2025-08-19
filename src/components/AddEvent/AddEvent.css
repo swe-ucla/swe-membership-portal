@@ -473,3 +473,8 @@ input[type="range"]::-moz-range-thumb:hover {
   border-radius: 10px;
   object-fit: cover;
 }
+.error-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}

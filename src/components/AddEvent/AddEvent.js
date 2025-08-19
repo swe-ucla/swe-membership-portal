@@ -62,6 +62,7 @@ function AddEvent() {
   });
   const [loading, setLoading] = useState(true);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const committees = [
     "Evening with Industry",
@@ -219,6 +220,11 @@ function AddEvent() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+
     // Set word limit on event description to 180
     if (name === "description") {
       const wordCount = value.trim().split(/\s+/).filter(Boolean).length;
@@ -309,20 +315,25 @@ function AddEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !eventData.name ||
-      !eventData.date ||
-      !eventData.startTime ||
-      !eventData.location ||
-      !eventData.committee ||
-      !eventData.description
-    ) {
-      setPopup({
-        isOpen: true,
-        message: "Please fill in all required fields.",
-        toast: true,
-      });
-      console.log("missing fields: ", eventData);
+
+    const newErrors = {};
+    if (!eventData.name.trim()) newErrors.name = "This field is required";
+    if (!eventData.date) newErrors.date = "This field is required";
+    if (!eventData.startTime) newErrors.startTime = "This field is required";
+    if (!eventData.endTime) newErrors.endTime = "This field is required";
+    if (!eventData.location.trim()) newErrors.location = "This field is required";
+    if (!eventData.committee) newErrors.committee = "This field is required";
+    if (!eventData.description.trim()) newErrors.description = "This field is required";
+    if (!eventData.points || eventData.points < 1) newErrors.points = "This field is required";
+    if (!eventData.signInOpensHoursBefore || eventData.signInOpensHoursBefore < 1) newErrors.signInOpensHoursBefore = "This field is required";
+
+    if (useCustomCode && eventData.attendanceCode.length !== 6) {
+      newErrors.attendanceCode = "Attendance code must be exactly 6 letters";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
@@ -537,8 +548,8 @@ function AddEvent() {
             name="name"
             value={eventData.name}
             onChange={handleInputChange}
-            required
           />
+          {errors.name && <p className="error-text">{errors.name}</p>}
         </div>
 
         <div className="form-group event-photo-upload">
@@ -575,8 +586,8 @@ function AddEvent() {
             value={eventData.date}
             onChange={handleInputChange}
             min={todayDate} // Restrict selecting past dates
-            required
           />
+          {errors.date && <p className="error-text">{errors.date}</p>}
         </div>
 
         <div
@@ -591,9 +602,9 @@ function AddEvent() {
               name="startTime"
               value={eventData.startTime}
               onChange={handleInputChange}
-              required
               className="form-control"
             />
+            {errors.startTime && <p className="error-text">{errors.startTime}</p>}
           </div>
           <div style={{ flex: 1 }}>
             <label className="form-label">End Time:</label>
@@ -605,6 +616,7 @@ function AddEvent() {
               onChange={handleInputChange}
               className="form-control"
             />
+            {errors.endTime && <p className="error-text">{errors.endTime}</p>}
           </div>
         </div>
 
@@ -615,8 +627,8 @@ function AddEvent() {
             name="location"
             value={eventData.location}
             onChange={handleInputChange}
-            required
           />
+          {errors.location && <p className="error-text">{errors.location}</p>}
         </div>
 
         <div className="form-group">
@@ -625,7 +637,6 @@ function AddEvent() {
             name="committee"
             value={eventData.committee}
             onChange={handleInputChange}
-            required
           >
             <option value="" disabled>
               Select a committee
@@ -636,6 +647,7 @@ function AddEvent() {
               </option>
             ))}
           </select>
+          {errors.committee && <p className="error-text">{errors.committee}</p>}
         </div>
 
         <div className="form-group">
@@ -649,6 +661,7 @@ function AddEvent() {
             onChange={handleInputChange}
           />
           <span className="slider-display">{eventData.points} points</span>
+          {errors.points && <p className="error-text">{errors.points}</p>}
         </div>
 
         <div className="form-group">
@@ -669,6 +682,7 @@ function AddEvent() {
           <span className="slider-display">
             {eventData.signInOpensHoursBefore} hour(s) before event
           </span>
+          {errors.signInOpensHoursBefore && <p className="error-text">{errors.signInOpensHoursBefore}</p>}
         </div>
 
         <div className="form-group">
@@ -678,6 +692,7 @@ function AddEvent() {
             value={eventData.description}
             onChange={handleInputChange}
           />
+          {errors.description && <p className="error-text">{errors.description}</p>}
         </div>
 
         <div className="form-group">
@@ -701,15 +716,17 @@ function AddEvent() {
           </div>
 
           {useCustomCode ? (
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter 6-letter code"
-              value={eventData.attendanceCode}
-              onChange={handleCodeChange}
-              maxLength={6}
-              required={useCustomCode}
-            />
+            <>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter 6-letter code"
+                value={eventData.attendanceCode}
+                onChange={handleCodeChange}
+                maxLength={6}
+              />
+              {errors.attendanceCode && <p className="error-text">{errors.attendanceCode}</p>}
+            </>
           ) : (
             <p className="text-muted">
               {isEditMode
