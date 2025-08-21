@@ -12,7 +12,7 @@ import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const BEAR_BANNER = process.env.PUBLIC_URL + "/onboarding-banner.svg";
+const BEAR_BANNER = process.env.PUBLIC_URL + "/assets/onboarding-banner.svg";
 
 const adminEmails = [
   "ewi.swe.ucla@gmail.com",
@@ -187,7 +187,7 @@ function Onboarding() {
         <div>
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <img
-              src={process.env.PUBLIC_URL + "/purple-swe-logo.svg"}
+              src={process.env.PUBLIC_URL + "/assets/purple-swe-logo.svg"}
               alt="SWE Logo"
               style={{ height: "80px" }}
             />
