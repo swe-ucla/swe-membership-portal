@@ -159,13 +159,11 @@ function Onboarding() {
     }
     try {
       await sendPasswordResetEmail(auth, resetEmail);
-      toast.success("Password reset email sent!", { position: "top-center" });
+      toast.success("If an account exists with this email, you will receive a password reset link.", { position: "top-center" });
       setResetLinkSent(true);
     } catch (error) {
       let message = "Failed to send password reset email.";
-      if (error.code === "auth/user-not-found") {
-        message = "No account exists with this email address.";
-      } else if (error.code === "auth/invalid-email") {
+      if (error.code === "auth/invalid-email") {
         message = "Please enter a valid email address.";
       }
       setErrorMessage(message);
@@ -365,13 +363,16 @@ function Onboarding() {
                   <div className="reset-success">
                     <h3>Check Your Email</h3>
                     <div className="alert alert-success">
-                      <p>We've sent a password reset link to:</p>
+                      <p>If an account exists with this email, we've sent a password reset link to:</p>
                       <p className="email-sent">
                         <strong>{resetEmail}</strong>
                       </p>
                       <p>
                         Please check your inbox and follow the instructions to
                         reset your password.
+                      </p>
+                      <p style={{ fontSize: "0.9rem", color: "#666", marginTop: "10px" }}>
+                        <strong>Note:</strong> If you don't see the email, please check your spam/junk folder.
                       </p>
                     </div>
                     <div className="d-grid mt-3">
