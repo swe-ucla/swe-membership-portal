@@ -257,7 +257,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     // First confirmation
     setPopup({
       isOpen: true,
-      message: "Are you sure you want to delete your account? This action cannot be undone.",
+      message: "Are you sure you want to delete your account?",
       toast: false,
       confirm: true,
       onConfirm: () => {
@@ -320,6 +320,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         toast={popup.toast}
         confirm={popup.confirm}
         onConfirm={popup.onConfirm}
+        cancelText={popup.confirm ? "Cancel" : undefined}
+        confirmText={popup.confirm ? "Yes, delete my account" : undefined}
       />
       <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
       <div className="form-group">
