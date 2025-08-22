@@ -9,9 +9,12 @@ import bronzeMedal from "../../assets/leaderboard-bronze-medal.svg";
 
 function Leaderboard() {
   const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [currentUserRank, setCurrentUserRank] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const rankLimit = 8;
 
   // Fetch authenticated user
   const fetchUserData = async () => {
@@ -71,8 +74,18 @@ function Leaderboard() {
           };
         });
 
-      // Slice to get top 10
-      setUsers(usersList.slice(0, 10));
+      // Store all users for reference
+      setAllUsers(usersList);
+
+      // Find current user's rank
+      const currentUserData = usersList.find(user => user.id === currentUser.uid);
+      if (currentUserData) {
+        setCurrentUserRank(currentUserData.rank);
+      }
+
+      // Get top users
+      const topUsers = usersList.slice(0, rankLimit);
+      setUsers(topUsers);
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
     } finally {
@@ -89,6 +102,61 @@ function Leaderboard() {
       fetchLeaderboardData();
     }
   }, [currentUser]);
+
+  // Render medal or rank number
+  const renderRank = (rank) => {
+    if (rank === 1) {
+      return <img src={goldMedal} alt="Gold Medal" className="medal-icon" />;
+    } else if (rank === 2) {
+      return <img src={silverMedal} alt="Silver Medal" className="medal-icon" />;
+    } else if (rank === 3) {
+      return <img src={bronzeMedal} alt="Bronze Medal" className="medal-icon" />;
+    } else {
+      return <span className="rank-number">{rank}</span>;
+    }
+  };
+
+  // Render user row
+  const renderUserRow = (user) => (
+    <div
+      key={user.id}
+      className={`leaderboard-row ${
+        currentUser && user.id === currentUser.uid
+          ? "highlighted-row"
+          : ""
+      }`}
+    >
+      <div className="rank-column">
+        {renderRank(user.rank)}
+      </div>
+      <div className="name-column">
+        <div className="user-avatar">
+          {user.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt={`${user.firstName}'s avatar`}
+            />
+          ) : (
+            <span className="avatar-initials">
+              {user.firstName?.charAt(0) || ""}
+              {user.lastName?.charAt(0) || ""}
+            </span>
+          )}
+        </div>
+        <div className="user-details">
+          <span className="user-name">
+            {user.firstName} {user.lastName}
+          </span>
+          {user.major && (
+            <span className="user-major">{user.major}</span>
+          )}
+        </div>
+      </div>
+      <div className="points-column">
+        <span className="points-value">{user.swePoints || 0}</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="leaderboard-background-container">
@@ -109,66 +177,27 @@ function Leaderboard() {
             </div>
             <div className="leaderboard-header-divider"></div>
 
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className={`leaderboard-row ${
-                  currentUser && user.id === currentUser.uid
-                    ? "highlighted-row"
-                    : ""
-                }`}
-              >
-                <div className="rank-column">
-                  {user.rank === 1 ? (
-                    <img
-                      src={goldMedal}
-                      alt="Gold Medal"
-                      className="medal-icon"
-                    />
-                  ) : user.rank === 2 ? (
-                    <img
-                      src={silverMedal}
-                      alt="Silver Medal"
-                      className="medal-icon"
-                    />
-                  ) : user.rank === 3 ? (
-                    <img
-                      src={bronzeMedal}
-                      alt="Bronze Medal"
-                      className="medal-icon"
-                    />
-                  ) : (
-                    <span className="rank-number">{user.rank}</span>
-                  )}
-                </div>
-                <div className="name-column">
-                  <div className="user-avatar">
-                    {user.profilePicture ? (
-                      <img
-                        src={user.profilePicture}
-                        alt={`${user.firstName}'s avatar`}
-                      />
-                    ) : (
-                      <span className="avatar-initials">
-                        {user.firstName?.charAt(0) || ""}
-                        {user.lastName?.charAt(0) || ""}
-                      </span>
-                    )}
-                  </div>
-                  <div className="user-details">
-                    <span className="user-name">
-                      {user.firstName} {user.lastName}
-                    </span>
-                    {user.major && (
-                      <span className="user-major">{user.major}</span>
-                    )}
+            {/* Render top 10 users */}
+            {users.map((user) => renderUserRow(user))}
+
+            {/* Show current user's position if not within rankLimit */}
+            {currentUserRank && currentUserRank > rankLimit && (
+              <>
+                <div className="leaderboard-row ellipsis-row">
+                  <div className="ellipsis-container">
+                    <span className="ellipsis">•••••</span>
                   </div>
                 </div>
-                <div className="points-column">
-                  <span className="points-value">{user.swePoints || 0}</span>
-                </div>
-              </div>
-            ))}
+                {(() => {
+                  // Find current user data from all users
+                  const currentUserData = allUsers.find(user => user.id === currentUser.uid);
+                  if (currentUserData) {
+                    return renderUserRow(currentUserData);
+                  }
+                  return null;
+                })()}
+              </>
+            )}
           </div>
         )}
       </div>

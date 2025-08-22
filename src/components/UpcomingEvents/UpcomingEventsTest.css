@@ -13,36 +13,12 @@ body {
 
 /* Apply background only when events page is active */
 body.events-page {
-  background-image: url("/public/assets/eventspage-background.svg");
-  background-repeat: no-repeat;
-  position: relative;
-
-  background-size: cover;
-  background-position: center;
-  margin: none;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0.000000001px solid white; /*fill the container*/
 }
 
-/* Decorative elements that grow with content */
+/* Decorative elements that grow with content - back to scrollable approach */
 body.events-page::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
+  background-image: url("/public/assets/eventspage-background.svg");
   background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100vw auto; /* Change this line */
-  pointer-events: none;
-  z-index: -1;
-  min-height: 100vh; /* Change this to viewport height instead of 100% */
-  background-attachment: local;
 }
 
 .App {
@@ -65,28 +41,19 @@ body.events-page::before {
   --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-  --bg-safe-top: 2in; /* keep stars visible at top */
-  --bg-art-bottom: 700px; /* reserved space for bear + moon at bottom */
+  --bg-safe-top: 1rem; /* reduce top padding since we can use space behind navbar */
+  --bg-art-bottom: 820px; /* reserved space for bear + moon at bottom */
   --bg-safe-bottom: var(--bg-art-bottom);
 }
 
 .events-container {
-  min-height: calc(
-    100vh + 1440px
-  ); /* Ensure container extends enough to show bear image on all pages */
-  padding: 1.5rem;
-  /* transparent so SVG shows; gradient is drawn via ::before */
-  background-color: transparent !important;
-  color: white;
-  /* push cards down so stars show; keep them above bottom art */
-  padding-top: 0;
-  /*padding-bottom: calc(var(--bg-safe-bottom));*/
-  position: relative; /* anchor ::before/::after layers */
-  /* Force full viewport width and remove gaps */
-  width: 100vw;
-  margin-top: 3rem;
-  margin-left: calc(-50vw + 50%);
-  box-sizing: border-box;
+  background-color: red;
+  background-image: url(/public/assets/eventspage-background.svg);
+  z-index: 1;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: fit-content;
 }
 
 /* Remove container background since it's now on body */
@@ -153,13 +120,14 @@ body.events-page::before {
   margin-bottom: 1rem;
 }
 
-/* Event card styles */
+/* Event card styles - consistent grid that accommodates up to 9 events */
 .event-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.2rem;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 400px; /* Ensures consistent space even with fewer events */
 }
 
 .event-card {
@@ -519,74 +487,6 @@ input[type="time"]:focus {
   background-color: white;
 }
 
-@media (max-width: 768px) {
-  .events-container {
-    padding: 1rem;
-    margin-top: 3rem; /* slightly closer on phones */
-  }
-
-  .events-title {
-    font-size: 1.8rem;
-  }
-
-  .event-cards-container {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .event-card {
-    margin-bottom: 1rem;
-  }
-
-  .event-card h4 {
-    font-size: 1.3rem;
-    padding: 0.8rem;
-    padding-right: 100px; /* Slightly smaller padding for mobile */
-  }
-
-  .event-card-content {
-    padding: 1rem;
-  }
-
-  .event-date-badge {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-    top: 0.6rem;
-    right: 0.6rem;
-  }
-
-  .loading-message,
-  .empty-message {
-    padding: 2rem;
-    margin: 2rem auto;
-  }
-
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-}
-
-/* Fix for very small screens */
-@media (max-width: 400px) {
-  .event-cards-container {
-    display: block;
-  }
-
-  .events-title {
-    font-size: 1.3rem;
-  }
-
-  .event-card h4 {
-    padding-right: 90px;
-    font-size: 1.1rem;
-  }
-
-  .event-detail strong {
-    min-width: 80px;
-  }
-}
-
 .event-card-photo-area {
   position: relative;
   width: 100%;
@@ -657,14 +557,27 @@ input[type="time"]:focus {
   color: white;
 }
 
-/* Page navigation styles */
+/* Ensure navbar appears above background when on events page */
+body.events-page .navbar,
+body.events-page nav,
+body.events-page header {
+  position: relative;
+  z-index: 100;
+  /* Optional: Add backdrop blur for better navbar visibility */
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Page navigation styles - positioned above decorative elements */
 .page-nav-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  margin-top: 0rem;
+  margin-top: 2rem;
   padding: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 .btn-page-nav {
@@ -674,6 +587,7 @@ input[type="time"]:focus {
   color: white;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--border-radius-md);
+  backdrop-filter: blur(10px);
 }
 
 .btn-page-nav:hover:not(:disabled) {
@@ -693,10 +607,84 @@ input[type="time"]:focus {
   font-size: 1rem;
   min-width: 120px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  backdrop-filter: blur(10px);
 }
 
-/* Responsive page-nav */
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  :root {
+    --bg-art-bottom: 600px;
+  }
+
+  .event-cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  body.events-page::before {
+    background-size: 120vw auto;
+    background-position: center 85%;
+  }
+}
+
 @media (max-width: 768px) {
+  :root {
+    --bg-safe-top: calc(2in - 0.4in);
+    --bg-art-bottom: 450px;
+  }
+
+  .events-container {
+    padding: 1rem;
+    padding-top: var(--bg-safe-top);
+    padding-bottom: calc(var(--bg-art-bottom) + 100px);
+  }
+
+  .event-cards-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    min-height: 300px;
+  }
+
+  .event-card {
+    margin-bottom: 1rem;
+  }
+
+  .event-card h4 {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+    padding-right: 100px; /* Slightly smaller padding for mobile */
+  }
+
+  .event-card-content {
+    padding: 1rem;
+  }
+
+  .event-date-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    top: 0.6rem;
+    right: 0.6rem;
+  }
+
+  .loading-message,
+  .empty-message {
+    padding: 2rem;
+    margin: 2rem auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  body.events-page::before {
+    background-size: 140vw auto;
+    background-position: center 85%;
+  }
+
   .page-nav-container {
     flex-direction: column;
     gap: 1rem;
@@ -704,5 +692,32 @@ input[type="time"]:focus {
 
   .page-nav-info {
     order: -1;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --bg-art-bottom: 350px;
+  }
+
+  body.events-page::before {
+    background-size: 160vw auto;
+    background-position: center 85%;
+  }
+}
+
+/* Fix for very small screens */
+@media (max-width: 400px) {
+  .event-cards-container {
+    display: block;
+  }
+
+  .event-card h4 {
+    padding-right: 90px;
+    font-size: 1.1rem;
+  }
+
+  .event-detail strong {
+    min-width: 80px;
   }
 }
