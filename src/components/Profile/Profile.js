@@ -77,7 +77,8 @@ function Profile() {
   };
 
   return (
-    <div className="profile-container">
+    <div className="profile-page">
+      <div className="profile-container">
       {userDetails ? (
         userDetails.missingProfile ? (
           <p className="error-message">
@@ -158,6 +159,7 @@ function Profile() {
       ) : (
         <p className="loading-state">Loading...</p>
       )}
+      </div>
     </div>
   );
 }
