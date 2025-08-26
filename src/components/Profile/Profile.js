@@ -148,13 +148,6 @@ function Profile() {
               </div>
             </div>
 
-            <h2 className="profile-header">Bio</h2>
-            <div className="bio-box">
-              {userDetails.bio ? userDetails.bio : "No bio added yet."}
-            </div>
-
-            
-
             <div className="button-group">
               <button className="btn logout-btn" onClick={handleLogout}>
                 Logout
