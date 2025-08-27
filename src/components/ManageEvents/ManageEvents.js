@@ -54,7 +54,11 @@ const ManageEvents = () => {
       fetchUserData(currentUser);
     });
 
-    return () => unsubscribe();
+    document.body.classList.add("manage-events-page");
+    return () => {
+      unsubscribe();
+      document.body.classList.remove("manage-events-page");
+    };
   }, [auth, navigate]);
 
   useEffect(() => {

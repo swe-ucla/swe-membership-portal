@@ -37,7 +37,11 @@ function Profile() {
       }
     });
 
-    return () => unsubscribe();
+    document.body.classList.add("profile-page");
+    return () => {
+      unsubscribe();
+      document.body.classList.remove("profile-page");
+    };
   }, [navigate]);
 
   async function handleLogout() {

@@ -127,6 +127,10 @@ function AddEvent() {
     }
 
     fetchUserData();
+    document.body.classList.add("add-event-page");
+    return () => {
+      document.body.classList.remove("add-event-page");
+    };
   }, [location.search]);
 
   const fetchEventData = async (id) => {

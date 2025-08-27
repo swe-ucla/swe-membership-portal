@@ -1,5 +1,37 @@
 /* Profile.css - uses shared variables from styles/variables.css */
 
+/* Background layering for profile page */
+body.profile-page {
+  background-image: url("/public/assets/makerspace-background.svg");
+  background-repeat: no-repeat;
+  position: relative;
+  background-size: 100% auto;
+  background-position: center top;
+  margin: none;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0.000000001px solid white; /*fill the container*/
+}
+
+/* Decorative elements that grow with content */
+body.profile-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% auto;
+  pointer-events: none;
+  z-index: -1;
+  min-height: 100vh;
+  background-attachment: local;
+}
+
 .profile-container {
   max-width: 1000px;
   margin: 2rem auto;
