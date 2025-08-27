@@ -101,6 +101,14 @@ function UpcomingEvents() {
         .sort((a, b) => {
           const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
           const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+          
+          // If dates are the same, sort by start time
+          if (dateA.toDateString() === dateB.toDateString()) {
+            const timeA = a.startTime || "00:00";
+            const timeB = b.startTime || "00:00";
+            return timeA.localeCompare(timeB);
+          }
+          
           return dateA - dateB; // Sort by date ascending (soonest first)
         });
 
@@ -134,6 +142,17 @@ function UpcomingEvents() {
       today.getMonth() === eventDateObj.getMonth() &&
       today.getFullYear() === eventDateObj.getFullYear()
     );
+  };
+
+  const hasEventPassed = (event) => {
+    const now = new Date();
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    const eventEndTime = event.endTime 
+      ? new Date(eventDate.getTime() + 
+          (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]) - 
+           parseInt(event.startTime?.split(':')[0] || '0') * 60 - parseInt(event.startTime?.split(':')[1] || '0')) * 60000)
+      : new Date(eventDate.getTime() + 2 * 3600000);
+    return now > eventEndTime;
   };
 
   const formatDate = (timestamp) => {
@@ -483,7 +502,7 @@ function UpcomingEvents() {
 
                 <div className="event-points-badge">{event.points} pts</div>
 
-                {isToday(event.date) && (
+                {isToday(event.date) && !hasEventPassed(event) && (
                   <div className="today-badge">HAPPENING TODAY</div>
                 )}
 
