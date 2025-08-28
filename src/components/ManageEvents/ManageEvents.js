@@ -186,7 +186,25 @@ const ManageEvents = () => {
 
     navigator.clipboard
       .writeText(emails)
-      .then(() => setPopup({ isOpen: true, message: "Emails copied to clipboard!", toast: true }))
+      .then(() => {
+        // Show the copy toast notification
+        const toast = document.createElement('div');
+        toast.className = 'copy-toast';
+        toast.innerHTML = `
+          <div class="copy-toast-content">
+            <span class="copy-icon">✓</span>
+            <span class="copy-text">Copied to clipboard!</span>
+          </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Remove the toast after 2 seconds
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 2000);
+      })
       .catch((err) => {
         console.error("Failed to copy emails:", err);
         setPopup({ isOpen: true, message: "Failed to copy emails. Please try again.", toast: false });
@@ -296,11 +314,11 @@ const ManageEvents = () => {
     <table className="events-table">
       <thead>
         <tr>
-          <th>Title</th>
+          <th>Event Name</th>
           <th>Date</th>
           <th>Committee</th>
           <th>Location</th>
-          <th>Total Attendees</th>
+          <th>Attendees</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -320,40 +338,61 @@ const ManageEvents = () => {
             <td>{event.location}</td>
             <td>{event.attendees ? event.attendees.length : 0}</td>
             <td className="event-actions">
-              <button
-                className="btn-edit"
-                onClick={() => handleEditEvent(event)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn-export"
-                onClick={() => exportToCSV(event)}
-                disabled={!event.attendees || event.attendees.length === 0}
-              >
-                Export CSV
-              </button>
-              <button
-                className="btn-copy"
-                onClick={() => copyEmailsToClipboard(event)}
-                disabled={!event.attendees || event.attendees.length === 0}
-              >
-                Copy Emails
-              </button>
-
-              {auth.currentUser?.uid === event.createdByUser ? (
+              <div className="actions-top">
                 <button
-                  className="btn-delete"
-                  onClick={() => deleteEvent(event)}
-                  disabled={deleteLoading}
+                  className="btn-edit"
+                  onClick={() => handleEditEvent(event)}
+                  title="Edit"
                 >
-                  {deleteLoading ? "Deleting..." : "Delete"}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3.33333 12.6667H4.28333L10.8 6.15L9.85 5.2L3.33333 11.7167V12.6667ZM2 14V11.1667L10.8 2.38333C10.9333 2.26111 11.0806 2.16667 11.2417 2.1C11.4028 2.03333 11.5722 2 11.75 2C11.9278 2 12.1 2.03333 12.2667 2.1C12.4333 2.16667 12.5778 2.26667 12.7 2.4L13.6167 3.33333C13.75 3.45556 13.8472 3.6 13.9083 3.76667C13.9694 3.93333 14 4.1 14 4.26667C14 4.44444 13.9694 4.61389 13.9083 4.775C13.8472 4.93611 13.75 5.08333 13.6167 5.21667L4.83333 14H2ZM10.3167 5.68333L9.85 5.2L10.8 6.15L10.3167 5.68333Z" fill="white"/>
+                  </svg>
+                  Edit
                 </button>
-              ) : (
-                <button disabled className="btn-delete">
-                  Delete
+                {auth.currentUser?.uid === event.createdByUser ? (
+                  <button
+                    className="btn-delete"
+                    onClick={() => deleteEvent(event)}
+                    disabled={deleteLoading}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M5.25 15.75C4.8375 15.75 4.48438 15.6031 4.19063 15.3094C3.89688 15.0156 3.75 14.6625 3.75 14.25V4.5H3V3H6.75V2.25H11.25V3H15V4.5H14.25V14.25C14.25 14.6625 14.1031 15.0156 13.8094 15.3094C13.5156 15.6031 13.1625 15.75 12.75 15.75H5.25ZM12.75 4.5H5.25V14.25H12.75V4.5ZM6.75 12.75H8.25V6H6.75V12.75ZM9.75 12.75H11.25V6H9.75V12.75Z" fill="white"/>
+                    </svg>
+                    {deleteLoading ? "Deleting..." : "Delete"}
+                  </button>
+                ) : (
+                  <button disabled className="btn-delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M5.25 15.75C4.8375 15.75 4.48438 15.6031 4.19063 15.3094C3.89688 15.0156 3.75 14.6625 3.75 14.25V4.5H3V3H6.75V2.25H11.25V3H15V4.5H14.25V14.25C14.25 14.6625 14.1031 15.0156 13.8094 15.3094C13.5156 15.6031 13.1625 15.75 12.75 15.75H5.25ZM12.75 4.5H5.25V14.25H12.75V4.5ZM6.75 12.75H8.25V6H6.75V12.75ZM9.75 12.75H11.25V6H9.75V12.75Z" fill="white"/>
+                    </svg>
+                    Delete
+                  </button>
+                )}
+              </div>
+              <div className="actions-bottom">
+                <button
+                  className="btn-export"
+                  onClick={() => exportToCSV(event)}
+                  disabled={!event.attendees || event.attendees.length === 0}
+                  title="Export CSV"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="14" viewBox="0 0 11 14" fill="none">
+                    <path d="M0.941896 14L0 13.0209L1.98471 10.9939H0.470948V9.61963H4.27217V13.5018H2.92661V11.973L0.941896 14ZM5.61774 13.7423V12.3681H9.65443V4.80982H6.29052V1.37423H1.58104V8.2454H0.235474V1.37423C0.235474 0.996319 0.367227 0.672802 0.630734 0.403681C0.894241 0.13456 1.21101 0 1.58104 0H6.9633L11 4.1227V12.3681C11 12.746 10.8682 13.0695 10.6047 13.3386C10.3412 13.6078 10.0245 13.7423 9.65443 13.7423H5.61774Z" fill="white"/>
+                  </svg>
+                  Export CSV
                 </button>
-              )}
+                <button
+                  className="btn-copy"
+                  onClick={() => copyEmailsToClipboard(event)}
+                  disabled={!event.attendees || event.attendees.length === 0}
+                  title="Copy Emails"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14" fill="none">
+                    <path d="M4.23529 11.2C3.84706 11.2 3.51471 11.0629 3.23824 10.7887C2.96176 10.5146 2.82353 10.185 2.82353 9.8V1.4C2.82353 1.015 2.96176 0.685417 3.23824 0.41125C3.51471 0.137083 3.84706 0 4.23529 0H10.5882C10.9765 0 11.3088 0.137083 11.5853 0.41125C11.8618 0.685417 12 1.015 12 1.4V9.8C12 10.185 11.8618 10.5146 11.5853 10.7887C11.3088 11.0629 10.9765 11.2 10.5882 11.2H4.23529ZM4.23529 9.8H10.5882V1.4H4.23529V9.8ZM1.41176 14C1.02353 14 0.691177 13.8629 0.414706 13.5887C0.138235 13.3146 0 12.985 0 12.6V2.8H1.41176V12.6H9.17647V14H1.41176Z" fill="white"/>
+                  </svg>
+                  Copy Emails
+                </button>
+              </div>
             </td>
           </tr>
         ))}
@@ -369,7 +408,10 @@ const ManageEvents = () => {
           onClick={() => navigate("/addevent")}
           className="btn-create-event"
         >
-          Create New Event
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+            <path d="M9 12H0V9H9V0H12V9H21V12H12V21H9V12Z" fill="white"/>
+          </svg>
+          Create Event
         </button>
       </div>
 
@@ -379,13 +421,13 @@ const ManageEvents = () => {
             className={`tab-button ${activeTab === "upcoming" ? "active" : ""}`}
             onClick={() => setActiveTab("upcoming")}
           >
-            Upcoming Events ({upcomingEvents.length})
+            Upcoming ({upcomingEvents.length})
           </button>
           <button
             className={`tab-button ${activeTab === "past" ? "active" : ""}`}
             onClick={() => setActiveTab("past")}
           >
-            Past Events ({pastEvents.length})
+            Past ({pastEvents.length})
           </button>
         </div>
 
