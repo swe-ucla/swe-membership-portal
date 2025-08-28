@@ -360,35 +360,46 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className={errors.firstName ? "input-error" : ""}
-                  />
-                  {errors.firstName && (
-                    <span className="error-message">{errors.firstName}</span>
-                  )}
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className={errors.firstName ? "input-error" : ""}
+                    />
+                    {errors.firstName && (
+                      <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                    )}
+                  </div>
                 </div>
 
                 <div className="form-group">
                   <label>Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={errors.lastName ? "input-error" : ""}
-                  />
-                  {errors.lastName && (
-                    <span className="error-message">{errors.lastName}</span>
-                  )}
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className={errors.lastName ? "input-error" : ""}
+                    />
+                    {errors.lastName && (
+                      <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {Object.values(errors).some((e) => e) && (
+            <div className="alert-banner">
+              <MaterialSymbol icon="error" size={20} className="alert-icon" />
+              <span>Your profile is missing information!</span>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
             <div className="form-group">
               <label>Email</label>
@@ -402,50 +413,59 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
             <div className="form-group">
               <label>Year</label>
-              <select 
-                name="year" 
-                value={formData.year} 
-                onChange={handleChange}
-                className={errors.year ? "input-error" : ""}
-              >
-                {yearOptions.map((option, index) => (
-                  <option key={index} value={option.value} disabled={option.disabled}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.year && <span className="error-message">{errors.year}</span>}
+              <div className="input-container">
+                <select 
+                  name="year" 
+                  value={formData.year} 
+                  onChange={handleChange}
+                  className={errors.year ? "input-error" : ""}
+                >
+                  {yearOptions.map((option, index) => (
+                    <option key={index} value={option.value} disabled={option.disabled}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.year && (
+                  <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                )}
+              </div>
             </div>
 
             <div className="form-group">
               <label>Major</label>
-              <select
-                name="major"
-                value={formData.major}
-                onChange={handleMajorChange}
-                className={errors.major ? "input-error" : ""}
-              >
-                {majorOptions.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <div className="input-container">
+                <select
+                  name="major"
+                  value={formData.major}
+                  onChange={handleMajorChange}
+                  className={errors.major ? "input-error" : ""}
+                >
+                  {majorOptions.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.major && (
+                  <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                )}
+              </div>
 
               {formData.major === "Other" && (
-                <input
-                  type="text"
-                  name="otherMajor"
-                  placeholder="Enter your major"
-                  value={formData.otherMajor}
-                  onChange={handleChange}
-                  className={errors.otherMajor ? "input-error" : ""}
-                />
-              )}
-
-              {errors.major && <span className="error-message">{errors.major}</span>}
-              {errors.otherMajor && (
-                <span className="error-message">{errors.otherMajor}</span>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="otherMajor"
+                    placeholder="Enter your major"
+                    value={formData.otherMajor}
+                    onChange={handleChange}
+                    className={errors.otherMajor ? "input-error" : ""}
+                  />
+                  {errors.otherMajor && (
+                    <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                  )}
+                </div>
               )}
             </div>
 

@@ -370,17 +370,29 @@
   text-align: left;
 }
 
-.form-group input,
-.form-group select {
-  padding: 0.75rem 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
+.input-container {
+  position: relative;
+  width: 100%;
 }
 
-.form-group input:focus,
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group input[type="number"],
+.form-group select {
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem;
+  border: 1px solid #D9D9D9;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.95rem;
+  background-color: #D9D9D952;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"],
+.form-group textarea:focus,
 .form-group select:focus {
   border-color: #B48FEF;
   background-color: white;
@@ -388,27 +400,30 @@
   box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
 }
 
-.disabled-input {
-  background-color: #f0f0f0 !important;
-  color: #666 !important;
+.form-group input.disabled-input {
+  background-color: #D9D9D9B2;
+  color: #00000080;
   cursor: not-allowed;
+  border: 1px solid #D9D9D9;
+  border-radius: var(--border-radius-lg);
 }
 
-.error-message {
+/* .form-group input.input-error,
+.form-group select.input-error */
+.form-group input[type="text"] .input-error,
+.form-group input[type="number"] .input-error {
+  background-color: #FDAEAE;
+  border: 1px solid #E13A3A;
+}
+
+.input-error-icon {
+  position: absolute;
+  right: 0.75rem;
   color: #ff3860;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
   display: block;
-}
-
-.input-error {
-  border-color: #ff3860 !important;
-  background-color: #fff6f6;
-}
-
-.input-error:focus {
-  border-color: #ff3860 !important;
-  box-shadow: 0 0 0 2px rgba(255, 56, 96, 0.1) !important;
 }
 
 .edit-profile-button-group {
@@ -463,8 +478,8 @@
   gap: 0.5rem;
   background: #FC5E5E80;
   color: black;
-  padding: 0.75rem 1rem;
-  border-radius: var(--border-radius-sm);
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
   font-size: 0.95rem;
   font-weight: 500;
   margin-bottom: 1rem;
