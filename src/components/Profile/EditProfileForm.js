@@ -120,7 +120,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   useEffect(() => {
     if (formData.profilePicture && formData.profilePicture.startsWith('data:')) {
-      return; // This is a preview URL, don't save to localStorage (so doesn't get overridden)
+      return; // preview URL, don't save to localStorage (so doesn't get overridden)
     }
     localStorage.setItem("editProfileForm", JSON.stringify(formData));
   }, [formData]);
@@ -395,7 +395,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                       className={errors.firstName ? "input-error" : ""}
                     />
                     {errors.firstName && (
-                      <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                      <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                     )}
                   </div>
                 </div>
@@ -411,7 +411,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                       className={errors.lastName ? "input-error" : ""}
                     />
                     {errors.lastName && (
-                      <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                      <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                     )}
                   </div>
                 </div>
@@ -421,7 +421,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
           {Object.values(errors).some((e) => e) && (
             <div className="alert-banner">
-              <MaterialSymbol icon="error" size={20} className="alert-icon" />
+              <MaterialSymbol icon="error" size={24} className="alert-icon" />
               <span>Your profile is missing information!</span>
             </div>
           )}
@@ -453,7 +453,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                   ))}
                 </select>
                 {errors.year && (
-                  <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                 )}
               </div>
             </div>
@@ -474,7 +474,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                   ))}
                 </select>
                 {errors.major && (
-                  <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                 )}
               </div>
 
