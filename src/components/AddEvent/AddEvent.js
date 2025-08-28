@@ -587,7 +587,7 @@ function AddEvent() {
 
           <div className="event-name-section">
             <div className="event-form-group">
-              <label className="form-label">Event Name</label>
+              <label className="form-label">Event Name:</label>
               <input
                 type="text"
                 name="name"
@@ -603,7 +603,7 @@ function AddEvent() {
 
         <div className="time-fields">
           <div className="event-form-group">
-            <label className="form-label">Date</label>
+            <label className="form-label">Date:</label>
             <input
               type="date"
               name="date"
@@ -616,7 +616,7 @@ function AddEvent() {
           </div>
 
           <div className="event-form-group">
-            <label className="form-label">Start Time</label>
+            <label className="form-label">Start Time:</label>
             <input
               type="time"
               name="startTime"
@@ -628,7 +628,7 @@ function AddEvent() {
           </div>
 
           <div className="event-form-group">
-            <label className="form-label">End Time</label>
+            <label className="form-label">End Time:</label>
             <input
               type="time"
               name="endTime"
@@ -641,7 +641,7 @@ function AddEvent() {
         </div>
 
         <div className="event-form-group">
-          <label className="form-label">Location</label>
+          <label className="form-label">Location:</label>
           <input
             type="text"
             name="location"
@@ -654,7 +654,7 @@ function AddEvent() {
         </div>
 
         <div className="event-form-group">
-          <label className="form-label">Committee</label>
+          <label className="form-label">Committee:</label>
           <select
             name="committee"
             className="add-event-select"
@@ -679,7 +679,7 @@ function AddEvent() {
               {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" fill="currentColor"/>
               </svg> */}
-              <span>Points</span>
+              <span>Points:</span>
             </div>
             <div className="slider-container">
               <input
@@ -701,7 +701,7 @@ function AddEvent() {
               {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" fill="currentColor"/>
               </svg> */}
-              <span>Sign-in Opens</span>
+              <span>Sign-in Opens:</span>
             </div>
             <div className="slider-container">
               <input
@@ -725,7 +725,7 @@ function AddEvent() {
         </div>
 
         <div className="event-form-group">
-          <label className="form-label">Description</label>
+          <label className="form-label">Description:</label>
           <textarea
             name="description"
             className="add-event-textarea"
@@ -752,7 +752,9 @@ function AddEvent() {
               }}
             />
             <label htmlFor="useCustomCode" className="custom-code-text">
-              Use custom attendance code
+              Use custom attendance code  ({isEditMode
+                ? "Existing attendance code will be preserved"
+                : "A random 6-letter code will be generated when the event is created"})
             </label>
           </div>
 
@@ -768,13 +770,7 @@ function AddEvent() {
               />
               {errors.attendanceCode && <p className="error-text">{errors.attendanceCode}</p>}
             </>
-          ) : (
-            <p className="text-muted">
-              {isEditMode
-                ? "Existing attendance code will be preserved."
-                : "A random 6-letter code will be generated when the event is created."}
-            </p>
-          )}
+          ) : null}
         </div>
 
         <div className="questions-section">

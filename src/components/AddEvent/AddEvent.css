@@ -308,7 +308,7 @@ body.add-event-page::before {
   margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  /* gap: 1.5rem; */
 }
 
 .add-event-form .slider-header {
@@ -327,6 +327,7 @@ body.add-event-page::before {
   flex-direction: column;
   justify-content: center;
   align-self: stretch;
+  margin-bottom: 10px;
 }
 
 .add-event-form .slider-header svg {
@@ -449,6 +450,18 @@ body.add-event-page::before {
 .add-event-form .form-check-label {
   font-size: 0.95rem;
   cursor: pointer;
+  display: flex;
+  width: 40.5rem;
+  height: 1.5rem;
+  flex-direction: column;
+  justify-content: center;
+  color: #895FD8;
+  font-family: Manrope;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
 }
 
 /* Questions section */
