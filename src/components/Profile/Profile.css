@@ -272,7 +272,7 @@
   height: 120px;
   border-radius: 50%;
   border: 3px solid #B48FEF;
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -285,6 +285,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .edit-no-picture {
@@ -297,12 +298,13 @@
   color: #666;
   font-size: 0.9rem;
   text-align: center;
+  border-radius: 50%;
 }
 
 .edit-picture-overlay {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 0px;
+  right: 0px;
   width: 32px;
   height: 32px;
   background: #B48FEF;
@@ -313,6 +315,7 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .edit-picture-overlay:hover {
@@ -373,6 +376,9 @@
 .input-container {
   position: relative;
   width: 100%;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .form-group input[type="text"],
@@ -408,22 +414,22 @@
   border-radius: var(--border-radius-lg);
 }
 
-/* .form-group input.input-error,
-.form-group select.input-error */
-.form-group input[type="text"] .input-error,
-.form-group input[type="number"] .input-error {
-  background-color: #FDAEAE;
-  border: 1px solid #E13A3A;
+.form-group input.input-error,
+.form-group select.input-error {
+  background-color: #FDAEAE !important;
+  border: 1px solid #E13A3A !important;
+  
 }
 
 .input-error-icon {
   position: absolute;
   right: 0.75rem;
-  color: #ff3860;
+  color: #E13A3A;
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
   display: block;
+  pointer-events: none;
 }
 
 .edit-profile-button-group {

@@ -119,6 +119,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   }, [userDetails]);
 
   useEffect(() => {
+    if (formData.profilePicture && formData.profilePicture.startsWith('data:')) {
+      return; // This is a preview URL, don't save to localStorage (so doesn't get overridden)
+    }
     localStorage.setItem("editProfileForm", JSON.stringify(formData));
   }, [formData]);
 
@@ -160,7 +163,30 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      // Create a preview URL for immediate display
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const previewUrl = event.target.result;
+        setFormData(prev => ({
+          ...prev,
+          profilePicture: previewUrl
+        }));
+        
+        // Force a re-render by updating state
+        setTimeout(() => {
+          setFormData(prev => ({
+            ...prev,
+            profilePicture: previewUrl
+          }));
+        }, 100);
+      };
+      reader.onerror = (error) => {
+        console.error("FileReader error:", error);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -331,12 +357,12 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         <div className="edit-profile-main-section">
           <div className="edit-profile-top-row">
             <div className="edit-profile-picture-section">
-              <div className="edit-profile-picture-container">
+              <div className="edit-profile-picture-container" onClick={() => document.getElementById('profile-picture-input').click()}>
                 {formData.profilePicture ? (
                   <img
                     src={formData.profilePicture}
                     alt="Profile"
-                    className="edit-profiles-picture"
+                    className="edit-profile-picture"
                   />
                 ) : (
                   <div className="edit-no-picture">
