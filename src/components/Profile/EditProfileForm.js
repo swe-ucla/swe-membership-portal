@@ -4,6 +4,8 @@ import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteUser } from "firebase/auth";
 import Popup from "../Popup/Popup";
 import "./Profile.css";
+import { MaterialSymbol } from "react-material-symbols";
+import "react-material-symbols/rounded";
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
@@ -117,6 +119,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   }, [userDetails]);
 
   useEffect(() => {
+    if (formData.profilePicture && formData.profilePicture.startsWith('data:')) {
+      return; // preview URL, don't save to localStorage (so doesn't get overridden)
+    }
     localStorage.setItem("editProfileForm", JSON.stringify(formData));
   }, [formData]);
 
@@ -158,7 +163,30 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      // Create a preview URL for immediate display
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const previewUrl = event.target.result;
+        setFormData(prev => ({
+          ...prev,
+          profilePicture: previewUrl
+        }));
+        
+        // Force a re-render by updating state
+        setTimeout(() => {
+          setFormData(prev => ({
+            ...prev,
+            profilePicture: previewUrl
+          }));
+        }, 100);
+      };
+      reader.onerror = (error) => {
+        console.error("FileReader error:", error);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -323,130 +351,169 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         cancelText={popup.confirm ? "Cancel" : undefined}
         confirmText={popup.confirm ? "Yes, delete my account" : undefined}
       />
-      <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
-      <div className="form-group">
-        <label>
-          Upload Profile Picture:
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-        </label>
+      <div className="edit-profile-container">
+        <h2 className="edit-profile-header">Edit Profile</h2>
+        
+        <div className="edit-profile-main-section">
+          <div className="edit-profile-top-row">
+            <div className="edit-profile-picture-section">
+              <div className="edit-profile-picture-container" onClick={() => document.getElementById('profile-picture-input').click()}>
+                {formData.profilePicture ? (
+                  <img
+                    src={formData.profilePicture}
+                    alt="Profile"
+                    className="edit-profile-picture"
+                  />
+                ) : (
+                  <div className="edit-no-picture">
+                    <span>Upload a photo</span>
+                  </div>
+                )}
+                <div className="edit-picture-overlay">
+                  <MaterialSymbol icon="edit" size={20} />
+                </div>
+              </div>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileChange}
+                className="edit-picture-input"
+                id="profile-picture-input"
+              />
+            </div>
+
+            <div className="edit-name-fields">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>First Name</label>
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      className={errors.firstName ? "input-error" : ""}
+                    />
+                    {errors.firstName && (
+                      <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Last Name</label>
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className={errors.lastName ? "input-error" : ""}
+                    />
+                    {errors.lastName && (
+                      <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {Object.values(errors).some((e) => e) && (
+            <div className="alert-banner">
+              <MaterialSymbol icon="error" size={24} className="alert-icon" />
+              <span>Your profile is missing information!</span>
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="edit-profile-form" ref={formRef}>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={userDetails?.email || ""}
+                disabled
+                className="disabled-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Year</label>
+              <div className="input-container">
+                <select 
+                  name="year" 
+                  value={formData.year} 
+                  onChange={handleChange}
+                  className={errors.year ? "input-error" : ""}
+                >
+                  {yearOptions.map((option, index) => (
+                    <option key={index} value={option.value} disabled={option.disabled}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.year && (
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                )}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Major</label>
+              <div className="input-container">
+                <select
+                  name="major"
+                  value={formData.major}
+                  onChange={handleMajorChange}
+                  className={errors.major ? "input-error" : ""}
+                >
+                  {majorOptions.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.major && (
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                )}
+              </div>
+
+              {formData.major === "Other" && (
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="otherMajor"
+                    placeholder="Enter your major"
+                    value={formData.otherMajor}
+                    onChange={handleChange}
+                    className={errors.otherMajor ? "input-error" : ""}
+                  />
+                  {errors.otherMajor && (
+                    <MaterialSymbol icon="error" size={20} className="input-error-icon" />
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="button-group">
+              <button
+                type="submit"
+                className="btn save-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save"}
+              </button>
+              <button
+                type="button"
+                className="btn delete-btn"
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <div className="form-group">
-        <label>
-          First Name <span style={{ color: "red" }}>*</span>:
-        </label>
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-        />
-        {errors.firstName && (
-          <span className="error-message">{errors.firstName}</span>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>
-          Last Name <span style={{ color: "red" }}>*</span>:
-        </label>
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-        />
-        {errors.lastName && (
-          <span className="error-message">{errors.lastName}</span>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>
-          Year <span style={{ color: "red" }}>*</span>:
-        </label>
-        <select name="year" value={formData.year} onChange={handleChange}>
-          {yearOptions.map((option, index) => (
-            <option key={index} value={option.value} disabled={option.disabled}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {errors.year && <span className="error-message">{errors.year}</span>}
-      </div>
-
-      <div className="form-group">
-        <label>
-          Major <span style={{ color: "red" }}>*</span>:
-        </label>
-        <select
-          name="major"
-          value={formData.major}
-          onChange={handleMajorChange}
-        >
-          {majorOptions.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-
-        {formData.major === "Other" && (
-          <input
-            type="text"
-            name="otherMajor"
-            placeholder="Enter your major"
-            value={formData.otherMajor}
-            onChange={handleChange}
-          />
-        )}
-
-        {errors.major && <span className="error-message">{errors.major}</span>}
-        {errors.otherMajor && (
-          <span className="error-message">{errors.otherMajor}</span>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>
-          Member ID:
-        </label>
-        <input
-          type="number"
-          inputMode="numeric"
-          name="memberId"
-          value={formData.memberId}
-          onChange={handleChange}
-        />
-        {errors.memberId && (
-          <span className="error-message">{errors.memberId}</span>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Bio (Max 100 words):</label>
-        <textarea name="bio" value={formData.bio} onChange={handleChange} />
-        <div className="word-counter">{100 - bioWordCount} words left</div>
-        {errors.bio && <span className="error-message">{errors.bio}</span>}
-      </div>
-
-      <div className="button-group">
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Saving..." : "Save Changes"}
-        </button>
-        <button
-          type="button"
-          className="btn btn-danger"
-          onClick={handleDeleteAccount}
-        >
-          Delete Account
-        </button>
-      </div>
-    </form>
     </>
   );
 };

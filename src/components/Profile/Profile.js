@@ -77,7 +77,8 @@ function Profile() {
   };
 
   return (
-    <div className="profile-container">
+    <div className="profile-page">
+      <div className="profile-container">
       {userDetails ? (
         userDetails.missingProfile ? (
           <p className="error-message">
@@ -148,12 +149,7 @@ function Profile() {
               </div>
             </div>
 
-            <h2 className="profile-header">Bio</h2>
-            <div className="bio-box">
-              {userDetails.bio ? userDetails.bio : "No bio added yet."}
-            </div>
 
-            
 
             <div className="button-group">
               <button className="btn logout-btn" onClick={handleLogout}>
@@ -165,6 +161,7 @@ function Profile() {
       ) : (
         <p className="loading-state">Loading...</p>
       )}
+      </div>
     </div>
   );
 }
