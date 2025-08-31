@@ -38,6 +38,11 @@ function UpcomingEvents() {
     isOpen: false,
     event: null,
   });
+  const [signInPopup, setSignInPopup] = useState({
+    isOpen: false,
+    event: null,
+    code: "",
+  });
 
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,6 +101,14 @@ function UpcomingEvents() {
         .sort((a, b) => {
           const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
           const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+          
+          // If dates are the same, sort by start time
+          if (dateA.toDateString() === dateB.toDateString()) {
+            const timeA = a.startTime || "00:00";
+            const timeB = b.startTime || "00:00";
+            return timeA.localeCompare(timeB);
+          }
+          
           return dateA - dateB; // Sort by date ascending (soonest first)
         });
 
@@ -131,6 +144,17 @@ function UpcomingEvents() {
     );
   };
 
+  const hasEventPassed = (event) => {
+    const now = new Date();
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    const eventEndTime = event.endTime 
+      ? new Date(eventDate.getTime() + 
+          (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]) - 
+           parseInt(event.startTime?.split(':')[0] || '0') * 60 - parseInt(event.startTime?.split(':')[1] || '0')) * 60000)
+      : new Date(eventDate.getTime() + 2 * 3600000);
+    return now > eventEndTime;
+  };
+
   const formatDate = (timestamp) => {
     if (!timestamp) return null;
 
@@ -152,7 +176,8 @@ function UpcomingEvents() {
   };
 
   const handleSignUpClick = (eventId) => {
-    navigate(`/eventsignin/${eventId}`); // Navigate to the event signing page with event ID
+    const event = events.find(e => e.id === eventId);
+    setSignInPopup({ isOpen: true, event, code: "" });
   };
 
   const handleCancelRegistration = async (eventId, points) => {
@@ -233,7 +258,15 @@ function UpcomingEvents() {
     const signInOpens = new Date(
       eventDate.getTime() - (event.signInOpensHoursBefore || 1) * 3600000
     ); // Convert hours to milliseconds
-    return now >= signInOpens && now <= eventDate;
+    
+    // Calculate event end time (use endTime if available, otherwise assume 2 hours duration)
+    const eventEndTime = event.endTime 
+      ? new Date(eventDate.getTime() + 
+          (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]) - 
+           parseInt(event.startTime?.split(':')[0] || '0') * 60 - parseInt(event.startTime?.split(':')[1] || '0')) * 60000)
+      : new Date(eventDate.getTime() + 2 * 3600000); // Default 2 hours if no end time
+    
+    return now >= signInOpens && now <= eventEndTime;
   };
 
   const isRSVPOpen = (event) => {
@@ -310,6 +343,58 @@ function UpcomingEvents() {
 
   const closeEventDetailsPopup = () => {
     setEventDetailsPopup({ isOpen: false, event: null });
+  };
+
+  const handleSignInSubmit = async () => {
+    const { event, code } = signInPopup;
+    if (!event || !code) return;
+
+    if (code.toUpperCase() === event.attendanceCode) {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) return;
+
+        const userRef = doc(db, "Users", userId);
+        const eventRef = doc(db, "events", event.id);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const currentPoints = Number(userData.swePoints) || 0;
+          const attendedEvents = userData.attendedEvents || [];
+          const rsvpEvents = userData.rsvpEvents || [];
+
+          if (attendedEvents.includes(event.id)) {
+            setPopup({ isOpen: true, message: "You have already signed into this event.", toast: true });
+            setSignInPopup({ isOpen: false, event: null, code: "" });
+            return;
+          }
+
+          const wasRSVPd = rsvpEvents.includes(event.id);
+          const updatedRsvpEvents = wasRSVPd ? rsvpEvents.filter(id => id !== event.id) : rsvpEvents;
+
+          await setDoc(userRef, {
+            attendedEvents: [...attendedEvents, event.id],
+            rsvpEvents: updatedRsvpEvents,
+            swePoints: currentPoints + (Number(event.points) || 0),
+          }, { merge: true });
+
+          await setDoc(eventRef, {
+            attendees: [...(event.attendees || []), userId],
+          }, { merge: true });
+
+          setIsSignedIn([...attendedEvents, event.id]);
+          setRsvpEvents(updatedRsvpEvents);
+          setSignInPopup({ isOpen: false, event: null, code: "" });
+          setPopup({ isOpen: true, message: "Successfully signed in!", toast: true });
+        }
+      } catch (error) {
+        console.error("Error signing in:", error);
+        setPopup({ isOpen: true, message: "Failed to sign in", toast: true });
+      }
+    } else {
+      setPopup({ isOpen: true, message: "Invalid attendance code", toast: true });
+    }
   };
 
   // Page navigation logic
@@ -417,7 +502,7 @@ function UpcomingEvents() {
 
                 <div className="event-points-badge">{event.points} pts</div>
 
-                {isToday(event.date) && (
+                {isToday(event.date) && !hasEventPassed(event) && (
                   <div className="today-badge">HAPPENING TODAY</div>
                 )}
 
@@ -571,6 +656,41 @@ function UpcomingEvents() {
           onClose={closeEventDetailsPopup}
           isAdmin={isAdmin}
         />
+        
+        {/* Sign In Popup */}
+        {signInPopup.isOpen && (
+          <div className="popup-overlay" onClick={() => setSignInPopup({ isOpen: false, event: null, code: "" })}>
+            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+              <h3>Enter the event code:</h3>
+              <div className="form-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={signInPopup.code}
+                  onChange={(e) => setSignInPopup(prev => ({ ...prev, code: e.target.value }))}
+                  placeholder="Enter 6-letter code"
+                  maxLength={6}
+                  autoFocus
+                />
+              </div>
+              <div className="popup-buttons">
+                <button 
+                  className="btn btn-primary" 
+                  onClick={handleSignInSubmit}
+                  disabled={!signInPopup.code}
+                >
+                  Sign In
+                </button>
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => setSignInPopup({ isOpen: false, event: null, code: "" })}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
