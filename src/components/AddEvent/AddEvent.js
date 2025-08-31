@@ -127,6 +127,10 @@ function AddEvent() {
     }
 
     fetchUserData();
+    document.body.classList.add("add-event-page");
+    return () => {
+      document.body.classList.remove("add-event-page");
+    };
   }, [location.search]);
 
   const fetchEventData = async (id) => {
@@ -541,100 +545,119 @@ function AddEvent() {
         {isEditMode ? "Edit Event" : "Add Event"}
       </h2>
       <form className="add-event-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Event Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={eventData.name}
-            onChange={handleInputChange}
-          />
-          {errors.name && <p className="error-text">{errors.name}</p>}
-        </div>
-
-        <div className="form-group event-photo-upload">
-          <label
-            className="form-label"
-            style={{ marginBottom: "0.4rem", display: "block" }}
-          >
-            Event Photo:
-          </label>
-          <label htmlFor="event-photo-input" className="upload-label">
-            Choose Photo
-          </label>
-          <input
-            id="event-photo-input"
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-          />
-          {eventData.photo && (
-            <span className="file-name">{eventData.photo.name}</span>
-          )}
-          {photoPreview && (
-            <div className="event-photo-preview">
-              <img src={photoPreview} alt="Event Preview" />
+        <div className="form-layout">
+          <div className="photo-section">
+            <div className="photo-upload-container">
+              {photoPreview ? (
+                <div className="photo-preview">
+                  <img src={photoPreview} alt="Event Preview" />
+                  <button
+                    type="button"
+                    className="edit-photo-btn"
+                    onClick={() => document.getElementById('event-photo-input').click()}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8.5 2.5H3.5C3.22386 2.5 3 2.72386 3 3V13C3 13.2761 3.22386 13.5 3.5 13.5H12.5C12.7761 13.5 13 13.2761 13 13V8M8.5 2.5L13 7M8.5 2.5V6.5C8.5 6.77614 8.72386 7 9 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <div className="photo-placeholder">
+                  <span>Upload a photo</span>
+                  <button
+                    type="button"
+                    className="edit-photo-btn"
+                    onClick={() => document.getElementById('event-photo-input').click()}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.6208 3.25 16.8625 3.15C17.1042 3.05 17.3583 3 17.625 3C17.8917 3 18.15 3.05 18.4 3.15C18.65 3.25 18.8667 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.7708 5.4 20.8625 5.65C20.9542 5.9 21 6.15 21 6.4C21 6.66667 20.9542 6.92083 20.8625 7.1625C20.7708 7.40417 20.625 7.625 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="white"/>
+                    </svg>
+                  </button>
+                </div>
+              )}
+              <input
+                id="event-photo-input"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: 'none' }}
+              />
             </div>
-          )}
+          </div>
+
+          <div className="event-name-section">
+            <div className="event-form-group">
+              <label className="form-label">Event Name:</label>
+              <input
+                type="text"
+                name="name"
+                className="add-event-input"
+                value={eventData.name}
+                onChange={handleInputChange}
+                placeholder="Placeholder event name"
+              />
+              {errors.name && <p className="error-text">{errors.name}</p>}
+            </div>
+          </div>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Event Date:</label>
-          <input
-            type="date"
-            name="date"
-            value={eventData.date}
-            onChange={handleInputChange}
-            min={todayDate} // Restrict selecting past dates
-          />
-          {errors.date && <p className="error-text">{errors.date}</p>}
-        </div>
+        <div className="time-fields">
+          <div className="event-form-group">
+            <label className="form-label">Date:</label>
+            <input
+              type="date"
+              name="date"
+              className="add-event-input"
+              value={eventData.date}
+              onChange={handleInputChange}
+              min={todayDate}
+            />
+            {errors.date && <p className="error-text">{errors.date}</p>}
+          </div>
 
-        <div
-          className="form-group"
-          style={{ display: "flex", gap: "1rem", alignItems: "flex-end" }}
-        >
-          <div style={{ flex: 1 }}>
+          <div className="event-form-group">
             <label className="form-label">Start Time:</label>
             <input
               type="time"
-              style={{ minWidth: "0" }}
               name="startTime"
+              className="add-event-input"
               value={eventData.startTime}
               onChange={handleInputChange}
-              className="form-control"
             />
             {errors.startTime && <p className="error-text">{errors.startTime}</p>}
           </div>
-          <div style={{ flex: 1 }}>
+
+          <div className="event-form-group">
             <label className="form-label">End Time:</label>
             <input
-              style={{ minWidth: "0" }}
               type="time"
               name="endTime"
+              className="add-event-input"
               value={eventData.endTime}
               onChange={handleInputChange}
-              className="form-control"
             />
             {errors.endTime && <p className="error-text">{errors.endTime}</p>}
           </div>
         </div>
 
-        <div className="form-group">
+        <div className="event-form-group">
           <label className="form-label">Location:</label>
           <input
             type="text"
             name="location"
+            className="add-event-input"
             value={eventData.location}
             onChange={handleInputChange}
+            placeholder="Engineering VI"
           />
           {errors.location && <p className="error-text">{errors.location}</p>}
         </div>
 
-        <div className="form-group">
+        <div className="event-form-group">
           <label className="form-label">Committee:</label>
           <select
             name="committee"
+            className="add-event-select"
             value={eventData.committee}
             onChange={handleInputChange}
           >
@@ -650,52 +673,70 @@ function AddEvent() {
           {errors.committee && <p className="error-text">{errors.committee}</p>}
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Points:</label>
-          <input
-            type="range"
-            name="points"
-            min="1"
-            max="5"
-            value={eventData.points}
-            onChange={handleInputChange}
-          />
-          <span className="slider-display">{eventData.points} points</span>
-          {errors.points && <p className="error-text">{errors.points}</p>}
+        <div className="slider-section">
+          <div className="slider-group">
+            <div className="slider-header">
+              {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" fill="currentColor"/>
+              </svg> */}
+              <span>Points:</span>
+            </div>
+            <div className="slider-container">
+              <input
+                type="range"
+                name="points"
+                min="1"
+                max="5"
+                value={eventData.points}
+                onChange={handleInputChange}
+                className="modern-slider"
+              />
+              <span className="slider-value">{eventData.points} pts</span>
+            </div>
+            {errors.points && <p className="error-text">{errors.points}</p>}
+          </div>
+
+          <div className="slider-group">
+            <div className="slider-header">
+              {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" fill="currentColor"/>
+              </svg> */}
+              <span>Sign-in Opens:</span>
+            </div>
+            <div className="slider-container">
+              <input
+                type="range"
+                name="signInOpensHoursBefore"
+                min="1"
+                max="24"
+                value={eventData.signInOpensHoursBefore}
+                onChange={(e) =>
+                  setEventData((prev) => ({
+                    ...prev,
+                    signInOpensHoursBefore: Number(e.target.value),
+                  }))
+                }
+                className="modern-slider sign-in-slider"
+              />
+              <span className="slider-value">{eventData.signInOpensHoursBefore} hour(s) before event</span>
+            </div>
+            {errors.signInOpensHoursBefore && <p className="error-text">{errors.signInOpensHoursBefore}</p>}
+          </div>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Sign In Opens:</label>
-          <input
-            type="range"
-            name="signInOpensHoursBefore"
-            min="1"
-            max="24"
-            value={eventData.signInOpensHoursBefore}
-            onChange={(e) =>
-              setEventData((prev) => ({
-                ...prev,
-                signInOpensHoursBefore: Number(e.target.value),
-              }))
-            }
-          />
-          <span className="slider-display">
-            {eventData.signInOpensHoursBefore} hour(s) before event
-          </span>
-          {errors.signInOpensHoursBefore && <p className="error-text">{errors.signInOpensHoursBefore}</p>}
-        </div>
-
-        <div className="form-group">
+        <div className="event-form-group">
           <label className="form-label">Description:</label>
           <textarea
             name="description"
+            className="add-event-textarea"
             value={eventData.description}
             onChange={handleInputChange}
+            placeholder="This is the description for the event!"
           />
           {errors.description && <p className="error-text">{errors.description}</p>}
         </div>
 
-        <div className="form-group">
+        <div className="event-form-group">
           <label className="form-label">Attendance Code:</label>
           <div className="d-flex align-items-center mb-2">
             <input
@@ -710,8 +751,10 @@ function AddEvent() {
                 }
               }}
             />
-            <label htmlFor="useCustomCode" className="mb-0">
-              Use custom attendance code
+            <label htmlFor="useCustomCode" className="custom-code-text">
+              Use custom attendance code  ({isEditMode
+                ? "Existing attendance code will be preserved"
+                : "A random 6-letter code will be generated when the event is created"})
             </label>
           </div>
 
@@ -719,7 +762,7 @@ function AddEvent() {
             <>
               <input
                 type="text"
-                className="form-control"
+                className="add-event-input"
                 placeholder="Enter 6-letter code"
                 value={eventData.attendanceCode}
                 onChange={handleCodeChange}
@@ -727,13 +770,7 @@ function AddEvent() {
               />
               {errors.attendanceCode && <p className="error-text">{errors.attendanceCode}</p>}
             </>
-          ) : (
-            <p className="text-muted">
-              {isEditMode
-                ? "Existing attendance code will be preserved."
-                : "A random 6-letter code will be generated when the event is created."}
-            </p>
-          )}
+          ) : null}
         </div>
 
         <div className="questions-section">
@@ -779,17 +816,17 @@ function AddEvent() {
           <div className="add-question-form">
             <input
               type="text"
-              /*className="form-control"*/
+              className="add-event-input"
               placeholder="Enter new question"
               value={newQuestion.text}
               onChange={(e) =>
                 setNewQuestion((prev) => ({ ...prev, text: e.target.value }))
               }
             />
-            <div className="form-group">
+            <div className="event-form-group">
               <label>Question Type:</label>
               <select
-                className="form-control"
+                className="add-event-select"
                 type="text"
                 style={{ width: "100%", minWidth: "0", maxWidth: "none" }}
                 value={newQuestion.type}
@@ -811,13 +848,13 @@ function AddEvent() {
             {["multipleChoice", "checkboxes", "dropdown"].includes(
               newQuestion.type
             ) && (
-              <div className="form-group">
+              <div className="event-form-group">
                 <label>Options:</label>
                 {newQuestion.options.map((option, index) => (
                   <div key={index} className="d-flex align-items-center mb-1">
                     <input
                       type="text"
-                      className="form-control me-2"
+                      className="add-event-input me-2"
                       placeholder={`Option ${index + 1}`}
                       value={option}
                       onChange={(e) =>
@@ -842,12 +879,13 @@ function AddEvent() {
                   type="button"
                   className="btn btn-sm btn-outline-primary"
                   onClick={addNewOptionField}
+                  style={{ marginTop: "0.5rem" }}
                 >
                   Add Option
                 </button>
               </div>
             )}
-            <div className="form-check">
+            <div className="form-check" style = {{marginBottom: "0.5rem"}}>
               <input
                 type="checkbox"
                 className="form-check-input"
@@ -871,16 +909,16 @@ function AddEvent() {
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="event-form-actions">
           <button
             type="button"
-            className="btn btn-outline-secondary"
+            className="btn"
             onClick={() => navigate("/manageevents")}
           >
             Cancel
           </button>
           <button type="submit" className="btn btn-success">
-            {isEditMode ? "Update Event" : "Add Event"}
+            Save
           </button>
         </div>
       </form>
