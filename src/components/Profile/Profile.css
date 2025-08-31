@@ -1,5 +1,8 @@
 /* Profile.css - uses shared variables from styles/variables.css */
 
+
+
+/* TODO: check which one is right */
 /* Background layering for profile page */
 body.profile-page {
   background-image: url("/public/assets/makerspace-background.svg");
@@ -7,6 +10,15 @@ body.profile-page {
   position: relative;
   background-size: 100% auto;
   background-position: center top;
+
+  /* before Lian's */
+.profile-page {
+  min-height: 100vh;
+  width: 100%;
+  background-image: url('/public/assets/engineering-background.png');
+  background-size: cover;
+  background-position: center;
+
   margin: none;
   height: 100%;
   width: 100%;
@@ -14,6 +26,7 @@ body.profile-page {
   padding: 0;
   border: 0.000000001px solid white; /*fill the container*/
 }
+
 
 /* Decorative elements that grow with content */
 body.profile-page::before {
@@ -31,6 +44,7 @@ body.profile-page::before {
   min-height: 100vh;
   background-attachment: local;
 }
+
 
 .profile-container {
   max-width: 1000px;
@@ -249,105 +263,313 @@ body.profile-page::before {
   color: white;
 }
 
-/* Edit Form Styling */
-.edit-profile-form {
+.stat-icon {
+  color: #ffd84d;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.bio-box {
+  width: 100%;
+  min-height: 100px;
+  background: none;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #333;
+  text-align: left;
+}
+
+.logout-btn {
+  color: white;
+  border: none;
+  box-shadow: 0 4px 0px #7D55CA;
+  border-radius: var(--border-radius-md);
+  background-color: #895FD8;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+  background: #7D55CA;
+  box-shadow: 0 4px 0px #61429c;
+  color: white;
+}
+
+/* Edit Form */
+.edit-profile-container {
   max-width: 800px;
-  margin: 2rem auto;
   padding: 1.5rem;
+}
+
+.edit-profile-header {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3A3536;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.edit-profile-main-section {
   display: flex;
   flex-direction: column;
-  background: #f9f9ff;
-  border-radius: var(--border-radius-md);
+  gap: 2rem;
 }
 
-.edit-profile-form .form-group {
-  width: 100%;
-}
-
-.edit-profile-form .button-group {
+.edit-profile-top-row {
   display: flex;
-  justify-content: center;
-  margin-top: 2rem;
+  gap: 3rem;
+  align-items: center;
+}
+
+/* Edit Profile Picture Section */
+.edit-profile-picture-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.edit-profile-picture-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #B48FEF;
+  overflow: visible;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-profile-picture-container:hover {
+  border-color: #895FD8;
+}
+
+.edit-profile-picture {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.edit-no-picture {
+  width: 100%;
+  height: 100%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+  border-radius: 50%;
+}
+
+.edit-picture-overlay {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 32px;
+  height: 32px;
+  background: #B48FEF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.edit-picture-overlay:hover {
+  background: #895FD8;
+}
+
+.edit-picture-input {
+  display: none;
+}
+
+.edit-picture-label {
+  color: #B48FEF;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.edit-picture-label:hover {
+  color: #895FD8;
+}
+
+.edit-name-fields {
+  flex: 1;
+}
+
+/* Edit Profile Form */
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
-  display: block;
   font-size: 0.95rem;
-  color: var(--color-purple-dark);
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  color: #3A3536;
+  margin: 0;
+  text-align: left;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
 }
 
 .form-group input[type="text"],
 .form-group input[type="file"],
 .form-group input[type="number"],
-.form-group textarea,
 .form-group select {
-  width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid #e0e0fe;
-  border-radius: var(--border-radius-sm);
+  padding-right: 2.5rem;
+  border: 1px solid #D9D9D9;
+  border-radius: var(--border-radius-lg);
   font-size: 0.95rem;
-  background-color: #fff;
-  transition: var(--transition);
+  background-color: #D9D9D952;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 3rem;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="number"],
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: var(--color-purple-medium);
-  box-shadow: 0 0 0 2px rgba(69, 37, 162, 0.1);
+  border-color: #B48FEF;
+  background-color: white;
   outline: none;
+  box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="number"],
-.form-group textarea:focus,
-.form-group select:focus {
-  border-color: var(--color-purple-medium);
-  box-shadow: 0 0 0 2px rgba(69, 37, 162, 0.1);
-  outline: none;
+.form-group input.disabled-input {
+  background-color: #D9D9D9B2;
+  color: #00000080;
+  cursor: not-allowed;
+  border: 1px solid #D9D9D9;
+  border-radius: var(--border-radius-lg);
 }
 
-.error-message {
-  color: #ff3860;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
+.form-group input.input-error,
+.form-group select.input-error {
+  background-color: #FDAEAE !important;
+  border: 1px solid #E13A3A !important;
+  
+}
+
+.input-error-icon {
+  position: absolute;
+  right: 0.75rem;
+  color: #E13A3A;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
   display: block;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.input-error {
-  border-color: #ff3860 !important;
-  background-color: #fff6f6;
+.edit-profile-button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
-.input-error:focus {
-  border-color: #ff3860 !important;
-  box-shadow: 0 0 0 2px rgba(255, 56, 96, 0.1) !important;
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.form-group input[type="file"] {
+.save-btn {
+  color: white;
   border: none;
-  padding: 0.5rem 0;
+  box-shadow: 0 4px 0px #895fd8;
+  border-radius: var(--border-radius-md);
+  background-color: #B48FEF;
+  text-align: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
 
-.word-counter {
-  font-size: 0.8rem;
-  color: #666;
-  text-align: right;
-  margin-top: 0.25rem;
+.save-btn:hover {
+  background: #895fd8;
+  box-shadow: 0 4px 0px #7D55CA;
+  color: white;
 }
+
+.delete-btn {
+  background: #FC5E5E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  box-shadow: 0 4px 0px #E13A3A;
+}
+
+.delete-btn:hover {
+  background: #E13A3A;
+  box-shadow: 0 4px 0px #a92121;
+  color: white;
+}
+
+/* Warning Banner */
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FC5E5E80;
+  color: black;
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.alert-icon {
+  color: #E13A3A;
+}
+
 
 /* Warning Banner */
 .alert-banner {
@@ -499,6 +721,28 @@ body.profile-page::before {
 
   .field-label {
     margin-bottom: 0.5rem;
+  }
+}
+
+/* Responsive Design for Edit Profile */
+@media (max-width: 768px) {
+  .edit-profile-top-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .save-btn,
+  .delete-btn {
+    width: 100%;
   }
 }
 
