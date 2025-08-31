@@ -1,7 +1,5 @@
 /* Profile.css - uses shared variables from styles/variables.css */
 
-
-
 /* TODO: check which one is right */
 /* Background layering for profile page */
 body.profile-page {
@@ -10,12 +8,12 @@ body.profile-page {
   position: relative;
   background-size: 100% auto;
   background-position: center top;
-
-  /* before Lian's */
+}
+/* before Lian's */
 .profile-page {
   min-height: 100vh;
   width: 100%;
-  background-image: url('/public/assets/engineering-background.png');
+  background-image: url("/public/assets/engineering-background.png");
   background-size: cover;
   background-position: center;
 
@@ -26,7 +24,6 @@ body.profile-page {
   padding: 0;
   border: 0.000000001px solid white; /*fill the container*/
 }
-
 
 /* Decorative elements that grow with content */
 body.profile-page::before {
@@ -44,7 +41,6 @@ body.profile-page::before {
   min-height: 100vh;
   background-attachment: local;
 }
-
 
 .profile-container {
   max-width: 1000px;
@@ -78,7 +74,7 @@ body.profile-page::before {
   border: none;
   box-shadow: 0 4px 0px #895fd8;
   border-radius: var(--border-radius-md);
-  background-color: #B48FEF;
+  background-color: #b48fef;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -88,7 +84,7 @@ body.profile-page::before {
 
 .edit-profile-btn:hover {
   background: #895fd8;
-  box-shadow: 0 4px 0px #7D55CA;
+  box-shadow: 0 4px 0px #7d55ca;
   color: white;
 }
 
@@ -113,7 +109,7 @@ body.profile-page::before {
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #B48FEF;
+  border: 3px solid #b48fef;
   box-shadow: 0 4px 10px rgba(69, 37, 162, 0.15);
 }
 
@@ -125,8 +121,8 @@ body.profile-page::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #B48FEF;
-  border: 3px solid #B48FEF;
+  color: #b48fef;
+  border: 3px solid #b48fef;
   box-shadow: 0 4px 10px rgba(69, 37, 162, 0.15);
   font-size: 0.9rem;
 }
@@ -163,7 +159,7 @@ body.profile-page::before {
 .profile-header {
   font-size: 2rem;
   font-weight: 600;
-  color: #3A3536;
+  color: #3a3536;
   margin: 0;
   text-align: left;
 }
@@ -177,7 +173,8 @@ body.profile-page::before {
   gap: 0.5rem;
 }
 
-.profile-major, .profile-year {
+.profile-major,
+.profile-year {
   font-size: 1rem;
   color: #444;
   font-weight: 500;
@@ -197,11 +194,11 @@ body.profile-page::before {
   height: 24px;
   margin-left: 2px;
   margin-right: 2px;
-  vertical-align: middle; 
+  vertical-align: middle;
 }
 
 .year-icon {
-  color: #B48FEF;
+  color: #b48fef;
 }
 
 /* Profile Details */
@@ -249,16 +246,16 @@ body.profile-page::before {
 .logout-btn {
   color: white;
   border: none;
-  box-shadow: 0 4px 0px #7D55CA;
+  box-shadow: 0 4px 0px #7d55ca;
   border-radius: var(--border-radius-md);
-  background-color: #895FD8;
+  background-color: #895fd8;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
 }
 
 .logout-btn:hover {
-  background: #7D55CA;
+  background: #7d55ca;
   box-shadow: 0 4px 0px #61429c;
   color: white;
 }
@@ -288,30 +285,30 @@ body.profile-page::before {
 .logout-btn {
   color: white;
   border: none;
-  box-shadow: 0 4px 0px #7D55CA;
+  box-shadow: 0 4px 0px #7d55ca;
   border-radius: var(--border-radius-md);
-  background-color: #895FD8;
+  background-color: #895fd8;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
 }
 
 .logout-btn:hover {
-  background: #7D55CA;
+  background: #7d55ca;
   box-shadow: 0 4px 0px #61429c;
   color: white;
 }
 
 /* Edit Form */
 .edit-profile-container {
-  max-width: 800px;
+  max-width: 100%;
   padding: 1.5rem;
 }
 
 .edit-profile-header {
   font-size: 2rem;
   font-weight: 700;
-  color: #3A3536;
+  color: #3a3536;
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -342,14 +339,14 @@ body.profile-page::before {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid #B48FEF;
+  border: 3px solid #b48fef;
   overflow: visible;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .edit-profile-picture-container:hover {
-  border-color: #895FD8;
+  border-color: #895fd8;
 }
 
 .edit-profile-picture {
@@ -378,7 +375,7 @@ body.profile-page::before {
   right: 0px;
   width: 32px;
   height: 32px;
-  background: #B48FEF;
+  background: #b48fef;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -390,7 +387,7 @@ body.profile-page::before {
 }
 
 .edit-picture-overlay:hover {
-  background: #895FD8;
+  background: #895fd8;
 }
 
 .edit-picture-input {
@@ -398,7 +395,7 @@ body.profile-page::before {
 }
 
 .edit-picture-label {
-  color: #B48FEF;
+  color: #b48fef;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -406,7 +403,7 @@ body.profile-page::before {
 }
 
 .edit-picture-label:hover {
-  color: #895FD8;
+  color: #895fd8;
 }
 
 .edit-name-fields {
@@ -440,7 +437,7 @@ body.profile-page::before {
 .form-group label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #3A3536;
+  color: #3a3536;
   margin: 0;
   text-align: left;
 }
@@ -459,10 +456,10 @@ body.profile-page::before {
 .form-group select {
   padding: 0.75rem 1rem;
   padding-right: 2.5rem;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: var(--border-radius-lg);
   font-size: 0.95rem;
-  background-color: #D9D9D952;
+  background-color: #d9d9d952;
   transition: all 0.3s ease;
   width: 100%;
   height: 3rem;
@@ -474,31 +471,30 @@ body.profile-page::before {
 .form-group input[type="number"],
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #B48FEF;
+  border-color: #b48fef;
   background-color: white;
   outline: none;
   box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
 }
 
 .form-group input.disabled-input {
-  background-color: #D9D9D9B2;
+  background-color: #d9d9d9b2;
   color: #00000080;
   cursor: not-allowed;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   border-radius: var(--border-radius-lg);
 }
 
 .form-group input.input-error,
 .form-group select.input-error {
-  background-color: #FDAEAE !important;
-  border: 1px solid #E13A3A !important;
-  
+  background-color: #fdaeae !important;
+  border: 1px solid #e13a3a !important;
 }
 
 .input-error-icon {
   position: absolute;
   right: 0.75rem;
-  color: #E13A3A;
+  color: #e13a3a;
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
@@ -519,7 +515,7 @@ body.profile-page::before {
   border: none;
   box-shadow: 0 4px 0px #895fd8;
   border-radius: var(--border-radius-md);
-  background-color: #B48FEF;
+  background-color: #b48fef;
   text-align: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
@@ -528,12 +524,12 @@ body.profile-page::before {
 
 .save-btn:hover {
   background: #895fd8;
-  box-shadow: 0 4px 0px #7D55CA;
+  box-shadow: 0 4px 0px #7d55ca;
   color: white;
 }
 
 .delete-btn {
-  background: #FC5E5E;
+  background: #fc5e5e;
   color: white;
   border: none;
   border-radius: 8px;
@@ -543,11 +539,11 @@ body.profile-page::before {
   cursor: pointer;
   transition: all 0.3s ease;
 
-  box-shadow: 0 4px 0px #E13A3A;
+  box-shadow: 0 4px 0px #e13a3a;
 }
 
 .delete-btn:hover {
-  background: #E13A3A;
+  background: #e13a3a;
   box-shadow: 0 4px 0px #a92121;
   color: white;
 }
@@ -557,7 +553,7 @@ body.profile-page::before {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #FC5E5E80;
+  background: #fc5e5e80;
   color: black;
   padding: 1rem;
   border-radius: var(--border-radius-lg);
@@ -567,16 +563,15 @@ body.profile-page::before {
 }
 
 .alert-icon {
-  color: #E13A3A;
+  color: #e13a3a;
 }
-
 
 /* Warning Banner */
 .alert-banner {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #FC5E5E80;
+  background: #fc5e5e80;
   color: black;
   padding: 0.75rem 1rem;
   border-radius: var(--border-radius-sm);
@@ -586,7 +581,7 @@ body.profile-page::before {
 }
 
 .alert-icon {
-  color: #E13A3A;
+  color: #e13a3a;
 }
 
 .warning-message {
@@ -623,7 +618,7 @@ body.profile-page::before {
 }
 
 .btn-primary {
-  background: #895FD8;
+  background: #895fd8;
   color: white;
   box-shadow: 0 4px 15px rgba(69, 37, 162, 0.3);
 }

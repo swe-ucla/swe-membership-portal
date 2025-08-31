@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
-import './Popup.css';
+import React, { useEffect, useState, useRef } from "react";
+import "./Popup.css";
 
-const Popup = ({ 
-  isOpen, 
-  onClose, 
-  message, 
-  toast = false, 
-  duration = 3000, 
-  confirm = false, 
+const Popup = ({
+  isOpen,
+  onClose,
+  message,
+  toast = false,
+  duration = 999999,
+  confirm = false,
   onConfirm,
   cancelText = "Cancel",
-  confirmText = "Confirm"
+  confirmText = "Confirm",
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const onCloseRef = useRef(onClose);
@@ -22,7 +22,7 @@ const Popup = ({
     onCloseRef.current = onClose;
   }, [onClose]);
 
-  useEffect(() => {    
+  useEffect(() => {
     // Clear any existing timers
     if (timersRef.current.fadeOutTimer) {
       clearTimeout(timersRef.current.fadeOutTimer);
@@ -32,18 +32,22 @@ const Popup = ({
       clearTimeout(timersRef.current.closeTimer);
       timersRef.current.closeTimer = null;
     }
-    
+
     if (isOpen && toast && !confirm) {
       setIsFadingOut(false);
-      timersRef.current.fadeOutTimer = setTimeout(() => { setIsFadingOut(true); }, duration); // Start fade out
-      timersRef.current.closeTimer = setTimeout(() => { onCloseRef.current(); }, duration + 300); // Close popup after fade out
+      timersRef.current.fadeOutTimer = setTimeout(() => {
+        setIsFadingOut(true);
+      }, duration); // Start fade out
+      timersRef.current.closeTimer = setTimeout(() => {
+        onCloseRef.current();
+      }, duration + 300); // Close popup after fade out
     }
   }, [isOpen, toast, confirm]); // Removed duration from dependencies
 
   useEffect(() => {
     if (!isOpen) {
       setIsFadingOut(false); // Reset fade-out state when popup is closed
-      
+
       // Clear timers when popup is closed
       if (timersRef.current.fadeOutTimer) {
         clearTimeout(timersRef.current.fadeOutTimer);
@@ -62,9 +66,9 @@ const Popup = ({
       // Small delay to ensure the popup is rendered
       setTimeout(() => {
         popupRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'center'
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
         });
       }, 100);
     }
@@ -84,7 +88,9 @@ const Popup = ({
 
   const handleClose = () => {
     setIsFadingOut(true); // Start fade out
-    setTimeout(() => { onCloseRef.current(); }, 300); // Close popup after fade out
+    setTimeout(() => {
+      onCloseRef.current();
+    }, 300); // Close popup after fade out
   };
 
   const handleConfirm = () => {
@@ -97,22 +103,36 @@ const Popup = ({
   return (
     <div
       ref={popupRef}
-      className={`popup-overlay ${isFadingOut ? 'fade-out' : 'fade-in'}`}
+      className={`popup-overlay ${isFadingOut ? "fade-out" : "fade-in"}`}
       onClick={toast ? undefined : handleClose}
     >
       <div
-        className={`popup ${toast ? 'popup-toast' : ''} ${confirm ? 'popup-confirm' : ''} ${isFadingOut ? 'fade-out' : 'fade-in'}`}
+        className={`popup ${toast ? "popup-toast" : ""} ${
+          confirm ? "popup-confirm" : ""
+        } ${isFadingOut ? "fade-out" : "fade-in"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="popup-header">
-          <button className="popup-close" onClick={handleClose}>×</button>
+          <button className="popup-close" onClick={handleClose}>
+            ×
+          </button>
         </div>
         <div className="popup-content">
           <p className="popup-message">{message}</p>
           {confirm && (
             <div className="popup-actions">
-              <button className="popup-btn popup-btn-cancel" onClick={handleClose}>{cancelText}</button>
-              <button className="popup-btn popup-btn-confirm" onClick={handleConfirm}>{confirmText}</button>
+              <button
+                className="popup-btn popup-btn-cancel"
+                onClick={handleClose}
+              >
+                {cancelText}
+              </button>
+              <button
+                className="popup-btn popup-btn-confirm"
+                onClick={handleConfirm}
+              >
+                {confirmText}
+              </button>
             </div>
           )}
         </div>
@@ -122,3 +142,85 @@ const Popup = ({
 };
 
 export default Popup;
+
+/* FOR DEBUGGing POPUP CSS*/
+/*
+import React, { useEffect, useRef } from "react";
+import "./Popup.css";
+
+const Popup = ({
+  message,
+  toast = false,
+  confirm = false,
+  onConfirm,
+  cancelText = "Cancel",
+  confirmText = "Confirm",
+}) => {
+  const popupRef = useRef(null);
+
+  // Auto-scroll popup into view when it renders
+  useEffect(() => {
+    if (popupRef.current) {
+      setTimeout(() => {
+        popupRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        });
+      }, 100);
+    }
+  }, []);
+
+  const handleClose = () => {
+    // Disabled for debugging: popup will NOT close
+    console.log("Popup close clicked (ignored in debug mode)");
+  };
+
+  const handleConfirm = () => {
+    if (onConfirm) onConfirm();
+    console.log("Confirm clicked (close ignored in debug mode)");
+  };
+
+  return (
+    <div
+      ref={popupRef}
+      className="popup-overlay"
+      // overlay click does nothing
+    >
+      <div
+        className={`popup ${toast ? "popup-toast" : ""} ${
+          confirm ? "popup-confirm" : ""
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="popup-header">
+          <button className="popup-close" onClick={handleClose}>
+            ×
+          </button>
+        </div>
+        <div className="popup-content">
+          <p className="popup-message">{message}</p>
+          {confirm && (
+            <div className="popup-actions">
+              <button
+                className="popup-btn popup-btn-cancel"
+                onClick={handleClose}
+              >
+                {cancelText}
+              </button>
+              <button
+                className="popup-btn popup-btn-confirm"
+                onClick={handleConfirm}
+              >
+                {confirmText}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Popup;
+*/

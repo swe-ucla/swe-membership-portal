@@ -706,6 +706,7 @@ input[type="time"]:focus {
     order: -1;
   }
 }
+
 /* Sign In Popup Styles */
 .popup-overlay {
   position: fixed;
@@ -726,7 +727,7 @@ input[type="time"]:focus {
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);*/
 }
 
 .popup-content h3 {
@@ -747,17 +748,16 @@ input[type="time"]:focus {
 }
 
 .popup-content .form-control {
-  width: 70%;   /* narrower than before (try 70% or even 60%) */
+  width: 70%; /* narrower than before (try 70% or even 60%) */
   max-width: 250px; /* prevents it from getting too wide on large screens */
   padding: 0.5rem 0.75rem;
   border: 2px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
   box-sizing: border-box;
-  margin: 0 auto;  /* keeps it centered */
+  margin: 0 auto; /* keeps it centered */
   display: block;
 }
-
 
 .popup-content .form-control:focus {
   outline: none;
