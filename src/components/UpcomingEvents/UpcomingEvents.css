@@ -723,7 +723,8 @@ input[type="time"]:focus {
 
 .popup-content {
   background: white;
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
+  margin-top: 0;
   border-radius: 12px;
   width: 90%;
   max-width: 500px;

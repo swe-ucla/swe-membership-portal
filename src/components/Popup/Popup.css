@@ -96,9 +96,9 @@
   cursor: pointer;
   font-size: 0.95rem;
   color: var(--color-purple-dark);
-  padding: 4px;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
