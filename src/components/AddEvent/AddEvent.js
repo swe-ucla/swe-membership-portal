@@ -538,6 +538,14 @@ function AddEvent() {
     );
   }
 
+  const questionTypeMap = {
+    shortAnswer: "Short Answer",
+    multipleChoice: "Multiple Choice",
+    checkboxes: "Checkboxes",
+    trueFalse: "T/F",
+    dropdown: "Dropdown",
+  };
+
   return (
     <div className="add-event-container">
       <Popup
@@ -818,7 +826,11 @@ function AddEvent() {
               <div className="question-header">
                 <p className="question-title">
                   <strong>Question {index + 1}:</strong> {question.text}{" "}
-                  <em>({question.type})</em>
+                  {/* don't need to render question type for now
+                  <em className="question-type">
+                    {questionTypeMap[question.type] || question.type}
+                  </em>
+                  */}
                 </p>
                 <div className="question-actions">
                   <button

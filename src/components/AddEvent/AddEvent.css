@@ -510,6 +510,12 @@ body.add-event-page::before {
   margin: 0;
 }
 
+.add-event-form .question-type {
+  font-size: 0.8rem;
+  color: #434343;
+  font-weight: 300;
+}
+
 .add-event-form .question-actions {
   display: flex;
   gap: 0.5rem;
