@@ -749,8 +749,8 @@ input[type="time"]:focus {
 }
 
 .popup-content .form-control {
-  width: 70%; /* narrower than before (try 70% or even 60%) */
-  max-width: 250px; /* prevents it from getting too wide on large screens */
+  /*width: 70%;  narrower than before (try 70% or even 60%) */
+  /*max-width: 250px;  prevents it from getting too wide on large screens */
   padding: 0.5rem 0.75rem;
   border: 2px solid #ddd;
   border-radius: 8px;
@@ -796,7 +796,7 @@ input[type="time"]:focus {
 /* Make the field narrower and prevent overflow */
 .popup-content .form-group .form-control {
   width: 100%;
-  max-width: 320px;
+  /*max-width: 320px;*/
   min-width: 0;
   box-sizing: border-box;
   margin: 0;
@@ -808,7 +808,7 @@ input[type="time"]:focus {
 
 /* If a global rule still wins, add !important */
 .popup-content .form-group .form-control {
-  max-width: 320px !important;
+  /*max-width: 320px !important; */
 }
 /* Center the button group as a unit */
 .popup-buttons {
