@@ -4,7 +4,7 @@
 /* Background layering for profile page */
 body.profile-page {
   background-image: url("/public/assets/makerspace-background.svg");
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   position: relative;
   background-size: 100% auto;
   background-position: center top;
@@ -15,8 +15,8 @@ body.profile-page {
   width: 100%;
   background-image: url("/public/assets/engineering-background.png");
   background-size: cover;
+  background-repeat: repeat;
   background-position: center;
-
   margin: none;
   height: 100%;
   width: 100%;

@@ -3,7 +3,7 @@
 /* Background layering for manage events page */
 body.manage-events-page {
   background-image: url("/public/assets/makerspace-background.svg");
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   position: relative;
   background-size: 100% auto;
   background-position: center top;
@@ -12,7 +12,6 @@ body.manage-events-page {
   width: 100%;
   margin: 0;
   padding: 0;
-  border: 0.000000001px solid white; /*fill the container*/
 }
 
 /* Decorative elements that grow with content */
@@ -40,8 +39,8 @@ body.manage-events-page::before {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: #FFF;
-  box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.10);
+  background: #fff;
+  box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.1);
 }
 
 .manage-events-container::before {
@@ -74,14 +73,14 @@ body.manage-events-page::before {
   justify-content: center;
   flex-shrink: 0;
 
-  color: #3A3536;
+  color: #3a3536;
   text-align: center;
   font-family: Gabarito;
   font-size: 40px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
-  
+
   /* margin-bottom: 1.5rem; */
   position: relative;
   display: inline-block;
@@ -91,8 +90,8 @@ body.manage-events-page::before {
 .btn-create-event {
   border-radius: 10px;
   border: none;
-  background: #B48FEF;
-  box-shadow: 0 4px 0 0 #895FD8;
+  background: #b48fef;
+  box-shadow: 0 4px 0 0 #895fd8;
 
   display: flex;
   /* width: 188px;
@@ -103,7 +102,7 @@ body.manage-events-page::before {
   gap: 10px;
   flex-shrink: 0;
 
-  color: #FFF;
+  color: #fff;
   text-align: center;
   font-family: Gabarito;
   font-size: 20px;
@@ -129,7 +128,7 @@ body.manage-events-page::before {
   height: 21px;
   font-weight: bold;
   flex-shrink: 0;
-  fill: #FFF;
+  fill: #fff;
 }
 
 /* Tabs styling */
@@ -161,8 +160,8 @@ body.manage-events-page::before {
   gap: 10px;
   border-radius: 10px;
   background: transparent;
-  
-  color: rgba(0, 0, 0, 0.50);
+
+  color: rgba(0, 0, 0, 0.5);
   border: none;
 
   text-align: center;
@@ -184,8 +183,8 @@ body.manage-events-page::before {
 }
 
 .tab-button.active {
-  background: #B48FEF;
-  box-shadow: 0 4px 0 0 #895FD8;
+  background: #b48fef;
+  box-shadow: 0 4px 0 0 #895fd8;
   color: white;
 }
 
@@ -196,7 +195,7 @@ body.manage-events-page::before {
   overflow: hidden;
   flex-shrink: 0;
   border-radius: 10px;
-  background: #FFFFFF;
+  background: #ffffff;
   /* box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.10); */
 }
 
@@ -206,7 +205,6 @@ body.manage-events-page::before {
   /* flex-direction: column; */
   align-items: center;
   gap: 12px;
-
 }
 
 .events-table thead tr th {
@@ -215,7 +213,7 @@ body.manage-events-page::before {
   padding: 12px 16px;
   text-align: left;
 
-  color: #231F20;
+  color: #231f20;
 
   font-family: Gabarito;
   font-size: 20px;
@@ -290,25 +288,25 @@ body.manage-events-page::before {
 }
 
 .btn-edit {
-  background: #B48FEF;
-  box-shadow: 0 4px 0 0 #895FD8;
+  background: #b48fef;
+  box-shadow: 0 4px 0 0 #895fd8;
 }
 
-.btn-export, .btn-copy {
+.btn-export,
+.btn-copy {
   background: rgba(180, 143, 239, 0.57);
-  box-shadow: 0 4px 0 0 #B48FEF;
-
+  box-shadow: 0 4px 0 0 #b48fef;
 }
 
 .btn-delete {
-  background: #FC5E5E;
-  box-shadow: 0 4px 0 0 #E13A3A;
+  background: #fc5e5e;
+  box-shadow: 0 4px 0 0 #e13a3a;
 }
 
 .btn-edit,
 .btn-export,
-.btn-copy, .btn-delete {
-
+.btn-copy,
+.btn-delete {
   display: flex;
   padding: 0.0625rem 0.375rem;
   justify-content: center;
@@ -318,7 +316,7 @@ body.manage-events-page::before {
   border: none;
   color: white;
   /* padding: 8px 16px; */
-  color: #FFF;
+  color: #fff;
   text-align: center;
   font-family: Manrope;
   font-size: 1rem;
@@ -337,21 +335,21 @@ body.manage-events-page::before {
 }
 
 .btn-edit:hover:not(:disabled) {
-  background: #895FD8;
-  box-shadow: 0 4px 0 0 #7A4FC7;
+  background: #895fd8;
+  box-shadow: 0 4px 0 0 #7a4fc7;
   transform: translateY(-1px);
 }
 
 .btn-export:hover:not(:disabled),
 .btn-copy:hover:not(:disabled) {
   background: rgba(180, 143, 239, 0.8);
-  box-shadow: 0 4px 0 0 #895FD8;
+  box-shadow: 0 4px 0 0 #895fd8;
   transform: translateY(-1px);
 }
 
 .btn-delete:hover:not(:disabled) {
-  background: #E13A3A;
-  box-shadow: 0 4px 0 0 #D12A2A;
+  background: #e13a3a;
+  box-shadow: 0 4px 0 0 #d12a2a;
   transform: translateY(-1px);
 }
 
@@ -459,7 +457,7 @@ body.manage-events-page::before {
 }
 
 .copy-text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @keyframes toastSlideUp {

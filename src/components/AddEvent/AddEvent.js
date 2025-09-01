@@ -226,7 +226,7 @@ function AddEvent() {
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
 
     // Set word limit on event description to 180
@@ -325,11 +325,18 @@ function AddEvent() {
     if (!eventData.date) newErrors.date = "This field is required";
     if (!eventData.startTime) newErrors.startTime = "This field is required";
     if (!eventData.endTime) newErrors.endTime = "This field is required";
-    if (!eventData.location.trim()) newErrors.location = "This field is required";
+    if (!eventData.location.trim())
+      newErrors.location = "This field is required";
     if (!eventData.committee) newErrors.committee = "This field is required";
-    if (!eventData.description.trim()) newErrors.description = "This field is required";
-    if (!eventData.points || eventData.points < 1) newErrors.points = "This field is required";
-    if (!eventData.signInOpensHoursBefore || eventData.signInOpensHoursBefore < 1) newErrors.signInOpensHoursBefore = "This field is required";
+    if (!eventData.description.trim())
+      newErrors.description = "This field is required";
+    if (!eventData.points || eventData.points < 1)
+      newErrors.points = "This field is required";
+    if (
+      !eventData.signInOpensHoursBefore ||
+      eventData.signInOpensHoursBefore < 1
+    )
+      newErrors.signInOpensHoursBefore = "This field is required";
 
     if (useCustomCode && eventData.attendanceCode.length !== 6) {
       newErrors.attendanceCode = "Attendance code must be exactly 6 letters";
@@ -554,10 +561,18 @@ function AddEvent() {
                   <button
                     type="button"
                     className="edit-photo-btn"
-                    onClick={() => document.getElementById('event-photo-input').click()}
+                    onClick={() =>
+                      document.getElementById("event-photo-input").click()
+                    }
                   >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M8.5 2.5H3.5C3.22386 2.5 3 2.72386 3 3V13C3 13.2761 3.22386 13.5 3.5 13.5H12.5C12.7761 13.5 13 13.2761 13 13V8M8.5 2.5L13 7M8.5 2.5V6.5C8.5 6.77614 8.72386 7 9 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path
+                        d="M8.5 2.5H3.5C3.22386 2.5 3 2.72386 3 3V13C3 13.2761 3.22386 13.5 3.5 13.5H12.5C12.7761 13.5 13 13.2761 13 13V8M8.5 2.5L13 7M8.5 2.5V6.5C8.5 6.77614 8.72386 7 9 7H13"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -567,10 +582,21 @@ function AddEvent() {
                   <button
                     type="button"
                     className="edit-photo-btn"
-                    onClick={() => document.getElementById('event-photo-input').click()}
+                    onClick={() =>
+                      document.getElementById("event-photo-input").click()
+                    }
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.6208 3.25 16.8625 3.15C17.1042 3.05 17.3583 3 17.625 3C17.8917 3 18.15 3.05 18.4 3.15C18.65 3.25 18.8667 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.7708 5.4 20.8625 5.65C20.9542 5.9 21 6.15 21 6.4C21 6.66667 20.9542 6.92083 20.8625 7.1625C20.7708 7.40417 20.625 7.625 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="white"/>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.6208 3.25 16.8625 3.15C17.1042 3.05 17.3583 3 17.625 3C17.8917 3 18.15 3.05 18.4 3.15C18.65 3.25 18.8667 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.7708 5.4 20.8625 5.65C20.9542 5.9 21 6.15 21 6.4C21 6.66667 20.9542 6.92083 20.8625 7.1625C20.7708 7.40417 20.625 7.625 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z"
+                        fill="white"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -580,7 +606,7 @@ function AddEvent() {
                 type="file"
                 accept="image/*"
                 onChange={handlePhotoChange}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </div>
           </div>
@@ -594,7 +620,7 @@ function AddEvent() {
                 className="add-event-input"
                 value={eventData.name}
                 onChange={handleInputChange}
-                placeholder="Placeholder event name"
+                placeholder=""
               />
               {errors.name && <p className="error-text">{errors.name}</p>}
             </div>
@@ -624,7 +650,9 @@ function AddEvent() {
               value={eventData.startTime}
               onChange={handleInputChange}
             />
-            {errors.startTime && <p className="error-text">{errors.startTime}</p>}
+            {errors.startTime && (
+              <p className="error-text">{errors.startTime}</p>
+            )}
           </div>
 
           <div className="event-form-group">
@@ -648,7 +676,7 @@ function AddEvent() {
             className="add-event-input"
             value={eventData.location}
             onChange={handleInputChange}
-            placeholder="Engineering VI"
+            placeholder=""
           />
           {errors.location && <p className="error-text">{errors.location}</p>}
         </div>
@@ -718,9 +746,13 @@ function AddEvent() {
                 }
                 className="modern-slider sign-in-slider"
               />
-              <span className="slider-value">{eventData.signInOpensHoursBefore} hour(s) before event</span>
+              <span className="slider-value">
+                {eventData.signInOpensHoursBefore} hour(s) before event
+              </span>
             </div>
-            {errors.signInOpensHoursBefore && <p className="error-text">{errors.signInOpensHoursBefore}</p>}
+            {errors.signInOpensHoursBefore && (
+              <p className="error-text">{errors.signInOpensHoursBefore}</p>
+            )}
           </div>
         </div>
 
@@ -731,9 +763,11 @@ function AddEvent() {
             className="add-event-textarea"
             value={eventData.description}
             onChange={handleInputChange}
-            placeholder="This is the description for the event!"
+            placeholder="Max 300 Words"
           />
-          {errors.description && <p className="error-text">{errors.description}</p>}
+          {errors.description && (
+            <p className="error-text">{errors.description}</p>
+          )}
         </div>
 
         <div className="event-form-group">
@@ -752,9 +786,11 @@ function AddEvent() {
               }}
             />
             <label htmlFor="useCustomCode" className="custom-code-text">
-              Use custom attendance code  ({isEditMode
+              Use custom attendance code (
+              {isEditMode
                 ? "Existing attendance code will be preserved"
-                : "A random 6-letter code will be generated when the event is created"})
+                : "A random 6-letter code will be generated when the event is created"}
+              )
             </label>
           </div>
 
@@ -768,7 +804,9 @@ function AddEvent() {
                 onChange={handleCodeChange}
                 maxLength={6}
               />
-              {errors.attendanceCode && <p className="error-text">{errors.attendanceCode}</p>}
+              {errors.attendanceCode && (
+                <p className="error-text">{errors.attendanceCode}</p>
+              )}
             </>
           ) : null}
         </div>
@@ -885,7 +923,7 @@ function AddEvent() {
                 </button>
               </div>
             )}
-            <div className="form-check" style = {{marginBottom: "0.5rem"}}>
+            <div className="form-check" style={{ marginBottom: "0.5rem" }}>
               <input
                 type="checkbox"
                 className="form-check-input"
