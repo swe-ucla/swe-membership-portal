@@ -72,7 +72,6 @@ body.manage-events-page::before {
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
-
   color: #3a3536;
   text-align: center;
   font-family: Gabarito;
@@ -542,4 +541,38 @@ body.manage-events-page::before {
     padding: 0.7rem 0.8rem;
     font-size: 0.9rem;
   }
+}
+
+.filters-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.committee-filter-admin .form-select-admin {
+  padding: 0.5rem 1rem;
+  border: 1.5px solid #895fd8;
+  border-radius: 8px;
+  background: transparent;
+  color: #895fd8;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 180px;
+  appearance: none;
+  /* Custom purple arrow */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23895fd8" d="M6 9L1.5 4.5h9L6 9z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  padding-right: 2.5rem;
+}
+
+.committee-filter-admin .form-select-admin:focus {
+  outline: none;
+  border-color: #895fd8;
+}
+
+.committee-filter-admin .form-select-admin option {
+  background: #895fd8;
+  color: white; /* so text is readable */
 }

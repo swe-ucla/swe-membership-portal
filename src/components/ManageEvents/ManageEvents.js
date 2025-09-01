@@ -22,6 +22,7 @@ const ManageEvents = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [committeeFilter, setCommitteeFilter] = useState("All Committees");
   const [popup, setPopup] = useState({
     isOpen: false,
     message: "",
@@ -107,6 +108,43 @@ const ManageEvents = () => {
 
     fetchEvents();
   }, [user, isAdmin]);
+
+  // Extract all unique committees
+  /*
+  const committees = [
+    "All Committees",
+    ...Array.from(
+      new Set(
+        [...pastEvents, ...upcomingEvents]
+          .map((e) =>
+            typeof e.createdBy === "string" ? e.createdBy.trim() : e.createdBy
+          )
+          .filter(Boolean)
+      )
+    ).sort(),
+  ];
+  */
+
+  const committees = [
+    "All Committees",
+    "Advocacy",
+    "Dev",
+    "Evening with Industry",
+    "General",
+    "Internal Affairs",
+    "Lobbying",
+    "Outreach",
+    "Technical",
+  ];
+
+  // Apply committee filter
+  const filterEvents = (events) => {
+    if (committeeFilter === "All Committees") return events;
+    return events.filter((e) => e.createdBy === committeeFilter);
+  };
+
+  const filteredUpcoming = filterEvents(upcomingEvents);
+  const filteredPast = filterEvents(pastEvents);
 
   const fetchUserDetails = async (attendeeIds) => {
     if (!attendeeIds || attendeeIds.length === 0) return [];
@@ -516,19 +554,36 @@ const ManageEvents = () => {
       </div>
 
       <div className="tabs-container">
-        <div className="tabs-header">
-          <button
-            className={`tab-button ${activeTab === "upcoming" ? "active" : ""}`}
-            onClick={() => setActiveTab("upcoming")}
-          >
-            Upcoming ({upcomingEvents.length})
-          </button>
-          <button
-            className={`tab-button ${activeTab === "past" ? "active" : ""}`}
-            onClick={() => setActiveTab("past")}
-          >
-            Past ({pastEvents.length})
-          </button>
+        <div className="filters-container">
+          <div className="tabs-header">
+            <button
+              className={`tab-button ${
+                activeTab === "upcoming" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("upcoming")}
+            >
+              Upcoming ({upcomingEvents.length})
+            </button>
+            <button
+              className={`tab-button ${activeTab === "past" ? "active" : ""}`}
+              onClick={() => setActiveTab("past")}
+            >
+              Past ({pastEvents.length})
+            </button>
+          </div>
+          <div className="committee-filter-admin">
+            <select
+              value={committeeFilter}
+              onChange={(e) => setCommitteeFilter(e.target.value)}
+              className="form-select-admin"
+            >
+              {committees.map((committee) => (
+                <option key={committee} value={committee}>
+                  {committee}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="tab-content">
@@ -536,12 +591,12 @@ const ManageEvents = () => {
             upcomingEvents.length === 0 ? (
               <p className="no-events-message">No upcoming events found.</p>
             ) : (
-              renderTable(upcomingEvents)
+              renderTable(filteredUpcoming)
             )
           ) : pastEvents.length === 0 ? (
             <p className="no-events-message">No past events found.</p>
           ) : (
-            renderTable(pastEvents)
+            renderTable(filteredPast)
           )}
         </div>
       </div>
