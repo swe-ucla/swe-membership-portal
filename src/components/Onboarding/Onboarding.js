@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -46,6 +47,7 @@ function Onboarding() {
   const [errorMessage, setErrorMessage] = useState("");
   const [emailError, setEmailError] = useState("");
   const [isGoogleSignIn, setIsGoogleSignIn] = useState(false);
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
   const navigate = useNavigate();
 
   // Login logic
@@ -65,7 +67,17 @@ function Onboarding() {
     }
     if (hasError) return;
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      if (!user.emailVerified) {
+        setErrorMessage("Please verify your email before logging in. Check your inbox for the verification link.");
+        toast.error("Email not verified. Please check your inbox.", {
+          position: "top-center",
+        });
+        return;
+      }
+      
       navigate("/");
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
@@ -116,9 +128,11 @@ function Onboarding() {
       return;
     }
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
       if (user && user.uid) {
+        await sendEmailVerification(user);
+        
         const isAdmin = adminEmails.includes(user.email);
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
@@ -129,9 +143,15 @@ function Onboarding() {
           isAdmin: isAdmin,
           attendedEvents: [],
           rsvpEvents: [],
+          emailVerified: false,
+        });
+        
+        await auth.signOut();
+        setIsVerificationSent(true);
+        toast.success("Verification email sent! Please check your inbox.", {
+          position: "top-center",
         });
       }
-      navigate("/profile");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError(
@@ -314,10 +334,28 @@ function Onboarding() {
                   )}
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-primary">
-                    Sign Up
+                  <button type="submit" className="btn btn-primary" disabled={isVerificationSent}>
+                    {isVerificationSent ? "Verification Email Sent" : "Sign Up"}
                   </button>
                 </div>
+                
+                {isVerificationSent && (
+                  <div className="verification-message" style={{marginTop: "15px", padding: "15px", backgroundColor: "#d4edda", border: "1px solid #c3e6cb", borderRadius: "5px", color: "#155724"}}>
+                    <p>If an account exists with this email, we've sent a verification email to:</p>
+                    <p style={{fontWeight: "bold", margin: "5px 0"}}>{email}</p>
+                    <p>Please check your inbox and follow the instructions to verify your email.</p>
+                    <p style={{fontSize: "0.9rem", color: "#666", marginTop: "10px"}}>
+                      <strong>Note:</strong> If you don't see the email, please check your spam/junk folder.
+                    </p>
+                    <button 
+                      onClick={() => setForm("login")} 
+                      className="btn btn-primary" 
+                      style={{marginTop: "10px", width: "100%"}}
+                    >
+                      Continue to Login
+                    </button>
+                  </div>
+                )}
                 <SignInwithGoogle
                   onGoogleSignInStart={() => {
                     setIsGoogleSignIn(true);

@@ -10,9 +10,12 @@ const Popup = ({
   confirm = false, 
   onConfirm,
   cancelText = "Cancel",
-  confirmText = "Confirm"
+  confirmText = "Confirm",
+  input = false,
+  inputValue = ""
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [inputText, setInputText] = useState(inputValue);
   const onCloseRef = useRef(onClose);
   const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
   const popupRef = useRef(null);
@@ -88,8 +91,15 @@ const Popup = ({
   };
 
   const handleConfirm = () => {
-    if (onConfirm) onConfirm();
-    handleClose();
+    if (onConfirm) {
+      if (input) {
+        onConfirm(inputText);
+      } else {
+        onConfirm();
+      }
+    } else {
+      handleClose();
+    }
   };
 
   if (!isOpen) return null;
@@ -109,6 +119,23 @@ const Popup = ({
         </div>
         <div className="popup-content">
           <p className="popup-message">{message}</p>
+          {input && (
+            <input 
+              type="text" 
+              value={inputText} 
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Type here..."
+              style={{
+                width: "100%", 
+                padding: "10px", 
+                margin: "10px 0", 
+                border: "1px solid #ddd", 
+                borderRadius: "5px",
+                fontSize: "16px"
+              }}
+              autoFocus
+            />
+          )}
           {confirm && (
             <div className="popup-actions">
               <button className="popup-btn popup-btn-cancel" onClick={handleClose}>{cancelText}</button>

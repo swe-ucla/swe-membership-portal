@@ -10,8 +10,9 @@ body.profile-page {
   position: relative;
   background-size: 100% auto;
   background-position: center top;
+}
 
-  /* before Lian's */
+/* before Lian's */
 .profile-page {
   min-height: 100vh;
   width: 100%;
