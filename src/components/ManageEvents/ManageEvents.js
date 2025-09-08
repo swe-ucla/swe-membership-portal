@@ -36,6 +36,11 @@ const ManageEvents = () => {
   const eventsPerPage = 12;
   const eventsContainerRef = useRef(null);
 
+  // Page navigation state
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 12;
+  const eventsContainerRef = useRef(null);
+
   const handlePopupClose = useCallback(() => {
     setPopup({
       isOpen: false,
