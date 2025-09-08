@@ -1,17 +1,23 @@
 /* ContactUs.css - uses shared variables from styles/variables.css */
 
+/* Background layering for profile page */
+body.contact-page {
+  background-image: url("/public/assets/contact_us_background.svg");
+  background-repeat: no-repeat;
+  position: relative;
+  background-size: cover;
+  background-position: center -60px;
+  min-height: 100vh;
+}
+
 /* Container with your specified styling */
 .contact-container {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 2.5rem;
-    background: var(--color-card);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--box-shadow);
+    background: none;
     position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* overflow: hidden; */
 }
 
 .section-heading {
@@ -37,9 +43,9 @@
 
 .contact-content {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
 }
 
 .contact-info {
@@ -52,6 +58,8 @@
     font-size: 1.5rem;
     position: relative;
     display: inline-block;
+    color: white;
+    font-weight: 600;
 }
 
 .contact-info h3:after {
@@ -65,67 +73,21 @@
     border-radius: 2px;
 }
 
-.email-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: var(--border-radius-md);
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    transition: var(--transition);
-    cursor: default;
-    .email-card {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);   }
-}
-
-.email-icon {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    background: var(--color-pink);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-}
-
-.email-icon svg {
-    width: 24px;
-    height: 24px;
-    color: white;
-}
-
-.email-content {
-    color: var(--text-color);
-    text-align: left;
-}
-
-.email-content h4 {
-    margin: 0 0 5px;
-    font-size: 1.1rem;
-    text-align: left;
-}
-
-.email-content p {
-    margin: 0;
-    opacity: 0.9;
-    font-size: 0.95rem;
-    text-align: left;
-}
 .social-links {
     padding-left: 20px;
     display: flex;
     gap: 15px;
+    margin-top: 8px;
+    align-items: center;
+    justify-content: center;
 }
 
 .social-link {
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #9D79F9;
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,24 +95,34 @@
 }
 
 .social-link:hover {
-    background: var(--color-pink);
-    /* Use your pink color on hover */
+    color: white;
+    background: #B48FEF;
     transform: translateY(-3px);
 }
 
-.social-link svg {
+/* .social-link svg {
     width: 20px;
     height: 20px;
     color: var(--text-color);
-    /* Use your text color instead of white */
 }
 
 .social-link:hover svg {
     color: white;
-}
+} */
+
 .contact-form {
     flex: 1.5;
     min-width: 350px;
+    max-width: 540px;
+    margin-left: auto;
+}
+
+.contact-form h1 {
+    color: white;
+    font-weight: 600;
+    margin-top: 190px;
+    margin-bottom: 25px;
+    font-size: 2.5rem;
 }
 
 .contact-form h3 {
@@ -179,18 +151,45 @@
 /* Fixed form control styling with proper outline */
 .form-control {
     width: 100%;
-    border: 2px solid #e0e0fe;
-    /* Added border like in your original auth CSS */
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: var(--border-radius-sm);
     padding: 15px;
     color: var(--text-color);
-    font-size: 1rem;
     transition: var(--transition);
+
+    border: 1px solid #7A7A7A;
+    border-radius: var(--border-radius-lg);
+    font-size: 0.95rem;
+    background-color: white;
 }
 
+/* .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group select {
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem;
+  border: 1px solid #d9d9d9;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.95rem;
+  background-color: #d9d9d952;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 3rem;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"],
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #b48fef;
+  background-color: white;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
+} */
+
 .form-control::placeholder {
-    color: rgba(0, 0, 0, 0.4);
+    color: #A9A8A9;
 }
 
 .form-control:focus {
@@ -202,38 +201,37 @@
     /* From your auth CSS */
 }
 
-.contact-form .btn-primary {
-    background: var(--color-pink) !important;
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-sm);
-    padding: 15px 30px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    width: auto;
-    display: inline-block;
-    box-shadow: 0 4px 15px rgba(232, 95, 122, 0.3);
-    margin-bottom: 20px;
+.contact-form .send-btn {
+  color: white;
+  border: none;
+  box-shadow: 0 4px 0px #895fd8;
+  border-radius: var(--border-radius-md);
+  background-color: #b48fef;
+  text-align: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.contact-form .btn-primary:hover {
-    background: var(--color-pink-dark) !important;
-    transform: translateY(-3px);
-    box-shadow: 0 7px 20px rgba(137, 12, 80, 0.4);
+.contact-form .send-btn:hover {
+  background: #895fd8;
+  box-shadow: 0 4px 0px #7d55ca;
+  color: white;
 }
 
-.contact-form .btn-primary:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 10px rgba(137, 12, 80, 0.3);
+.contact-form .send-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(137, 12, 80, 0.3);
 }
 
-.contact-form .btn-primary:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+.contact-form .send-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .submit-message {
@@ -265,12 +263,15 @@
 @media (max-width: 768px) {
     .contact-content {
         flex-direction: column;
-        gap: 50px;
+        align-items: stretch;
+        gap: 24px;
     }
 
     .contact-info,
     .contact-form {
         min-width: 100%;
+        margin-left: 0;
+        max-width: 100%;
     }
 
     .section-heading h2 {
