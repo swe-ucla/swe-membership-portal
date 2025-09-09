@@ -20,61 +20,16 @@ body.contact-page {
     /* overflow: hidden; */
 }
 
-.section-heading {
-    text-align: center;
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.section-heading h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    background: linear-gradient(90deg, var(--color-purple-dark), var(--color-pink));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    display: block;
-    padding: 0;
-}
-
 .contact-content {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     gap: 20px;
-}
-
-.contact-info {
-    flex: 1;
-    min-width: 300px;
-}
-
-.contact-info h3 {
-    margin-bottom: 25px;
-    font-size: 1.5rem;
-    position: relative;
-    display: inline-block;
-    color: white;
-    font-weight: 600;
-}
-
-.contact-info h3:after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: var(--color-pink);
-    border-radius: 2px;
+    margin-top: 160px;
+    margin-left: 30rem;
 }
 
 .social-links {
-    padding-left: 20px;
     display: flex;
     gap: 15px;
     margin-top: 8px;
@@ -100,52 +55,21 @@ body.contact-page {
     transform: translateY(-3px);
 }
 
-/* .social-link svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-color);
-}
-
-.social-link:hover svg {
-    color: white;
-} */
-
 .contact-form {
     flex: 1.5;
-    min-width: 350px;
-    max-width: 540px;
-    margin-left: auto;
+    min-width: 550px;
+    max-width: 650px;
 }
 
 .contact-form h1 {
     color: white;
     font-weight: 600;
-    margin-top: 190px;
-    margin-bottom: 25px;
+    margin-bottom: 32px;
     font-size: 2.5rem;
 }
 
-.contact-form h3 {
-    margin-bottom: 25px;
-    font-size: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
-
-.contact-form h3:after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: var(--color-pink);
-    border-radius: 2px;
-}
-
-
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 /* Fixed form control styling with proper outline */
@@ -154,39 +78,13 @@ body.contact-page {
     padding: 15px;
     color: var(--text-color);
     transition: var(--transition);
-
     border: 1px solid #7A7A7A;
     border-radius: var(--border-radius-lg);
     font-size: 0.95rem;
     background-color: white;
+    box-sizing: border-box;
+    font-family: inherit;
 }
-
-/* .form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="number"],
-.form-group select {
-  padding: 0.75rem 1rem;
-  padding-right: 2.5rem;
-  border: 1px solid #d9d9d9;
-  border-radius: var(--border-radius-lg);
-  font-size: 0.95rem;
-  background-color: #d9d9d952;
-  transition: all 0.3s ease;
-  width: 100%;
-  height: 3rem;
-  box-sizing: border-box;
-  margin: 0;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"],
-.form-group textarea:focus,
-.form-group select:focus {
-  border-color: #b48fef;
-  background-color: white;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
-} */
 
 .form-control::placeholder {
     color: #A9A8A9;
@@ -194,11 +92,40 @@ body.contact-page {
 
 .form-control:focus {
     border-color: var(--color-purple-medium);
-    /* From your auth CSS */
-    background: rgba(255, 255, 255, 0.3);
+    background-color: white;
     outline: none;
     box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.2);
-    /* From your auth CSS */
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    color: var(--text-color);
+    transition: var(--transition);
+    border: 1px solid #7A7A7A;
+    border-radius: var(--border-radius-lg);
+    font-size: 0.95rem;
+    background-color: white;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-purple-medium);
+    background-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.2);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #A9A8A9;
 }
 
 .contact-form .send-btn {
@@ -235,8 +162,8 @@ body.contact-page {
 }
 
 .submit-message {
-    margin-top: 15px;
-    padding: 10px;
+    margin-top: 24px;
+    padding: 12px;
     border-radius: var(--border-radius-sm);
     font-size: 0.9rem;
 }
