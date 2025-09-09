@@ -1,13 +1,14 @@
 /* ContactUs.css - uses shared variables from styles/variables.css */
 
-/* Background layering for profile page */
+/* Background layering for contact page */
 body.contact-page {
   background-image: url("/public/assets/contact_us_background.svg");
   background-repeat: no-repeat;
   position: relative;
-  background-size: cover;
+  background-size: 100% auto;
   background-position: center -60px;
-  min-height: 100vh;
+  min-height: 140vh;
+  background-attachment: scroll;
 }
 
 /* Container with your specified styling */
@@ -17,7 +18,6 @@ body.contact-page {
     padding: 2.5rem;
     background: none;
     position: relative;
-    /* overflow: hidden; */
 }
 
 .contact-content {
@@ -64,7 +64,7 @@ body.contact-page {
 .contact-form h1 {
     color: white;
     font-weight: 600;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     font-size: 2.5rem;
 }
 
@@ -111,6 +111,8 @@ body.contact-page {
     background-color: white;
     box-sizing: border-box;
     font-family: inherit;
+    margin: 0;
+    resize: none;
 }
 
 .form-group input[type="text"]:focus,

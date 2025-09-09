@@ -4,11 +4,16 @@ import "./ContactUs.css";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import Popup from "../Popup/Popup";
 
 const ContactSection = () => {
   const form = useRef();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [popup, setPopup] = useState({
+    isOpen: false,
+    message: "",
+    type: "success"
+  });
 
   useEffect(() => {
     document.body.classList.add("contact-page");
@@ -21,7 +26,6 @@ const ContactSection = () => {
   const sendEmail = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus(null);
 
     emailjs
       .sendForm(
@@ -33,12 +37,20 @@ const ContactSection = () => {
       .then(
         (result) => {
           console.log("Email sent successfully!", result.text);
-          setSubmitStatus("success");
           form.current.reset();
+          setPopup({
+            isOpen: true,
+            message: "Message sent successfully!",
+            type: "success"
+          });
         },
         (error) => {
           console.error("Error sending email:", error.text);
-          setSubmitStatus("error");
+          setPopup({
+            isOpen: true,
+            message: "Failed to send message. Please try again or contact us directly.",
+            type: "error"
+          });
         }
       )
       .finally(() => {
@@ -46,9 +58,17 @@ const ContactSection = () => {
       });
   };
 
-  return (
+  const closePopup = () => {
+    setPopup({
+      isOpen: false,
+      message: "",
+      type: "success"
+    });
+  };
 
-    <div className="contact-container">
+  return (
+    <>
+      <div className="contact-container">
 
       <div className="contact-content">
 
@@ -90,17 +110,6 @@ const ContactSection = () => {
               {isSubmitting ? "Sending..." : "Send Message"}
             </button>
 
-            {submitStatus === "success" && (
-              <div className="submit-message success">
-                Message sent successfully!
-              </div>
-            )}
-
-            {submitStatus === "error" && (
-              <div className="submit-message error">
-                Failed to send message. Please try again.
-              </div>
-            )}
           </form>
         </div>
 
@@ -127,7 +136,15 @@ const ContactSection = () => {
         </div>
 
       </div>
-    
+
+      <Popup
+        isOpen={popup.isOpen}
+        onClose={closePopup}
+        message={popup.message}
+        toast={true}
+        duration={4000}
+      />
+    </>
   );
 };
 
