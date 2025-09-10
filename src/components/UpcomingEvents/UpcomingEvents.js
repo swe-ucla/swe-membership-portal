@@ -15,6 +15,7 @@ import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
 import Popup from "../Popup/Popup";
 import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
+import SignInQuestions from "./SignInQuestions";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -42,6 +43,7 @@ function UpcomingEvents() {
     isOpen: false,
     event: null,
     code: "",
+    responses: {},
   });
 
   // Page navigation state
@@ -101,14 +103,14 @@ function UpcomingEvents() {
         .sort((a, b) => {
           const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
           const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-          
+
           // If dates are the same, sort by start time
           if (dateA.toDateString() === dateB.toDateString()) {
             const timeA = a.startTime || "00:00";
             const timeB = b.startTime || "00:00";
             return timeA.localeCompare(timeB);
           }
-          
+
           return dateA - dateB; // Sort by date ascending (soonest first)
         });
 
@@ -134,9 +136,6 @@ function UpcomingEvents() {
       ? eventDate.toDate()
       : new Date(eventDate);
 
-    console.log("Event Date:", eventDateObj); // Log the event date to check
-    console.log("Today:", today); // Log today's date to check
-
     return (
       today.getDate() === eventDateObj.getDate() &&
       today.getMonth() === eventDateObj.getMonth() &&
@@ -146,11 +145,18 @@ function UpcomingEvents() {
 
   const hasEventPassed = (event) => {
     const now = new Date();
-    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
-    const eventEndTime = event.endTime 
-      ? new Date(eventDate.getTime() + 
-          (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]) - 
-           parseInt(event.startTime?.split(':')[0] || '0') * 60 - parseInt(event.startTime?.split(':')[1] || '0')) * 60000)
+    const eventDate = event.date?.toDate
+      ? event.date.toDate()
+      : new Date(event.date);
+    const eventEndTime = event.endTime
+      ? new Date(
+          eventDate.getTime() +
+            (parseInt(event.endTime.split(":")[0]) * 60 +
+              parseInt(event.endTime.split(":")[1]) -
+              parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+              parseInt(event.startTime?.split(":")[1] || "0")) *
+              60000
+        )
       : new Date(eventDate.getTime() + 2 * 3600000);
     return now > eventEndTime;
   };
@@ -176,7 +182,7 @@ function UpcomingEvents() {
   };
 
   const handleSignUpClick = (eventId) => {
-    const event = events.find(e => e.id === eventId);
+    const event = events.find((e) => e.id === eventId);
     setSignInPopup({ isOpen: true, event, code: "" });
   };
 
@@ -258,14 +264,19 @@ function UpcomingEvents() {
     const signInOpens = new Date(
       eventDate.getTime() - (event.signInOpensHoursBefore || 1) * 3600000
     ); // Convert hours to milliseconds
-    
+
     // Calculate event end time (use endTime if available, otherwise assume 2 hours duration)
-    const eventEndTime = event.endTime 
-      ? new Date(eventDate.getTime() + 
-          (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]) - 
-           parseInt(event.startTime?.split(':')[0] || '0') * 60 - parseInt(event.startTime?.split(':')[1] || '0')) * 60000)
+    const eventEndTime = event.endTime
+      ? new Date(
+          eventDate.getTime() +
+            (parseInt(event.endTime.split(":")[0]) * 60 +
+              parseInt(event.endTime.split(":")[1]) -
+              parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+              parseInt(event.startTime?.split(":")[1] || "0")) *
+              60000
+        )
       : new Date(eventDate.getTime() + 2 * 3600000); // Default 2 hours if no end time
-    
+
     return now >= signInOpens && now <= eventEndTime;
   };
 
@@ -346,7 +357,8 @@ function UpcomingEvents() {
   };
 
   const handleSignInSubmit = async () => {
-    const { event, code } = signInPopup;
+    console.log("handleSignInSubmit triggered");
+    const { event, code, responses } = signInPopup;
     if (!event || !code) return;
 
     if (code.toUpperCase() === event.attendanceCode) {
@@ -365,35 +377,66 @@ function UpcomingEvents() {
           const rsvpEvents = userData.rsvpEvents || [];
 
           if (attendedEvents.includes(event.id)) {
-            setPopup({ isOpen: true, message: "You have already signed into this event.", toast: true });
+            setPopup({
+              isOpen: true,
+              message: "You have already signed into this event.",
+              toast: true,
+            });
             setSignInPopup({ isOpen: false, event: null, code: "" });
             return;
           }
 
           const wasRSVPd = rsvpEvents.includes(event.id);
-          const updatedRsvpEvents = wasRSVPd ? rsvpEvents.filter(id => id !== event.id) : rsvpEvents;
+          const updatedRsvpEvents = wasRSVPd
+            ? rsvpEvents.filter((id) => id !== event.id)
+            : rsvpEvents;
 
-          await setDoc(userRef, {
-            attendedEvents: [...attendedEvents, event.id],
-            rsvpEvents: updatedRsvpEvents,
-            swePoints: currentPoints + (Number(event.points) || 0),
-          }, { merge: true });
+          console.log("Saving user doc...");
+          await setDoc(
+            userRef,
+            {
+              attendedEvents: [...attendedEvents, event.id],
+              rsvpEvents: updatedRsvpEvents,
+              swePoints: currentPoints + (Number(event.points) || 0),
+            },
+            { merge: true }
+          );
+          console.log("✅ User doc saved");
 
-          await setDoc(eventRef, {
-            attendees: [...(event.attendees || []), userId],
-          }, { merge: true });
+          console.log("Saving event doc...");
+          await setDoc(
+            eventRef,
+            {
+              attendees: [...(event.attendees || []), userId],
+              responses: {
+                ...(event.responses || {}),
+                [userId]: responses || {}, // store answers keyed by userId
+              },
+            },
+            { merge: true }
+          );
+          console.log("✅ Event doc saved");
+          console.log("✅ Saved responses:", responses);
 
           setIsSignedIn([...attendedEvents, event.id]);
           setRsvpEvents(updatedRsvpEvents);
           setSignInPopup({ isOpen: false, event: null, code: "" });
-          setPopup({ isOpen: true, message: "Successfully signed in!", toast: true });
+          setPopup({
+            isOpen: true,
+            message: "Successfully signed in!",
+            toast: true,
+          });
         }
       } catch (error) {
         console.error("Error signing in:", error);
         setPopup({ isOpen: true, message: "Failed to sign in", toast: true });
       }
     } else {
-      setPopup({ isOpen: true, message: "Invalid attendance code", toast: true });
+      setPopup({
+        isOpen: true,
+        message: "Invalid attendance code",
+        toast: true,
+      });
     }
   };
 
@@ -656,10 +699,20 @@ function UpcomingEvents() {
           onClose={closeEventDetailsPopup}
           isAdmin={isAdmin}
         />
-        
+
         {/* Sign In Popup */}
         {signInPopup.isOpen && (
-          <div className="popup-overlay" onClick={() => setSignInPopup({ isOpen: false, event: null, code: "" })}>
+          <div
+            className="popup-overlay"
+            onClick={() =>
+              setSignInPopup({
+                isOpen: false,
+                event: null,
+                code: "",
+                responses: {},
+              })
+            }
+          >
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
               <h3>Enter the event code:</h3>
               <div className="form-group">
@@ -667,23 +720,41 @@ function UpcomingEvents() {
                   type="text"
                   className="form-control"
                   value={signInPopup.code}
-                  onChange={(e) => setSignInPopup(prev => ({ ...prev, code: e.target.value }))}
+                  onChange={(e) =>
+                    setSignInPopup((prev) => ({
+                      ...prev,
+                      code: e.target.value,
+                    }))
+                  }
                   placeholder="Enter 6-letter code"
                   maxLength={6}
                   autoFocus
                 />
               </div>
+              <SignInQuestions
+                questions={signInPopup.event?.questions || []}
+                responses={signInPopup.responses || {}}
+                setResponses={(newResponses) =>
+                  setSignInPopup((prev) => ({
+                    ...prev,
+                    responses: newResponses,
+                  }))
+                }
+              />
+              console.log("questions passed to SignInQuestions:", questions);
               <div className="popup-buttons">
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   onClick={handleSignInSubmit}
                   disabled={!signInPopup.code}
                 >
                   Sign In
                 </button>
-                <button 
-                  className="btn btn-secondary" 
-                  onClick={() => setSignInPopup({ isOpen: false, event: null, code: "" })}
+                <button
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    setSignInPopup({ isOpen: false, event: null, code: "" })
+                  }
                 >
                   Cancel
                 </button>
