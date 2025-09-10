@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { deleteUser } from "firebase/auth";
+import { deleteUser, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import Popup from "../Popup/Popup";
 import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";
@@ -84,7 +84,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null, input: false, inputValue: "" });
   const formRef = useRef(null);
 
   const handlePopupClose = useCallback(() => {
@@ -282,60 +282,72 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       return;
     }
 
-    // First confirmation
     setPopup({
       isOpen: true,
-      message: "Are you sure you want to delete your account?",
+      message: "Are you sure you want to delete your account? This action cannot be undone.",
       toast: false,
       confirm: true,
-      onConfirm: () => {
-        // Second confirmation
-        setPopup({
-          isOpen: true,
-          message: "This will permanently delete all your data. Are you absolutely sure?",
-          toast: false,
-          confirm: true,
-          onConfirm: performDeleteAccount
-        });
-      }
+      onConfirm: performDeleteAccount
     });
   };
 
   const performDeleteAccount = async () => {
+    console.log("performDeleteAccount called");
     const user = auth.currentUser;
     if (!user) {
       console.error("No authenticated user found.");
+      setPopup({ isOpen: true, message: "No user found. Please log in again.", toast: true });
       return;
     }
 
     try {
-      // First delete the Firestore document
-      await deleteDoc(doc(db, "Users", user.uid));
-      console.log("User document deleted from Firestore.");
+      // Show input popup for typing "delete"
+      setPopup({
+        isOpen: true,
+        message: 'Type "delete" to confirm account deletion:',
+        toast: false,
+        confirm: true,
+        input: true,
+        inputValue: "",
+        onConfirm: (inputValue) => {
+          if (inputValue !== "delete") {
+            setPopup({ isOpen: true, message: "Account deletion cancelled.", toast: true });
+            return;
+          }
+          setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+          performActualDelete();
+        }
+      });
+    } catch (error) {
+      console.error("Delete account error:", error);
+      setPopup({ isOpen: true, message: "Failed to delete account: " + error.message, toast: true });
+    }
+  };
 
-      // Then delete the Firebase Auth user
+  const performActualDelete = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      setPopup({ isOpen: true, message: "No user found. Please log in again.", toast: true });
+      return;
+    }
+
+    try {
+
+      // Delete Firebase Auth user first (this also signs them out)
       await deleteUser(user);
-      console.log("User account deleted from Firebase Auth.");
+      console.log("Firebase Auth user deleted");
+      
+      // Then delete Firestore document
+      await deleteDoc(doc(db, "Users", user.uid));
+      console.log("Firestore document deleted");
 
-      // Clear any local storage
       localStorage.removeItem("editProfileForm");
       
-      setPopup({ isOpen: true, message: "Your account has been deleted successfully. You will be redirected to the homepage.", toast: true, confirm: false, onConfirm: null });
-      
-      // Redirect to homepage after popup shows
-      setTimeout(() => { window.location.href = "/"; }, 3000);
+      setPopup({ isOpen: true, message: "Account deleted successfully. Redirecting...", toast: true });
+      setTimeout(() => { window.location.href = "/"; }, 2000);
     } catch (error) {
-      console.error("Error deleting account:", error);
-      
-      // Handle specific Firebase Auth errors
-      if (error.code === 'auth/requires-recent-login') {
-        setPopup({ isOpen: true, message: "For security reasons, you need to log in again before deleting your account. Please log out, log back in, and try again.", toast: false, confirm: false, onConfirm: null });
-      } else if (error.code === 'auth/user-not-found') {
-        setPopup({ isOpen: true, message: "User account not found. You may have already been logged out.", toast: false, confirm: false, onConfirm: null });
-        setTimeout(() => { window.location.href = "/"; }, 3000);
-      } else {
-        setPopup({ isOpen: true, message: "Failed to delete account. Please try logging out and logging back in, then try again. Error: " + (error.message || "Unknown error"), toast: false, confirm: false, onConfirm: null });
-      }
+      console.error("Delete account error:", error);
+      setPopup({ isOpen: true, message: "Failed to delete account: " + error.message, toast: true });
     }
   };
 
@@ -349,7 +361,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         confirm={popup.confirm}
         onConfirm={popup.onConfirm}
         cancelText={popup.confirm ? "Cancel" : undefined}
-        confirmText={popup.confirm ? "Yes, delete my account" : undefined}
+        confirmText={popup.confirm ? (popup.input ? "Confirm" : "Yes, delete my account") : undefined}
+        input={popup.input}
+        inputValue={popup.inputValue}
       />
       <div className="edit-profile-container">
         <h2 className="edit-profile-header">Edit Profile</h2>
