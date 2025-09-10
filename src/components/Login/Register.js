@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { auth, db } from "../firebase";
 import { setDoc, doc } from "firebase/firestore";
@@ -14,6 +14,7 @@ function Register() {
   const [lname, setLname] = useState("");
   const [error, setError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
   const navigate = useNavigate();
   const adminEmails = [
     "ewi.swe.ucla@gmail.com",
@@ -65,27 +66,45 @@ function Register() {
 
     try {
       // Attempt to create user with Firebase authentication
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
       if (user && user.uid) {
-        const isAdmin = adminEmails.includes(user.email);
-        // If user created successfully, store additional information in Firestore
-        await setDoc(doc(db, "Users", user.uid), {
-          email: user.email,
-          firstName: fname,
-          lastName: lname,
-          photo: "",
-          swePoints: 10,
-          isAdmin: isAdmin,
-          attendedEvents: [],
-          rsvpEvents: [],
-        });
+        try {
+          // Send email verification immediately after account creation
+          await sendEmailVerification(user);
+          console.log("Verification email sent to:", user.email);
+          
+          const isAdmin = adminEmails.includes(user.email);
+          // Store user information in Firestore
+          await setDoc(doc(db, "Users", user.uid), {
+            email: user.email,
+            firstName: fname,
+            lastName: lname,
+            photo: "",
+            swePoints: 10,
+            isAdmin: isAdmin,
+            attendedEvents: [],
+            rsvpEvents: [],
+            emailVerified: false,
+          });
+          
+          // Sign out user so they must verify email before logging in
+          await auth.signOut();
+          
+          setIsVerificationSent(true);
+          toast.success("Account created! Verification email sent to " + user.email, {
+            position: "top-center",
+          });
+          // Don't navigate - keep user on registration page
+        } catch (verificationError) {
+          console.error("Error sending verification email:", verificationError);
+          toast.error("Account created but failed to send verification email: " + verificationError.message, {
+            position: "top-center",
+          });
+        }
       }
-
-      // Navigate to profile page on successful registration
-      navigate("/profile");
-      console.log("User Registered Successfully!!");
+      return; // Exit here to prevent any navigation
     } catch (error) {
       console.error(error.message);
       if (error.code === "auth/email-already-in-use") {
@@ -162,10 +181,16 @@ function Register() {
           </div>
 
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
-              Sign Up
+            <button type="submit" className="btn btn-primary" disabled={isVerificationSent}>
+              {isVerificationSent ? "Verification Email Sent" : "Sign Up"}
             </button>
           </div>
+          
+          {isVerificationSent && (
+            <div className="verification-message" style={{marginTop: "15px", padding: "10px", backgroundColor: "#d4edda", border: "1px solid #c3e6cb", borderRadius: "5px", color: "#155724"}}>
+              <p>Please check your email and click the verification link before logging in.</p>
+            </div>
+          )}
           <p className="forgot-password text-right">
             Already registered? <a href="/login">Login</a>
           </p>

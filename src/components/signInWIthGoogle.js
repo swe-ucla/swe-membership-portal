@@ -46,7 +46,8 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
           swePoints: 0,
           isAdmin: false,
           attendedEvents: [],
-          rsvpEvents: []
+          rsvpEvents: [],
+          emailVerified: true
         });
       }
 

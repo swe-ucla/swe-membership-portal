@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
-import SWELogo from "./SWE_Logo.png"; 
+ 
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -69,7 +69,7 @@ const NavBar = () => {
       <div className="navbar-container">
         <div className="logo">
           <NavLink to="/upcoming">
-            <img src={SWELogo} alt="SWE UCLA Logo" className="logo-image" />
+            <img src={process.env.PUBLIC_URL + "/assets/SWE Logo SVG.svg"} alt="SWE UCLA Logo" className="logo-image" />
           </NavLink>
         </div>
 
