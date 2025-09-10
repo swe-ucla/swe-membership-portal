@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
 import goldMedal from "../../assets/leaderboard-gold-medal.svg";
@@ -68,6 +76,14 @@ function Leaderboard() {
             offset++;
           }
           prevPoints = user.swePoints;
+
+          // Update user rank in Firestore if changed
+          if (user.rank !== currentRank) {
+            updateDoc(doc(db, "Users", user.id), { rank: currentRank }).catch(
+              console.error
+            );
+          }
+
           return {
             ...user,
             rank: currentRank,
@@ -78,7 +94,9 @@ function Leaderboard() {
       setAllUsers(usersList);
 
       // Find current user's rank
-      const currentUserData = usersList.find(user => user.id === currentUser.uid);
+      const currentUserData = usersList.find(
+        (user) => user.id === currentUser.uid
+      );
       if (currentUserData) {
         setCurrentUserRank(currentUserData.rank);
       }
@@ -108,9 +126,13 @@ function Leaderboard() {
     if (rank === 1) {
       return <img src={goldMedal} alt="Gold Medal" className="medal-icon" />;
     } else if (rank === 2) {
-      return <img src={silverMedal} alt="Silver Medal" className="medal-icon" />;
+      return (
+        <img src={silverMedal} alt="Silver Medal" className="medal-icon" />
+      );
     } else if (rank === 3) {
-      return <img src={bronzeMedal} alt="Bronze Medal" className="medal-icon" />;
+      return (
+        <img src={bronzeMedal} alt="Bronze Medal" className="medal-icon" />
+      );
     } else {
       return <span className="rank-number">{rank}</span>;
     }
@@ -121,21 +143,14 @@ function Leaderboard() {
     <div
       key={user.id}
       className={`leaderboard-row ${
-        currentUser && user.id === currentUser.uid
-          ? "highlighted-row"
-          : ""
+        currentUser && user.id === currentUser.uid ? "highlighted-row" : ""
       }`}
     >
-      <div className="rank-column">
-        {renderRank(user.rank)}
-      </div>
+      <div className="rank-column">{renderRank(user.rank)}</div>
       <div className="name-column">
         <div className="user-avatar">
           {user.profilePicture ? (
-            <img
-              src={user.profilePicture}
-              alt={`${user.firstName}'s avatar`}
-            />
+            <img src={user.profilePicture} alt={`${user.firstName}'s avatar`} />
           ) : (
             <span className="avatar-initials">
               {user.firstName?.charAt(0) || ""}
@@ -147,9 +162,7 @@ function Leaderboard() {
           <span className="user-name">
             {user.firstName} {user.lastName}
           </span>
-          {user.major && (
-            <span className="user-major">{user.major}</span>
-          )}
+          {user.major && <span className="user-major">{user.major}</span>}
         </div>
       </div>
       <div className="points-column">
@@ -190,7 +203,9 @@ function Leaderboard() {
                 </div>
                 {(() => {
                   // Find current user data from all users
-                  const currentUserData = allUsers.find(user => user.id === currentUser.uid);
+                  const currentUserData = allUsers.find(
+                    (user) => user.id === currentUser.uid
+                  );
                   if (currentUserData) {
                     return renderUserRow(currentUserData);
                   }
