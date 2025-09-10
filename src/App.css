@@ -1,11 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Gabarito&family=Manrope:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Gabarito&family=Manrope:wght@400;700&display=swap");
 
 .App {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Gabarito', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Gabarito", sans-serif;
 }
 
 .App {

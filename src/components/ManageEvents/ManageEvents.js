@@ -691,31 +691,36 @@ const ManageEvents = () => {
       </div>
 
       <div className="tabs-container">
-        <div className="tabs-header">
-          <button
-            className={`tab-button ${activeTab === "upcoming" ? "active" : ""}`}
-            onClick={() => {
-              console.log(
-                "Switching to upcoming tab, events count:",
-                upcomingEvents.length
-              );
-              setActiveTab("upcoming");
-            }}
-          >
-            Upcoming ({upcomingEvents.length})
-          </button>
-          <button
-            className={`tab-button ${activeTab === "past" ? "active" : ""}`}
-            onClick={() => {
-              console.log(
-                "Switching to past tab, events count:",
-                pastEvents.length
-              );
-              setActiveTab("past");
-            }}
-          >
-            Past ({pastEvents.length})
-          </button>
+        <div className="filters-container">
+          <div className="tabs-header">
+            <button
+              className={`tab-button ${
+                activeTab === "upcoming" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("upcoming")}
+            >
+              Upcoming ({upcomingEvents.length})
+            </button>
+            <button
+              className={`tab-button ${activeTab === "past" ? "active" : ""}`}
+              onClick={() => setActiveTab("past")}
+            >
+              Past ({pastEvents.length})
+            </button>
+          </div>
+          <div className="committee-filter-admin">
+            <select
+              value={committeeFilter}
+              onChange={(e) => setCommitteeFilter(e.target.value)}
+              className="form-select-admin"
+            >
+              {committees.map((committee) => (
+                <option key={committee} value={committee}>
+                  {committee}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="tab-content">
