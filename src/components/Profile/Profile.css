@@ -10,7 +10,8 @@ body.profile-page {
   background-position: center top;
 }
 
-/* before Lian's */
+/*
+
 .profile-page {
   min-height: 100vh;
   width: 100%;
@@ -24,7 +25,8 @@ body.profile-page {
   margin: 0;
   padding: 0;
   border: 0.000000001px solid white; /*fill the container*/
-}
+
+*/
 
 /* Decorative elements that grow with content */
 body.profile-page::before {
@@ -44,8 +46,8 @@ body.profile-page::before {
 }
 
 .profile-container {
-  max-width: 1000px;
-  margin: 2rem auto;
+  max-width: 100%;
+  margin: 2rem;
   padding: 4rem;
   background-color: #ffffff;
   border-radius: var(--border-radius-lg);
@@ -93,10 +95,9 @@ body.profile-page::before {
 .profile-main-section {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 1.5rem;
-  margin-bottom: 0rem;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 /* Profile Picture Styling */
@@ -670,9 +671,13 @@ body.profile-page::before {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .profile-header {
+    text-align: center;
+  }
+
   .profile-container {
-    margin: 1rem;
-    padding: 1rem;
+    margin: 1.5rem;
+    padding: 1.5rem;
   }
 
   .profile-header-section {
