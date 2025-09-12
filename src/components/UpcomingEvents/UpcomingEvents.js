@@ -181,6 +181,14 @@ function UpcomingEvents() {
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   };
 
+  const showAlreadySignedInMessage = () => {
+    setPopup({
+      isOpen: true,
+      message: "You have already signed into this event.",
+      toast: true,
+    });
+  };
+
   const handleSignUpClick = (eventId) => {
     const event = events.find((e) => e.id === eventId);
     setSignInPopup({ isOpen: true, event, code: "" });
@@ -189,7 +197,7 @@ function UpcomingEvents() {
   const handleCancelRegistration = async (eventId, points) => {
     setPopup({
       isOpen: true,
-      message: `Are you sure you want to cancel your registration?\nYou will lose any SWE points that you earned from this event.`,
+      message: `Are you sure you want to cancel your RSVP?`,
       toast: false,
       confirm: true,
       onConfirm: () => performCancelRegistration(eventId, points),
@@ -377,11 +385,7 @@ function UpcomingEvents() {
           const rsvpEvents = userData.rsvpEvents || [];
 
           if (attendedEvents.includes(event.id)) {
-            setPopup({
-              isOpen: true,
-              message: "You have already signed into this event.",
-              toast: true,
-            });
+            showAlreadySignedInMessage();
             setSignInPopup({ isOpen: false, event: null, code: "" });
             return;
           }
@@ -582,7 +586,10 @@ function UpcomingEvents() {
                     {isSignInOpen(event) ? (
                       // Sign-in period is open
                       hasUserSignedIn(event.id) ? (
-                        <button className="btn btn-signed-in-badge">
+                        <button
+                          onClick={showAlreadySignedInMessage}
+                          className="btn btn-signed-in-badge"
+                        >
                           SIGNED IN
                         </button>
                       ) : (

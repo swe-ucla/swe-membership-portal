@@ -12,7 +12,7 @@ const Popup = ({
   cancelText = "Cancel",
   confirmText = "Confirm",
   input = false,
-  inputValue = ""
+  inputValue = "",
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [inputText, setInputText] = useState(inputValue);
@@ -131,12 +131,14 @@ const Popup = ({
           <p className="popup-message">{message}</p>
           {confirm && (
             <div className="popup-actions">
+              {/*
               <button
                 className="popup-btn popup-btn-cancel"
                 onClick={handleClose}
               >
                 {cancelText}
               </button>
+              */}
               <button
                 className="popup-btn popup-btn-confirm"
                 onClick={handleConfirm}
