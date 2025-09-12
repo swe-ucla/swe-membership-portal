@@ -200,7 +200,13 @@ function UpcomingEvents() {
       message: `Are you sure you want to cancel your RSVP?`,
       toast: false,
       confirm: true,
-      onConfirm: () => performCancelRegistration(eventId, points),
+      onConfirm: () => {
+        setPopup((prev) => ({
+          ...prev,
+          isOpen: false,
+        }));
+        performCancelRegistration(eventId, points);
+      },
     });
   };
 
