@@ -77,7 +77,7 @@ body.contact-page {
 /* Fixed form control styling with proper outline */
 .form-control {
   width: 100%;
-  padding: 15px;
+  /* padding: 15px;*/
   color: var(--text-color);
   transition: var(--transition);
   border: 1px solid #7a7a7a;
@@ -104,7 +104,7 @@ body.contact-page {
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 15px;
+  /*padding: 15px;*/
   color: var(--text-color);
   transition: var(--transition);
   border: 1px solid var(--color-purple-medium);
