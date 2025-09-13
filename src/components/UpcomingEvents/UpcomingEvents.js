@@ -8,6 +8,9 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
@@ -238,28 +241,18 @@ function UpcomingEvents() {
         const updatedSWEPoints = wasSignedIn
           ? Math.max((userData.swePoints || 0) - (points || 0), 0)
           : userData.swePoints || 0;
+        // Remove from user doc
+        await updateDoc(userRef, {
+          rsvpEvents: arrayRemove(eventId),
+          attendedEvents: arrayRemove(eventId),
+          swePoints: updatedSWEPoints,
+        });
 
-        await setDoc(
-          userRef,
-          {
-            rsvpEvents: updatedRsvp,
-            attendedEvents: updatedAttended,
-            swePoints: updatedSWEPoints,
-          },
-          { merge: true }
-        );
-
-        const updatedAttendees = (eventData.attendees || []).filter(
-          (uid) => uid !== userId
-        );
-
-        await setDoc(
-          eventRef,
-          {
-            attendees: updatedAttendees,
-          },
-          { merge: true }
-        );
+        // Remove from event doc
+        await updateDoc(eventRef, {
+          attendees: arrayRemove(userId),
+          rsvpAttendees: arrayRemove(userId),
+        });
 
         setRsvpEvents(updatedRsvp);
         setIsSignedIn(updatedAttended);
@@ -326,39 +319,21 @@ function UpcomingEvents() {
     const eventRef = doc(db, "events", eventId);
 
     try {
-      const userSnap = await getDoc(userRef);
-      const eventSnap = await getDoc(eventRef);
+      // Add event to user's RSVP list
+      await updateDoc(userRef, {
+        rsvpEvents: arrayUnion(eventId),
+      });
 
-      if (userSnap.exists() && eventSnap.exists()) {
-        const userData = userSnap.data();
-        const eventData = eventSnap.data();
+      // Add user to event's rsvpAttendees
+      await updateDoc(eventRef, {
+        rsvpAttendees: arrayUnion(userId),
+      });
 
-        // Add to RSVP events (no points)
-        const updatedRsvpEvents = [...(userData.rsvpEvents || []), eventId];
-
-        // Add to attendees list for the event
-        const updatedAttendees = [...(eventData.attendees || []), userId];
-
-        await setDoc(
-          userRef,
-          {
-            rsvpEvents: updatedRsvpEvents,
-          },
-          { merge: true }
-        );
-
-        await setDoc(
-          eventRef,
-          {
-            attendees: updatedAttendees,
-          },
-          { merge: true }
-        );
-
-        setRsvpEvents(updatedRsvpEvents);
-      }
+      setRsvpEvents((prev) => [...prev, eventId]);
+      setPopup({ isOpen: true, message: "RSVP successful!", toast: true });
     } catch (error) {
       console.error("Error RSVPing:", error);
+      setPopup({ isOpen: true, message: "Failed to RSVP.", toast: true });
     }
   };
 
@@ -401,32 +376,27 @@ function UpcomingEvents() {
             ? rsvpEvents.filter((id) => id !== event.id)
             : rsvpEvents;
 
-          console.log("Saving user doc...");
-          await setDoc(
-            userRef,
-            {
-              attendedEvents: [...attendedEvents, event.id],
-              rsvpEvents: updatedRsvpEvents,
-              swePoints: currentPoints + (Number(event.points) || 0),
-            },
-            { merge: true }
-          );
-          console.log("✅ User doc saved");
+          // Update user document
+          const userUpdateData = {
+            attendedEvents: arrayUnion(event.id),
+            swePoints: currentPoints + (Number(event.points) || 0),
+            [`eventResponses.${event.id}`]: responses || {},
+          };
+          if (wasRSVPd) userUpdateData.rsvpEvents = arrayRemove(event.id);
 
-          console.log("Saving event doc...");
-          await setDoc(
-            eventRef,
-            {
-              attendees: [...(event.attendees || []), userId],
-              responses: {
-                ...(event.responses || {}),
-                [userId]: responses || {}, // store answers keyed by userId
-              },
+          await updateDoc(userRef, userUpdateData);
+
+          // Update event document
+          const eventUpdateData = {
+            attendees: arrayUnion(userId),
+            responses: {
+              ...(event.responses || {}),
+              [userId]: responses || {},
             },
-            { merge: true }
-          );
-          console.log("✅ Event doc saved");
-          console.log("✅ Saved responses:", responses);
+          };
+          if (wasRSVPd) eventUpdateData.rsvpAttendees = arrayRemove(userId);
+
+          await updateDoc(eventRef, eventUpdateData);
 
           setIsSignedIn([...attendedEvents, event.id]);
           setRsvpEvents(updatedRsvpEvents);

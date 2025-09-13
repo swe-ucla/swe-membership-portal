@@ -480,6 +480,7 @@ const ManageEvents = () => {
               <th>Date</th>
               <th>Committee</th>
               <th>Location</th>
+              <th>RSVP'd</th>
               <th>Attendees</th>
               <th>Actions</th>
             </tr>
@@ -499,6 +500,7 @@ const ManageEvents = () => {
                 </td>
                 <td>{event.createdBy}</td>
                 <td>{event.location}</td>
+                <td>{event.rsvpAttendees ? event.rsvpAttendees.length : 0}</td>
                 <td>{event.attendees ? event.attendees.length : 0}</td>
                 <td className="event-actions">
                   <div className="actions-top">
