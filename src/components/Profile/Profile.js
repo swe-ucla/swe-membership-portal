@@ -111,9 +111,11 @@ function Profile() {
                     <h2 className="profile-header">
                       {userDetails.firstName} {userDetails.lastName}
                     </h2>
+                    {/* remove member id funcitonality
                     <p className="profile-member-id">
                       Member ID: {userDetails.memberId}
                     </p>
+                    */}
                     <p className="profile-major">
                       {/* <MaterialSymbol icon="circle" size={28} />  */}
                       <img

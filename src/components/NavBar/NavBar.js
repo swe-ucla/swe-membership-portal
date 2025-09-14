@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
- 
+
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-
 
 const NavBar = () => {
   const [user, setUser] = useState(null);
@@ -48,7 +47,10 @@ const NavBar = () => {
   // Close menu when clicking outside
   useEffect(() => {
     const closeMenu = (e) => {
-      if (!e.target.closest(".navbar-container")) {
+      if (
+        !e.target.closest(".navbar-container") &&
+        !e.target.closest(".hamburger")
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -57,75 +59,72 @@ const NavBar = () => {
     return () => document.removeEventListener("click", closeMenu);
   }, []);
 
-  // checking authentication state
   if (loading || !user) return null;
-  // if no user is logged in, redirect to login page
-  // if (!user) {
-  //   return <Navigate to="/login" />;
-  // }
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* Logo */}
         <div className="logo">
           <NavLink to="/upcoming">
-            <img src={process.env.PUBLIC_URL + "/assets/SWE Logo SVG.svg"} alt="SWE UCLA Logo" className="logo-image" />
+            <img
+              src={process.env.PUBLIC_URL + "/assets/SWE Logo SVG.svg"}
+              alt="SWE UCLA Logo"
+              className="logo-image"
+            />
           </NavLink>
         </div>
 
+        {/* Hamburger */}
+        <div className="hamburger" onClick={toggleMenu}>
+          <span className={`bar ${isMenuOpen ? "open" : ""}`}></span>
+          <span className={`bar ${isMenuOpen ? "open" : ""}`}></span>
+          <span className={`bar ${isMenuOpen ? "open" : ""}`}></span>
+        </div>
+
+        {/* Nav Links */}
         <div className={`nav-links ${isMenuOpen ? "active" : ""}`}>
-          {/* <NavLink
-            to="/home"
+          <NavLink
+            to="/upcoming"
             className={({ isActive }) => (isActive ? "active" : "")}
             onClick={() => setIsMenuOpen(false)}
           >
-            Home
-          </NavLink> */}
-          <div className="nav-links">
-            {/* <NavLink
-              to="/home"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Home
-            </NavLink> */}
+            Upcoming Events
+          </NavLink>
+          <NavLink
+            to="/leaderboard"
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Leaderboard
+          </NavLink>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Profile
+          </NavLink>
+          <NavLink
+            to="/contactus"
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Contact Us
+          </NavLink>
+          {isAdmin && (
             <NavLink
-              to="/upcoming"
+              to="/manageevents"
               className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setIsMenuOpen(false)}
             >
-              Upcoming Events
+              Admin Only
             </NavLink>
-            <NavLink
-              to="/leaderboard"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Leaderboard
-            </NavLink>
-            <NavLink
-              to="/profile"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Profile
-            </NavLink>
-            <NavLink
-              to="/contactus"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Contact Us
-            </NavLink>
-            {isAdmin && (
-              <NavLink
-                to="/manageevents"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Admin Only
-              </NavLink>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </nav>
   );
 };
-
 
 export default NavBar;
