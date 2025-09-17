@@ -194,9 +194,10 @@ body.add-event-page::before {
 }
 
 .photo-upload-container {
-  position: relative;
+  position: relative !important;
   width: 9.25rem;
   height: 9.25rem;
+  z-index: 1;
 }
 
 .photo-placeholder {
@@ -216,6 +217,7 @@ body.add-event-page::before {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  z-index: 1;
 }
 
 .photo-preview {
@@ -225,6 +227,7 @@ body.add-event-page::before {
   overflow: hidden;
   position: relative;
   border: 2px dashed #b48fef;
+  z-index: 1;
 }
 
 .photo-preview img {
@@ -234,20 +237,22 @@ body.add-event-page::before {
 }
 
 .edit-photo-btn {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  width: 2.3125rem;
-  height: 2.3125rem;
-  border-radius: 50%;
-  background: #b48fef;
-  border: none;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  position: absolute !important;
+  top: -12px !important;
+  right: -12px !important;
+  width: 2.3125rem !important;
+  height: 2.3125rem !important;
+  border-radius: 50% !important;
+  background: #b48fef !important;
+  border: none !important;
+  color: white !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  z-index: 9999 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 .edit-photo-btn:hover {

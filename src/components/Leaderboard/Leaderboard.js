@@ -62,20 +62,17 @@ function Leaderboard() {
         }
       });
 
-      // Convert the Map to an array and assign ranks
-      let currentRank = 1;
+      // Convert the Map to an array and assign dense ranks (no gaps after ties)
+      let currentRank = 0;
       let prevPoints = null;
-      let offset = 0;
 
       const usersList = Array.from(uniqueUsers.values())
         .sort((a, b) => b.swePoints - a.swePoints)
-        .map((user, index, arr) => {
-          if (user.swePoints !== prevPoints) {
-            currentRank = index + 1;
-          } else {
-            offset++;
+        .map((user) => {
+          if (prevPoints === null || user.swePoints !== prevPoints) {
+            currentRank += 1; // increment rank only when points decrease
+            prevPoints = user.swePoints;
           }
-          prevPoints = user.swePoints;
 
           // Update user rank in Firestore if changed
           if (user.rank !== currentRank) {
@@ -193,14 +190,32 @@ function Leaderboard() {
             {/* Render top 10 users */}
             {users.map((user) => renderUserRow(user))}
 
-            {/* Show current user's position if not within rankLimit */}
-            {currentUserRank && currentUserRank > rankLimit && (
+            {/* Show current user's position if not within displayed users */}
+            {currentUserRank && !users.find(user => user.id === currentUser.uid) && (
               <>
-                <div className="leaderboard-row ellipsis-row">
-                  <div className="ellipsis-container">
-                    <span className="ellipsis">•••••</span>
-                  </div>
-                </div>
+                {/* Only show ellipsis if there's more than 1 person between last displayed and current user */}
+                {(() => {
+                  const lastDisplayedRank = users[users.length - 1]?.rank;
+                  const currentUserData = allUsers.find(user => user.id === currentUser.uid);
+                  
+                  if (currentUserData) {
+                    // Count how many people are between the last displayed user and current user
+                    const peopleInBetween = allUsers.filter(user => 
+                      user.rank > lastDisplayedRank && user.rank < currentUserRank
+                    ).length;
+                    
+                    if (peopleInBetween > 1) {
+                      return (
+                        <div className="leaderboard-row ellipsis-row">
+                          <div className="ellipsis-container">
+                            <span className="ellipsis">•••••</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                  }
+                  return null;
+                })()}
                 {(() => {
                   // Find current user data from all users
                   const currentUserData = allUsers.find(
