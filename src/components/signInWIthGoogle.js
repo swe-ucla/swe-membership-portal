@@ -99,9 +99,7 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
 
   return (
     <div className="google-signin-container">
-      <div className="divider">
-        <span>or continue with</span>
-      </div>
+      <p style={{textAlign: 'center', color: '#999', fontSize: '0.85rem', margin: '25px 0'}}>or continue with</p>
       <button 
         className="google-signin-button"
         onClick={googleLogin}
