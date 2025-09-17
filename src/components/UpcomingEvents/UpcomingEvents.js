@@ -706,7 +706,7 @@ function UpcomingEvents() {
                   onChange={(e) =>
                     setSignInPopup((prev) => ({
                       ...prev,
-                      code: e.target.value,
+                      code: e.target.value.toUpperCase(),
                     }))
                   }
                   placeholder="Enter 6-letter code"

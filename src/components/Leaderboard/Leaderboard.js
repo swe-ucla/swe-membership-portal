@@ -102,7 +102,14 @@ function Leaderboard() {
       }
 
       // Get top users
-      const topUsers = usersList.slice(0, rankLimit);
+      // Render top 6 + your rank, else top 8 if within top 8
+      let topUsers;
+      if (currentUserData && currentUserData.rank <= 8) {
+        topUsers = usersList.slice(0, 8);
+      } else {
+        // Otherwise, show top 6
+        topUsers = usersList.slice(0, 6);
+      }
       setUsers(topUsers);
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
@@ -190,7 +197,7 @@ function Leaderboard() {
             </div>
             <div className="leaderboard-header-divider"></div>
 
-            {/* Render top 10 users */}
+            {/* Render top 6-8 users */}
             {users.map((user) => renderUserRow(user))}
 
             {/* Show current user's position if not within rankLimit */}
