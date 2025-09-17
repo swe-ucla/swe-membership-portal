@@ -728,6 +728,8 @@ input[type="time"]:focus {
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
+  max-height: 500px;
+  overflow: scroll;
   /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);*/
 }
 
@@ -736,8 +738,7 @@ input[type="time"]:focus {
   font-size: 1.5rem;
   color: #333;
 }
-
-.popup-content .form-group {
+` .popup-content .form-group {
   margin-bottom: 1.5rem;
 }
 
