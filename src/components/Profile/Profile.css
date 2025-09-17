@@ -6,7 +6,7 @@ body.profile-page {
   background-image: url("/public/assets/makerspace-background.svg");
   background-repeat: repeat;
   position: relative;
-  background-size: 100% auto;
+  background-size: 50% auto;
   background-position: center top;
 }
 
@@ -38,7 +38,7 @@ body.profile-page::before {
   bottom: 0;
   background-repeat: no-repeat;
   background-position: center top;
-  background-size: 100% auto;
+  background-size: 50% auto;
   pointer-events: none;
   z-index: -1;
   min-height: 100vh;
