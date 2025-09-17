@@ -193,14 +193,7 @@ const ManageEvents = () => {
     const questionHeaders = event.questions
       ? event.questions.map((q) => q.text)
       : [];
-    const headers = [
-      "Email",
-      "Full Name",
-      "Major",
-      "Year",
-      "Member ID",
-      ...questionHeaders,
-    ];
+    const headers = ["Email", "Full Name", "Major", "Year", ...questionHeaders];
 
     const escapeCSVValue = (value) => {
       if (value === undefined || value === null) return "";
@@ -222,7 +215,6 @@ const ManageEvents = () => {
         escapeCSVValue(`${user.firstName || ""} ${user.lastName || ""}`),
         escapeCSVValue(user.major),
         escapeCSVValue(user.year),
-        escapeCSVValue(user.memberId),
         ...responseValues,
       ];
       csvRows.push(row.join(","));
