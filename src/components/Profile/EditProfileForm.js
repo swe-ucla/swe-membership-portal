@@ -301,38 +301,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     }
 
     try {
-      // Show input popup for typing "delete"
-      setPopup({
-        isOpen: true,
-        message: 'Type "delete" to confirm account deletion:',
-        toast: false,
-        confirm: true,
-        input: true,
-        inputValue: "",
-        onConfirm: (inputValue) => {
-          if (inputValue !== "delete") {
-            setPopup({ isOpen: true, message: "Account deletion cancelled.", toast: true });
-            return;
-          }
-          setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
-          performActualDelete();
-        }
-      });
-    } catch (error) {
-      console.error("Delete account error:", error);
-      setPopup({ isOpen: true, message: "Failed to delete account: " + error.message, toast: true });
-    }
-  };
-
-  const performActualDelete = async () => {
-    const user = auth.currentUser;
-    if (!user) {
-      setPopup({ isOpen: true, message: "No user found. Please log in again.", toast: true });
-      return;
-    }
-
-    try {
-
       // Delete Firebase Auth user first (this also signs them out)
       await deleteUser(user);
       console.log("Firebase Auth user deleted");
