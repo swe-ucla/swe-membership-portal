@@ -39,7 +39,17 @@ function Login() {
     if (hasError) return;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      if (!user.emailVerified) {
+        setErrorMessage("Please verify your email before logging in. Check your inbox for the verification link.");
+        toast.error("Email not verified. Please check your inbox.", {
+          position: "top-center",
+        });
+        return;
+      }
+      
       console.log("User logged in Successfully");
       navigate("/");
     } catch (error) {
