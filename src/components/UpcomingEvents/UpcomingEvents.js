@@ -49,6 +49,7 @@ function UpcomingEvents() {
     responses: {},
   });
 
+
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 9;
@@ -417,6 +418,8 @@ function UpcomingEvents() {
         message: "Invalid attendance code",
         toast: true,
       });
+      // Close the sign-in popup when invalid code is entered
+      setSignInPopup({ isOpen: false, event: null, code: "", responses: {} });
     }
   };
 
@@ -562,7 +565,7 @@ function UpcomingEvents() {
                     {isSignInOpen(event) ? (
                       // Sign-in period is open
                       hasUserSignedIn(event.id) ? (
-                        <button
+                        <button 
                           onClick={showAlreadySignedInMessage}
                           className="btn btn-signed-in-badge"
                         >

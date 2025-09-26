@@ -62,39 +62,42 @@ function Leaderboard() {
         }
       });
 
-      // Convert the Map to an array and assign ranks
+      // Convert the Map to an array and assign ranks based on points
+      const usersList = Array.from(uniqueUsers.values())
+        .sort((a, b) => b.swePoints - a.swePoints);
+
+      // Assign ranks sequentially - ties get same rank, next rank continues without skipping
       let currentRank = 1;
       let prevPoints = null;
-      let offset = 0;
+      let rankCounter = 1;
 
-      const usersList = Array.from(uniqueUsers.values())
-        .sort((a, b) => b.swePoints - a.swePoints)
-        .map((user, index, arr) => {
-          if (user.swePoints !== prevPoints) {
-            currentRank = index + 1;
-          } else {
-            offset++;
-          }
+      const rankedUsersList = usersList.map((user, index) => {
+        // If this is a new point value, assign the next sequential rank
+        if (prevPoints === null || user.swePoints !== prevPoints) {
+          currentRank = rankCounter;
+          rankCounter++;
           prevPoints = user.swePoints;
+        }
+        // If same points as previous user, keep the same rank (tie)
 
-          // Update user rank in Firestore if changed
-          if (user.rank !== currentRank) {
-            updateDoc(doc(db, "Users", user.id), { rank: currentRank }).catch(
-              console.error
-            );
-          }
+        // Update user rank in Firestore if changed
+        if (user.rank !== currentRank) {
+          updateDoc(doc(db, "Users", user.id), { rank: currentRank }).catch(
+            console.error
+          );
+        }
 
-          return {
-            ...user,
-            rank: currentRank,
-          };
-        });
+        return {
+          ...user,
+          rank: currentRank,
+        };
+      });
 
       // Store all users for reference
-      setAllUsers(usersList);
+      setAllUsers(rankedUsersList);
 
       // Find current user's rank
-      const currentUserData = usersList.find(
+      const currentUserData = rankedUsersList.find(
         (user) => user.id === currentUser.uid
       );
       if (currentUserData) {
@@ -200,14 +203,32 @@ function Leaderboard() {
             {/* Render top 6-8 users */}
             {users.map((user) => renderUserRow(user))}
 
-            {/* Show current user's position if not within rankLimit */}
-            {currentUserRank && currentUserRank > rankLimit && (
+            {/* Show current user's position if not within displayed users */}
+            {currentUserRank && !users.find(user => user.id === currentUser.uid) && (
               <>
-                <div className="leaderboard-row ellipsis-row">
-                  <div className="ellipsis-container">
-                    <span className="ellipsis">•••••</span>
-                  </div>
-                </div>
+                {/* Only show ellipsis if there's more than 1 person between last displayed and current user */}
+                {(() => {
+                  const lastDisplayedRank = users[users.length - 1]?.rank;
+                  const currentUserData = allUsers.find(user => user.id === currentUser.uid);
+                  
+                  if (currentUserData) {
+                    // Count how many people are between the last displayed user and current user
+                    const peopleInBetween = allUsers.filter(user => 
+                      user.rank > lastDisplayedRank && user.rank < currentUserRank
+                    ).length;
+                    
+                    if (peopleInBetween > 1) {
+                      return (
+                        <div className="leaderboard-row ellipsis-row">
+                          <div className="ellipsis-container">
+                            <span className="ellipsis">•••••</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                  }
+                  return null;
+                })()}
                 {(() => {
                   // Find current user data from all users
                   const currentUserData = allUsers.find(

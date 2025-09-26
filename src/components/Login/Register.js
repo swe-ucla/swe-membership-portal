@@ -109,10 +109,10 @@ function Register() {
       console.error(error.message);
       if (error.code === "auth/email-already-in-use") {
         setError(
-          "This email is already registered. Please use a different email or log in."
+          "An account with this email already exists. Please sign in instead or use a different email."
         );
         toast.error(
-          "This email is already registered. Please use a different email or log in.",
+          "An account with this email already exists. Please sign in instead.",
           {
             position: "top-center",
           }

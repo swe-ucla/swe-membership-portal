@@ -5,7 +5,7 @@ body.manage-events-page {
   background-image: url("/public/assets/makerspace-background.svg");
   background-repeat: repeat;
   position: relative;
-  background-size: 100% auto;
+  background-size: 50% auto;
   background-position: center top;
   margin: none;
   height: 100%;
@@ -24,7 +24,7 @@ body.manage-events-page::before {
   bottom: 0;
   background-repeat: no-repeat;
   background-position: center top;
-  background-size: 100% auto;
+  background-size: 50% auto;
   pointer-events: none;
   z-index: -1;
   min-height: 100vh;
@@ -624,7 +624,7 @@ body.manage-events-page::before {
   min-width: 180px;
   appearance: none;
   /* Custom purple arrow */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23895fd8" d="M6 9L1.5 4.5h9L6 9z"/></svg>');
+  background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"%3E%3Cpath fill="%23895fd8" d="M6 9L1.5 4.5h9L6 9z"/%3E%3C/svg%3E');
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   padding-right: 2.5rem;
