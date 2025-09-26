@@ -113,18 +113,24 @@ const ContactSection = () => {
               <a
                 href="mailto:webmaster.swe.ucla@gmail.com"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <MailOutlineIcon style={{ fontSize: 30 }} />
               </a>
               <a
                 href="https://www.instagram.com/swe.ucla/?hl=en"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <InstagramIcon style={{ fontSize: 30 }} />
               </a>
               <a
                 href="https://www.linkedin.com/company/swe-ucla/"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <LinkedInIcon style={{ fontSize: 30 }} />
               </a>
