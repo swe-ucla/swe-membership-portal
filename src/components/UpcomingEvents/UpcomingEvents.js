@@ -417,6 +417,8 @@ function UpcomingEvents() {
         message: "Invalid attendance code",
         toast: true,
       });
+      // Close the sign-in popup when invalid code is entered
+      setSignInPopup({ isOpen: false, event: null, code: "", responses: {} });
     }
   };
 
