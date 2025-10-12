@@ -237,6 +237,19 @@ body.events-page::before {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.sign-in-hours-badge {
+  position: absolute;
+  top: 3rem;
+  left: 0.8rem;
+  background: var(--color-purple-light);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.9rem;
+  z-index: 5; /* Ensure it's above other elements */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .event-date-time {
   display: inline-flex;
   align-items: center;
