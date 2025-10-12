@@ -288,6 +288,28 @@ function UpcomingEvents() {
     return now >= signInOpens && now <= eventEndTime;
   };
 
+  const getHoursLeftToSignIn = (event) => {
+    const now = new Date();
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    
+    const eventEndTime = new Date(
+      eventDate.getTime() +
+        (parseInt(event.endTime.split(":")[0]) * 60 +
+          parseInt(event.endTime.split(":")[1]) -
+          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+          parseInt(event.startTime?.split(":")[1] || "0")) *
+          60000
+    );
+    
+    const diffInMs = eventEndTime - now;
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInMinutes = Math.ceil((diffInMs % 3600000) / 60000);
+    
+    return diffInHours >= 1
+      ? `${diffInHours} Hour${diffInHours !== 1 ? "s" : ""} Left to Sign In`
+      : `${diffInMinutes} Minute${diffInMinutes !== 1 ? "s" : ""} Left to Sign In`;
+  };
+
   const isRSVPOpen = (event) => {
     if (!event.date || !event.signInOpensHoursBefore) return false;
     const eventDate = event.date?.toDate
@@ -530,6 +552,10 @@ function UpcomingEvents() {
 
                 {isToday(event.date) && !hasEventPassed(event) && (
                   <div className="today-badge">HAPPENING TODAY</div>
+                )}
+
+                {!hasEventPassed(event) && isSignInOpen(event) && (
+                  <div className="sign-in-hours-badge">{getHoursLeftToSignIn(event)}</div>
                 )}
 
                 <div className="event-title-row">
