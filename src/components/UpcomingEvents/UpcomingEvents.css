@@ -369,6 +369,20 @@ body.events-page::before {
   scale: 1.05;
 }
 
+/* Cancel RSVP button in yellow with accessible text */
+.btn-cancel-rsvp,
+.btn-cancel-rsvp:hover {
+  color: #2d2144; /* dark text for contrast */
+  border-radius: var(--border-radius-md);
+  background-color: #ffd54f; /* warm yellow */
+  padding: 0.3rem 0.8rem;
+}
+
+.btn-cancel-rsvp:hover {
+  scale: 1.05;
+  background-color: #ffca28; /* slightly darker on hover */
+}
+
 .btn-event-danger {
   color: var(--color-pink);
   border: 2px solid var(--color-pink);
@@ -738,7 +752,7 @@ input[type="time"]:focus {
   font-size: 1.5rem;
   color: #333;
 }
-` .popup-content .form-group {
+.popup-content .form-group {
   margin-bottom: 1.5rem;
 }
 
@@ -808,9 +822,6 @@ input[type="time"]:focus {
 }
 
 /* If a global rule still wins, add !important */
-.popup-content .form-group .form-control {
-  /*max-width: 320px !important; */
-}
 /* Center the button group as a unit */
 .popup-buttons {
   display: flex;

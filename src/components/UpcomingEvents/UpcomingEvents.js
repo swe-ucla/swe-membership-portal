@@ -584,7 +584,7 @@ function UpcomingEvents() {
                       isUserRegistered(event.id) ? (
                         <button
                           onClick={() => handleCancelRegistration(event.id, 0)}
-                          className="btn btn-event"
+                          className="btn btn-cancel-rsvp"
                         >
                           CANCEL RSVP
                         </button>
@@ -605,7 +605,7 @@ function UpcomingEvents() {
                             hasUserSignedIn(event.id) ? event.points || 0 : 0
                           )
                         }
-                        className="btn btn-event-danger"
+                        className="btn btn-cancel-rsvp"
                       >
                         Cancel{" "}
                         {hasUserSignedIn(event.id) ? "Registration" : "RSVP"}
