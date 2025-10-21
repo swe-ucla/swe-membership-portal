@@ -351,7 +351,8 @@ body.events-page::before {
 
 .btn-event:hover {
   scale: 1.05;
-  border: 2px solid white;
+  border: 2px solid #F5C422;
+  background-color: #FAD424;
   color: white;
 }
 
@@ -367,6 +368,38 @@ body.events-page::before {
 
 .btn-sign-in:hover {
   scale: 1.05;
+}
+
+/* Cancel RSVP button in yellow with accessible text */
+.btn-cancel-rsvp {
+  /* color: #2d2144; dark text for contrast */
+  color: white;
+  border-radius: var(--border-radius-md);
+  background-color: #F5C422;
+  border: 2px solid #E4B548;
+  padding: 0.3rem 0.8rem;
+}
+
+.btn-cancel-rsvp:hover {
+  color: white;
+  background-color: #F5C422;
+  border: 2px solid #E4B548;
+}
+
+/* More Info button - separate from RSVP styling */
+.btn-more-info {
+  color: white;
+  border: 1.5px solid white;
+  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  padding: 0.3rem 0.8rem;
+}
+
+.btn-more-info:hover {
+  scale: 1.05;
+  border: 2px solid white;
+  color: white;
+  background-color: transparent;
 }
 
 .btn-event-danger {
@@ -738,7 +771,7 @@ input[type="time"]:focus {
   font-size: 1.5rem;
   color: #333;
 }
-` .popup-content .form-group {
+.popup-content .form-group {
   margin-bottom: 1.5rem;
 }
 
@@ -808,9 +841,6 @@ input[type="time"]:focus {
 }
 
 /* If a global rule still wins, add !important */
-.popup-content .form-group .form-control {
-  /*max-width: 320px !important; */
-}
 /* Center the button group as a unit */
 .popup-buttons {
   display: flex;

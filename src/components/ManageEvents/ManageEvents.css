@@ -253,13 +253,23 @@ body.manage-events-page::before {
   text-align: left;
 }
 
-.events-table th:nth-child(5), /* Attendees */
+.events-table th:nth-child(5), /* Event Code */
 .events-table td:nth-child(5) {
   text-align: center;
 }
 
-.events-table th:nth-child(6), /* Actions */
+.events-table th:nth-child(6), /* RSVP'd */
 .events-table td:nth-child(6) {
+  text-align: center;
+}
+
+.events-table th:nth-child(7), /* Attendees */
+.events-table td:nth-child(7) {
+  text-align: center;
+}
+
+.events-table th:nth-child(8), /* Actions */
+.events-table td:nth-child(8) {
   text-align: center;
 }
 
