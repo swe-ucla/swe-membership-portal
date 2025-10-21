@@ -621,7 +621,7 @@ function UpcomingEvents() {
                     )}
                     <button
                       onClick={() => handleMoreInfo(event)}
-                      className="btn btn-event"
+                      className="btn btn-more-info"
                     >
                       MORE INFO
                     </button>
