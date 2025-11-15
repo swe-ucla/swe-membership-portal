@@ -282,6 +282,7 @@ function Onboarding() {
             {form === "register" && (
               <form onSubmit={handleRegister}>
                 <h3>Create your account</h3>
+                <p className="forgot-password">Please sign up with your UCLA email!</p>
                 <p className="forgot-password text-right">
                   Already registered?{" "}
                   <a href="#" onClick={() => setForm("login")}>

@@ -170,16 +170,21 @@ const ManageEvents = () => {
   };
 
   const exportToCSV = async (event) => {
-    if (!event.attendees || event.attendees.length === 0) {
+    // Get all unique user IDs from both RSVP and attendees
+    const rsvpIds = event.rsvpAttendees || [];
+    const attendeeIds = event.attendees || [];
+    const allUserIds = [...new Set([...rsvpIds, ...attendeeIds])];
+
+    if (allUserIds.length === 0) {
       setPopup({
         isOpen: true,
-        message: "No attendees to export.",
+        message: "No users to export.",
         toast: false,
       });
       return;
     }
 
-    const users = await fetchUserDetails(event.attendees);
+    const users = await fetchUserDetails(allUserIds);
 
     if (users.length === 0) {
       setPopup({
@@ -193,7 +198,7 @@ const ManageEvents = () => {
     const questionHeaders = event.questions
       ? event.questions.map((q) => q.text)
       : [];
-    const headers = ["Email", "Full Name", "Major", "Year", ...questionHeaders];
+    const headers = ["Email", "Full Name", "Major", "Year", "RSVP'ed", "Attended", ...questionHeaders];
 
     const escapeCSVValue = (value) => {
       if (value === undefined || value === null) return "";
@@ -201,41 +206,80 @@ const ManageEvents = () => {
       return strValue.includes(",") ? `"${strValue}"` : strValue;
     };
 
-    const csvRows = [headers.map(escapeCSVValue).join(",")];
+    // Categorize users
+    const rsvpedAndAttended = [];
+    const notRsvpedButAttended = [];
+    const rsvpedButDidNotAttend = [];
 
     users.forEach((user) => {
+      const userId = user.id;
+      const didRSVP = rsvpIds.includes(userId);
+      const didAttend = attendeeIds.includes(userId);
+
+      if (didRSVP && didAttend) {
+        rsvpedAndAttended.push(user);
+      } else if (!didRSVP && didAttend) {
+        notRsvpedButAttended.push(user);
+      } else if (didRSVP && !didAttend) {
+        rsvpedButDidNotAttend.push(user);
+      }
+    });
+
+    const csvRows = [headers.map(escapeCSVValue).join(",")];
+
+    // Add users in order: RSVP'd and attended, not RSVP'd but attended, RSVP'd but didn't attend
+    const orderedUsers = [...rsvpedAndAttended, ...notRsvpedButAttended, ...rsvpedButDidNotAttend];
+
+    orderedUsers.forEach((user) => {
       const userId = user.id;
       const responses = event.responses?.[userId] || {};
       const responseValues = questionHeaders.map((_, index) =>
         escapeCSVValue(responses[index] || "")
       );
 
+      const didRSVP = rsvpIds.includes(userId);
+      const didAttend = attendeeIds.includes(userId);
+
       const row = [
         escapeCSVValue(user.email),
         escapeCSVValue(`${user.firstName || ""} ${user.lastName || ""}`),
         escapeCSVValue(user.major),
         escapeCSVValue(user.year),
+        escapeCSVValue(didRSVP ? "Yes" : "No"),
+        escapeCSVValue(didAttend ? "Yes" : "No"),
         ...responseValues,
       ];
       csvRows.push(row.join(","));
     });
 
+    // Add summary rows
+    csvRows.push(""); // Empty row
+    csvRows.push(`RSVP + Attended,${rsvpedAndAttended.length}`);
+    csvRows.push(`No RSVP + Attended,${notRsvpedButAttended.length}`);
+    csvRows.push(`RSVP + No-show,${rsvpedButDidNotAttend.length}`);
+    csvRows.push(""); // Empty row
+    csvRows.push(`Total Attendees,${rsvpedAndAttended.length + notRsvpedButAttended.length}`);
+    csvRows.push(`Total RSVPs,${rsvpedAndAttended.length + rsvpedButDidNotAttend.length}`);
+
     const csvContent = csvRows.join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, `${event.name}-Attendees.csv`);
+    saveAs(blob, `${event.name}-All-Users.csv`);
   };
 
-  const copyEmailsToClipboard = async (event) => {
-    if (!event.attendees || event.attendees.length === 0) {
+  const copyEmailsToClipboard = async (event, type = 'attendees') => {
+    const userIds = type === 'rsvp' ? event.rsvpAttendees : event.attendees;
+    const listType = type === 'rsvp' ? 'RSVP attendees' : 'attendees';
+
+    if (!userIds || userIds.length === 0) {
       setPopup({
         isOpen: true,
-        message: "No attendees to copy.",
+        message: `No ${listType} to copy.`,
         toast: false,
       });
       return;
     }
 
-    const users = await fetchUserDetails(event.attendees);
+    const users = await fetchUserDetails(userIds);
     const emails = users.map((user) => user.email).join(", ");
 
     if (emails.length === 0) {
@@ -472,6 +516,7 @@ const ManageEvents = () => {
               <th>Date</th>
               <th>Committee</th>
               <th>Location</th>
+              <th>Attendance Code</th>
               <th>RSVP'd</th>
               <th>Attendees</th>
               <th>Actions</th>
@@ -492,6 +537,7 @@ const ManageEvents = () => {
                 </td>
                 <td>{event.createdBy}</td>
                 <td>{event.location}</td>
+                <td>{event.attendanceCode || 'N/A'}</td>
                 <td>{event.rsvpAttendees ? event.rsvpAttendees.length : 0}</td>
                 <td>{event.attendees ? event.attendees.length : 0}</td>
                 <td className="event-actions">
@@ -552,13 +598,12 @@ const ManageEvents = () => {
                         Delete
                       </button>
                     )}
-                  </div>
-                  <div className="actions-bottom">
                     <button
                       className="btn-export"
                       onClick={() => exportToCSV(event)}
                       disabled={
-                        !event.attendees || event.attendees.length === 0
+                        (!event.attendees || event.attendees.length === 0) && 
+                        (!event.rsvpAttendees || event.rsvpAttendees.length === 0)
                       }
                       title="Export CSV"
                     >
@@ -576,13 +621,15 @@ const ManageEvents = () => {
                       </svg>
                       Export CSV
                     </button>
+                  </div>
+                  <div className="actions-bottom">
                     <button
                       className="btn-copy"
-                      onClick={() => copyEmailsToClipboard(event)}
+                      onClick={() => copyEmailsToClipboard(event, 'attendees')}
                       disabled={
                         !event.attendees || event.attendees.length === 0
                       }
-                      title="Copy Emails"
+                      title="Copy Attendee Emails"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -596,7 +643,31 @@ const ManageEvents = () => {
                           fill="white"
                         />
                       </svg>
-                      Copy Emails
+                      Copy Attendee Emails
+                    </button>
+                  </div>
+                  <div className="actions-third">
+                    <button
+                      className="btn-copy"
+                      onClick={() => copyEmailsToClipboard(event, 'rsvp')}
+                      disabled={
+                        !event.rsvpAttendees || event.rsvpAttendees.length === 0
+                      }
+                      title="Copy RSVP Emails"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="14"
+                        viewBox="0 0 12 14"
+                        fill="none"
+                      >
+                        <path
+                          d="M4.23529 11.2C3.84706 11.2 3.51471 11.0629 3.23824 10.7887C2.96176 10.5146 2.82353 10.185 2.82353 9.8V1.4C2.82353 1.015 2.96176 0.685417 3.23824 0.41125C3.51471 0.137083 3.84706 0 4.23529 0H10.5882C10.9765 0 11.3088 0.137083 11.5853 0.41125C11.8618 0.685417 12 1.015 12 1.4V9.8C12 10.185 11.8618 10.5146 11.5853 10.7887C11.3088 11.0629 10.9765 11.2 10.5882 11.2H4.23529ZM4.23529 9.8H10.5882V1.4H4.23529V9.8ZM1.41176 14C1.02353 14 0.691177 13.8629 0.414706 13.5887C0.138235 13.3146 0 12.985 0 12.6V2.8H1.41176V12.6H9.17647V14H1.41176Z"
+                          fill="white"
+                        />
+                      </svg>
+                      Copy RSVP Emails
                     </button>
                   </div>
                 </td>
