@@ -88,7 +88,6 @@ const EventSignin = () => {
           const userData = userSnap.data();
           const currentPoints = Number(userData.swePoints) || 0;
           const attendedEvents = userData.attendedEvents || [];
-          const rsvpEvents = userData.rsvpEvents || [];
 
           if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
             setPopup({ isOpen: true, message: "Please complete your profile before signing in.", toast: false });
@@ -101,15 +100,8 @@ const EventSignin = () => {
             return;
           }
 
-          // Check if user RSVP'd and remove from RSVP list
-          const wasRSVPd = rsvpEvents.includes(eventID);
-          const updatedRsvpEvents = wasRSVPd 
-            ? rsvpEvents.filter(id => id !== eventID)
-            : rsvpEvents;
-
           await updateDoc(userRef, {
             attendedEvents: arrayUnion(eventID),
-            rsvpEvents: updatedRsvpEvents,
             [`eventResponses.${eventID}`]: responses,
             swePoints: currentPoints + (Number(event.points) || 0),
             // lastEventSignIn: new Date().toISOString(),
