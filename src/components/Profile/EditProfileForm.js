@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { deleteUser, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { deleteUser } from "firebase/auth";
 import Popup from "../Popup/Popup";
 import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";

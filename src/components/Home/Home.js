@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,7 @@ function Home() {
   const [userDetails, setUserDetails] = useState(null);
   const navigate = useNavigate();
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     auth.onAuthStateChanged(async (user) => {
       if (user && user.uid) {
         console.log(user);
@@ -23,11 +23,11 @@ function Home() {
         setUserDetails(null);
       }
     });
-  };
+  }, [navigate]);
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [fetchUserData]);
 
   const handleProfileClick = () => {
     navigate("/profile");

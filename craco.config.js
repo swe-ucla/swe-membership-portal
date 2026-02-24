@@ -1,4 +1,19 @@
+const replaceColorAdjust = () => ({
+  postcssPlugin: "replace-color-adjust",
+  Declaration(decl) {
+    if (decl.prop === "color-adjust") {
+      decl.prop = "print-color-adjust";
+    }
+  },
+});
+replaceColorAdjust.postcss = true;
+
 module.exports = {
+  style: {
+    postcss: {
+      plugins: [replaceColorAdjust],
+    },
+  },
   webpack: {
     configure: (webpackConfig) => {
       // Disable CSS minification

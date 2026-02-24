@@ -79,62 +79,7 @@ function AddEvent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    // Check if we're in edit mode by looking at the URL query params
-    const params = new URLSearchParams(location.search);
-    const editId = params.get("edit");
-
-    if (editId) {
-      setIsEditMode(true);
-      setEventId(editId);
-
-      // Try to get event data from localStorage first (it was set in ManageEvents.js)
-      const storedEventData = localStorage.getItem("editEventData");
-      if (storedEventData) {
-        const parsedData = JSON.parse(storedEventData);
-
-        // Initialize form with the event data
-        setEventData({
-          name: parsedData.name || "",
-          date: parsedData.date || "",
-          startTime: parsedData.startTime || "",
-          endTime: parsedData.endTime || "",
-          location: parsedData.location || "",
-          committee: parsedData.createdBy || "",
-          author: parsedData.createdByUser || "",
-          description: parsedData.description || "",
-          attendanceCode: parsedData.attendanceCode || "",
-          points: parsedData.points || 1,
-          questions: parsedData.questions || [],
-          photo: parsedData.photo || null,
-        });
-
-        // Show preview if photo is a URL
-        if (parsedData.photo && typeof parsedData.photo === "string") {
-          setPhotoPreview(parsedData.photo);
-        } else {
-          setPhotoPreview(null);
-        }
-
-        // Set custom code checkbox
-        setUseCustomCode(!!parsedData.attendanceCode);
-
-        // Clear localStorage after using it
-        localStorage.removeItem("editEventData");
-      } else {
-        // If not in localStorage, fetch from Firestore
-        fetchEventData(editId);
-      }
-    }
-
-    fetchUserData();
-    document.body.classList.add("add-event-page");
-    return () => {
-      document.body.classList.remove("add-event-page");
-    };
-  }, [location.search]);
-
-  const fetchEventData = async (id) => {
+  const fetchEventData = useCallback(async (id) => {
     try {
       const eventRef = doc(db, "events", id);
       const eventSnap = await getDoc(eventRef);
@@ -201,9 +146,9 @@ function AddEvent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     setLoading(true);
     auth.onAuthStateChanged(async (user) => {
       if (user && user.uid) {
@@ -220,7 +165,102 @@ function AddEvent() {
       }
       setLoading(false);
     });
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    // Check if we're in edit mode by looking at the URL query params
+    const params = new URLSearchParams(location.search);
+    const editId = params.get("edit");
+
+    if (editId) {
+      setIsEditMode(true);
+      setEventId(editId);
+
+      // Try to get event data from localStorage first (it was set in ManageEvents.js)
+      const storedEventData = localStorage.getItem("editEventData");
+      if (storedEventData) {
+        const parsedData = JSON.parse(storedEventData);
+
+        // Initialize form with the event data
+        setEventData({
+          name: parsedData.name || "",
+          date: parsedData.date || "",
+          startTime: parsedData.startTime || "",
+          endTime: parsedData.endTime || "",
+          location: parsedData.location || "",
+          committee: parsedData.createdBy || "",
+          author: parsedData.createdByUser || "",
+          description: parsedData.description || "",
+          attendanceCode: parsedData.attendanceCode || "",
+          points: parsedData.points || 1,
+          questions: parsedData.questions || [],
+          photo: parsedData.photo || null,
+        });
+
+        // Show preview if photo is a URL
+        if (parsedData.photo && typeof parsedData.photo === "string") {
+          setPhotoPreview(parsedData.photo);
+        } else {
+          setPhotoPreview(null);
+        }
+
+        // Set custom code checkbox
+        setUseCustomCode(!!parsedData.attendanceCode);
+
+        // Clear localStorage after using it
+        localStorage.removeItem("editEventData");
+      } else {
+        // If not in localStorage, fetch from Firestore
+        fetchEventData(editId);
+      }
+    }
+
+    fetchUserData();
+    document.body.classList.add("add-event-page");
+    return () => {
+      document.body.classList.remove("add-event-page");
+    };
+  }, [fetchEventData, fetchUserData, location.search]);
+
+  useEffect(() => {
+    // Check if we're in edit mode by looking at the URL query params
+    const params = new URLSearchParams(location.search);
+    const editId = params.get("edit");
+
+    if (editId) {
+      setIsEditMode(true);
+      setEventId(editId);
+
+      // Try to get event data from localStorage first (it was set in ManageEvents.js)
+      const storedData = localStorage.getItem("editEventData");
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        setEventData(parsedData);
+        setPhotoPreview(parsedData.photo || null);
+        // Show preview if photo is a URL
+        if (parsedData.photo && typeof parsedData.photo === "string") {
+          setPhotoPreview(parsedData.photo);
+        } else {
+          setPhotoPreview(null);
+        }
+
+        // Set custom code checkbox
+        setUseCustomCode(!!parsedData.attendanceCode);
+
+        // Clear localStorage after using it
+        localStorage.removeItem("editEventData");
+      } else {
+        // If not in localStorage, fetch from Firestore
+        fetchEventData(editId);
+      }
+    }
+
+    fetchUserData();
+    document.body.classList.add("add-event-page");
+    return () => {
+      document.body.classList.remove("add-event-page");
+    };
+  }, [fetchEventData, fetchUserData, location.search]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -538,14 +578,6 @@ function AddEvent() {
       </div>
     );
   }
-
-  const questionTypeMap = {
-    shortAnswer: "Short Answer",
-    multipleChoice: "Multiple Choice",
-    checkboxes: "Checkboxes",
-    trueFalse: "T/F",
-    dropdown: "Dropdown",
-  };
 
   return (
     <div className="add-event-container">

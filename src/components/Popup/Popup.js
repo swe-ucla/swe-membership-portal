@@ -15,7 +15,7 @@ const Popup = ({
   inputValue = "",
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const [inputText, setInputText] = useState(inputValue);
+  const [inputText] = useState(inputValue);
   const onCloseRef = useRef(onClose);
   const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
   const popupRef = useRef(null);
@@ -45,7 +45,7 @@ const Popup = ({
         onCloseRef.current();
       }, duration + 300); // Close popup after fade out
     }
-  }, [isOpen, toast, confirm]); // Removed duration from dependencies
+  }, [confirm, duration, isOpen, toast]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -79,12 +79,13 @@ const Popup = ({
 
   // Cleanup timers on unmount
   useEffect(() => {
+    const timers = timersRef.current;
     return () => {
-      if (timersRef.current.fadeOutTimer) {
-        clearTimeout(timersRef.current.fadeOutTimer);
+      if (timers.fadeOutTimer) {
+        clearTimeout(timers.fadeOutTimer);
       }
-      if (timersRef.current.closeTimer) {
-        clearTimeout(timersRef.current.closeTimer);
+      if (timers.closeTimer) {
+        clearTimeout(timers.closeTimer);
       }
     };
   }, []);
