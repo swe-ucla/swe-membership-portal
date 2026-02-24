@@ -138,6 +138,7 @@ const ManageEvents = () => {
     "General",
     "Internal Affairs",
     "Lobbying",
+    "Mentorship",
     "Outreach",
     "Technical",
   ];

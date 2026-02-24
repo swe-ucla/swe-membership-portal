@@ -72,6 +72,7 @@ function AddEvent() {
     "Outreach",
     "Internal Affairs",
     "Advocacy",
+    "Mentorship",
     "General",
   ];
 
