@@ -344,10 +344,32 @@ function UpcomingEvents() {
     setEventDetailsPopup({ isOpen: false, event: null });
   };
 
+  const hasMissingRequiredResponses = (questions = [], responses = {}) => {
+    return questions.some((q, index) => {
+      if (!q.required) return false;
+      const response = responses[index];
+
+      if (q.type === "checkboxes") {
+        return !Array.isArray(response) || response.length === 0;
+      }
+
+      return !response || (typeof response === "string" && response.trim() === "");
+    });
+  };
+
   const handleSignInSubmit = async () => {
     console.log("handleSignInSubmit triggered");
     const { event, code, responses } = signInPopup;
     if (!event || !code) return;
+
+    if (hasMissingRequiredResponses(event.questions || [], responses || {})) {
+      setPopup({
+        isOpen: true,
+        message: "Please answer all required questions",
+        toast: true,
+      });
+      return;
+    }
 
     if (code.toUpperCase() === event.attendanceCode) {
       try {
@@ -371,9 +393,7 @@ function UpcomingEvents() {
           }
 
           const wasRSVPd = rsvpEvents.includes(event.id);
-          const updatedRsvpEvents = wasRSVPd
-            ? rsvpEvents.filter((id) => id !== event.id)
-            : rsvpEvents;
+          const updatedRsvpEvents = rsvpEvents;
 
           // Update user document
           const userUpdateData = {
@@ -381,8 +401,6 @@ function UpcomingEvents() {
             swePoints: currentPoints + (Number(event.points) || 0),
             [`eventResponses.${event.id}`]: responses || {},
           };
-          if (wasRSVPd) userUpdateData.rsvpEvents = arrayRemove(event.id);
-
           await updateDoc(userRef, userUpdateData);
 
           // Update event document
@@ -393,8 +411,6 @@ function UpcomingEvents() {
               [userId]: responses || {},
             },
           };
-          if (wasRSVPd) eventUpdateData.rsvpAttendees = arrayRemove(userId);
-
           await updateDoc(eventRef, eventUpdateData);
 
           setIsSignedIn([...attendedEvents, event.id]);
