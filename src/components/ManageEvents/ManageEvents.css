@@ -291,10 +291,14 @@ body.manage-events-page::before {
   box-shadow: 0 4px 0 0 #895fd8;
 }
 
-.btn-export,
-.btn-copy {
+.btn-export {
   background: rgba(180, 143, 239, 0.57);
   box-shadow: 0 4px 0 0 #b48fef;
+}
+
+.btn-copy {
+  background: #b48fef;
+  box-shadow: 0 4px 0 0 #895fd8;
 }
 
 .btn-delete {
@@ -339,10 +343,15 @@ body.manage-events-page::before {
   transform: translateY(-1px);
 }
 
-.btn-export:hover:not(:disabled),
-.btn-copy:hover:not(:disabled) {
+.btn-export:hover:not(:disabled) {
   background: rgba(180, 143, 239, 0.8);
   box-shadow: 0 4px 0 0 #895fd8;
+  transform: translateY(-1px);
+}
+
+.btn-copy:hover:not(:disabled) {
+  background: #895fd8;
+  box-shadow: 0 4px 0 0 #7a4fc7;
   transform: translateY(-1px);
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./SignInQuestions.css";
+import "./SignInQuestions.css";
 
 function SignInQuestions({ questions = [], responses = {}, setResponses }) {
   const updateResponse = (index, value) => {

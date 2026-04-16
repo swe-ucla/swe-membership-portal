@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
@@ -36,6 +36,13 @@ const EventSignin = () => {
     fetchEventDetails();
   }, [eventID, navigate]);
 
+  const sortedQuestions = useMemo(() => {
+    if (!event?.questions) return [];
+    return [...event.questions].sort((a, b) =>
+      a.text.toLowerCase().includes("attendance code") ? -1 : 1
+    );
+  }, [event]);
+
   const handleResponseChange = (questionIndex, value) => {
     setResponses(prev => ({
       ...prev,
@@ -48,7 +55,7 @@ const EventSignin = () => {
     setError("");
     
     // Validate required questions
-    const missingRequired = event.questions?.some((q, index) => {
+    const missingRequired = sortedQuestions.some((q, index) => {
       const response = responses[index];
       if (!q.required) return false;
     
@@ -88,7 +95,6 @@ const EventSignin = () => {
           const userData = userSnap.data();
           const currentPoints = Number(userData.swePoints) || 0;
           const attendedEvents = userData.attendedEvents || [];
-          const rsvpEvents = userData.rsvpEvents || [];
 
           if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
             setPopup({ isOpen: true, message: "Please complete your profile before signing in.", toast: false });
@@ -101,15 +107,8 @@ const EventSignin = () => {
             return;
           }
 
-          // Check if user RSVP'd and remove from RSVP list
-          const wasRSVPd = rsvpEvents.includes(eventID);
-          const updatedRsvpEvents = wasRSVPd 
-            ? rsvpEvents.filter(id => id !== eventID)
-            : rsvpEvents;
-
           await updateDoc(userRef, {
             attendedEvents: arrayUnion(eventID),
-            rsvpEvents: updatedRsvpEvents,
             [`eventResponses.${eventID}`]: responses,
             swePoints: currentPoints + (Number(event.points) || 0),
             // lastEventSignIn: new Date().toISOString(),
@@ -159,12 +158,10 @@ const EventSignin = () => {
                 />
               
               {/* Questions Section */}
-              {event.questions && event.questions.length > 0 && (
+              {sortedQuestions.length > 0 && (
                 <div className="mb-4">
                   <h3>Event Questions</h3>
-                  {[...event.questions]
-                    .sort((a, b) => a.text.toLowerCase().includes("attendance code") ? -1 : 1)
-                    .map((question, index) => (
+                  {sortedQuestions.map((question, index) => (
                       <div key={index} className="mb-3">
                         <label className="form-label">
                           {question.text}

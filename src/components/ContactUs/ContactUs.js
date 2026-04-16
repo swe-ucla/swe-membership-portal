@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import emailjs from "emailjs-com";
-import styles from "./ContactUs.css";
+import "./ContactUs.css";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
