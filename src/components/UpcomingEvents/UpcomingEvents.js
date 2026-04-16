@@ -16,9 +16,12 @@ import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
+
 import Popup from "../Popup/Popup";
 import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 import SignInQuestions from "./SignInQuestions";
+
+import placeholderImage from "../../assets/placeholder-image.png";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -554,8 +557,7 @@ function UpcomingEvents() {
                       src={
                         event.photo
                           ? event.photo
-                          : process.env.PUBLIC_URL +
-                            "/assets/placeholder-image.png"
+                          : placeholderImage
                       }
                       alt={event.name + " event"}
                     />

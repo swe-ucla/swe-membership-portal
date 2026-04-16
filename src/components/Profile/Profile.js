@@ -7,6 +7,8 @@ import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
 
+import bearFaceIcon from "../../assets/bear-face-icon.svg";
+
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -119,7 +121,7 @@ function Profile() {
                     <p className="profile-major">
                       {/* <MaterialSymbol icon="circle" size={28} />  */}
                       <img
-                        src="/assets/bear-face-icon.svg"
+                        src={bearFaceIcon}
                         alt="Bear Icon"
                         className="major-icon"
                       />

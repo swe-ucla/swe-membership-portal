@@ -6,6 +6,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
+import sweLogo from "../../assets/purple-swe-logo.svg";
+
 const NavBar = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,7 +70,7 @@ const NavBar = () => {
         <div className="logo">
           <NavLink to="/upcoming">
             <img
-              src={process.env.PUBLIC_URL + "/assets/purple-swe-logo.svg"}
+              src={sweLogo}
               alt="SWE UCLA Logo"
               className="logo-image"
             />
