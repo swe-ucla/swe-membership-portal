@@ -68,7 +68,7 @@ const NavBar = () => {
         <div className="logo">
           <NavLink to="/upcoming">
             <img
-              src={process.env.PUBLIC_URL + "/assets/SWE Logo SVG.svg"}
+              src={process.env.PUBLIC_URL + "/assets/purple-swe-logo.svg"}
               alt="SWE UCLA Logo"
               className="logo-image"
             />

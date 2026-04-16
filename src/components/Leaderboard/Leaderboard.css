@@ -21,7 +21,7 @@
 
 /*TODO: fix fit + sizing for responsive UI*/
 .leaderboard-background-container {
-  background-image: url("/public/assets/leaderboard-background.svg");
+  background-image: url("/src/assets/page-backgrounds/leaderboard-background.svg");
   background-size: cover;
   background-position: center;
   margin: none;

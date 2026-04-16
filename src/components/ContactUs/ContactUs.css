@@ -3,7 +3,7 @@
 /* Background layering for contact page */
 
 body.contact-page {
-  background-image: url("/public/assets/contact_us_background.svg");
+  background-image: url("/src/assets/page-backgrounds/contact-us-background.svg");
   background-repeat: no-repeat;
   position: relative;
   background-size: cover;
