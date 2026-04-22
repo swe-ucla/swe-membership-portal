@@ -78,7 +78,7 @@ function Onboarding() {
         return;
       }
       
-      navigate("/");
+      navigate("/upcoming");
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         setErrorMessage("Invalid email or password.");
