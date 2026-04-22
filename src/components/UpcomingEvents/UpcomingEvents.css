@@ -448,7 +448,7 @@ body.events-page .App {
 }
 
 /* Loading and empty states */
-.events-container .events-container .loading-message {
+.events-container .loading-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -460,7 +460,7 @@ body.events-page .App {
   margin: 2.5rem auto;
 }
 
-.events-container .events-container .empty-message {
+.events-container .empty-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -473,7 +473,7 @@ body.events-page .App {
 }
 
 /* Loading spinner */
-.events-container .events-container .loading-spinner {
+.events-container .loading-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
@@ -535,18 +535,18 @@ body.events-page .App {
 }
 
 /* Form row for date and time fields */
-.events-container .events-container .form-row {
+.events-container .form-row {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.events-container .events-container .form-col {
+.events-container .form-col {
   flex: 1;
 }
 
 /* Time input styling */
-.events-container .events-container input[type="time"] {
+.events-container input[type="time"] {
   width: 100%;
   padding: 10px 12px;
   border: 2px solid #e0e0fe;
@@ -558,7 +558,7 @@ body.events-page .App {
   color: var(--color-purple-dark);
 }
 
-.events-container .events-container input[type="time"]:focus {
+.events-container input[type="time"]:focus {
   outline: none;
   border-color: var(--color-purple-medium);
   box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.1);
@@ -602,12 +602,12 @@ body.events-page .App {
   }
 
   .events-container .loading-message,
-  .events-container .events-container .empty-message {
+  .events-container .empty-message {
     padding: 2rem;
     margin: 2rem auto;
   }
 
-  .events-container .events-container .form-row {
+  .events-container .form-row {
     flex-direction: column;
     gap: 0;
   }
@@ -704,7 +704,7 @@ body.events-page .App {
 }
 
 /* Page navigation styles */
-.events-container .events-container .page-nav-container {
+.events-container .page-nav-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -713,7 +713,7 @@ body.events-page .App {
   padding: 1rem;
 }
 
-.events-container .events-container .btn-page-nav {
+.events-container .btn-page-nav {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
@@ -722,19 +722,19 @@ body.events-page .App {
   border-radius: var(--border-radius-md);
 }
 
-.events-container .events-container .btn-page-nav:hover:not(:disabled) {
+.events-container .btn-page-nav:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   color: white;
   scale: 1.05;
 }
 
-.events-container .events-container .btn-page-nav:disabled {
+.events-container .btn-page-nav:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-.events-container .events-container .page-nav-info {
+.events-container .page-nav-info {
   color: white;
   font-size: 1rem;
   min-width: 120px;
@@ -743,12 +743,12 @@ body.events-page .App {
 
 /* Responsive page-nav */
 @media (max-width: 768px) {
-  .events-container .events-container .page-nav-container {
+  .events-container .page-nav-container {
     flex-direction: column;
     gap: 1rem;
   }
 
-  .events-container .events-container .page-nav-info {
+  .events-container .page-nav-info {
     order: -1;
   }
 }
@@ -818,7 +818,7 @@ body.events-page .App {
   gap: 1rem;
 }
 
-.popup-buttons .events-container .events-container .btn {
+.events-container .popup-buttons .btn {
   flex: 0;
   width: auto;
   min-width: 100px;
@@ -865,13 +865,13 @@ body.events-page .App {
 }
 
 /* Fixed equal width buttons */
-.popup-buttons .events-container .events-container .btn {
+.events-container .popup-buttons .btn {
   flex: 0 0 140px;
   text-align: center;
   margin: 0 !important;
 }
 
 /* Override any auto-margins on secondary button */
-.popup-buttons .events-container .btn-secondary {
+.events-container .popup-buttons .btn-secondary {
   margin-left: 0 !important;
 }
