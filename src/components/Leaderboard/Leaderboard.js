@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
+
 import goldMedal from "../../assets/leaderboard-gold-medal.svg";
 import silverMedal from "../../assets/leaderboard-silver-medal.svg";
 import bronzeMedal from "../../assets/leaderboard-bronze-medal.svg";

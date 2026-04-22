@@ -16,9 +16,12 @@ import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
+
 import Popup from "../Popup/Popup";
 import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 import SignInQuestions from "./SignInQuestions";
+
+import placeholderImage from "../../assets/placeholder-image.png";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -286,6 +289,28 @@ function UpcomingEvents() {
     return now >= signInOpens && now <= eventEndTime;
   };
 
+  const getHoursLeftToSignIn = (event) => {
+    const now = new Date();
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    
+    const eventEndTime = new Date(
+      eventDate.getTime() +
+        (parseInt(event.endTime.split(":")[0]) * 60 +
+          parseInt(event.endTime.split(":")[1]) -
+          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+          parseInt(event.startTime?.split(":")[1] || "0")) *
+          60000
+    );
+    
+    const diffInMs = eventEndTime - now;
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInMinutes = Math.ceil((diffInMs % 3600000) / 60000);
+    
+    return diffInHours >= 1
+      ? `${diffInHours} Hour${diffInHours !== 1 ? "s" : ""} Left to Sign In`
+      : `${diffInMinutes} Minute${diffInMinutes !== 1 ? "s" : ""} Left to Sign In`;
+  };
+
   const isRSVPOpen = (event) => {
     if (!event.date || !event.signInOpensHoursBefore) return false;
     const eventDate = event.date?.toDate
@@ -392,7 +417,6 @@ function UpcomingEvents() {
             return;
           }
 
-          const wasRSVPd = rsvpEvents.includes(event.id);
           const updatedRsvpEvents = rsvpEvents;
 
           // Update user document
@@ -532,8 +556,7 @@ function UpcomingEvents() {
                       src={
                         event.photo
                           ? event.photo
-                          : process.env.PUBLIC_URL +
-                            "/assets/placeholder-image.png"
+                          : placeholderImage
                       }
                       alt={event.name + " event"}
                     />
@@ -544,6 +567,10 @@ function UpcomingEvents() {
 
                 {isToday(event.date) && !hasEventPassed(event) && (
                   <div className="today-badge">HAPPENING TODAY</div>
+                )}
+
+                {!hasEventPassed(event) && isSignInOpen(event) && (
+                  <div className="sign-in-hours-badge">{getHoursLeftToSignIn(event)}</div>
                 )}
 
                 <div className="event-title-row">
