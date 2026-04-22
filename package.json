@@ -27,6 +27,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "craco build",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -51,6 +53,7 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
     "postcss": "^8.5.3"
   }
 }

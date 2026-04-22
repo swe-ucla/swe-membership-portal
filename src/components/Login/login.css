@@ -1,17 +1,10 @@
 /* Updated Login/Register CSS with clean minimal theme - Complete Rewrite */
-:root {
-  --color-purple-dark: #4525a2;
-  --color-purple-medium: #6677ca;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
-  --border-radius-lg: 12px;
-  --border-radius-md: 8px;
-  --border-radius-sm: 6px;
-  --box-shadow: 0 4px 20px rgba(69, 37, 162, 0.1);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+.auth-wrapper,
+.auth-wrapper * {
+  box-sizing: border-box;
+}
 
+.auth-wrapper {
   --primary-gradient: linear-gradient(
     135deg,
     var(--color-purple-dark),
@@ -23,21 +16,11 @@
     var(--color-pink)
   );
   --accent-color: var(--color-purple-medium);
-  --text-color: #333;
-  --light-text: #fff;
   --bg-color: var(--color-background);
   --card-bg: rgba(255, 255, 255, 0.95);
   --input-bg: rgba(255, 255, 255, 0.9);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
     sans-serif;
-  background-color: var(--bg-color);
   margin: 0;
   padding: 0;
 }
@@ -125,7 +108,7 @@ body {
 }
 
 /* Form inputs */
-.form-control,
+.auth-inner .form-control,
 input.register-form-control {
   border: 1px solid #d1d5db;
   border-radius: 15px;
@@ -141,7 +124,7 @@ input.register-form-control {
   font-family: inherit;
 }
 
-.form-control:focus,
+.auth-inner .form-control:focus,
 input.register-form-control:focus {
   border-color: var(--color-purple-medium);
   box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1);
@@ -149,7 +132,7 @@ input.register-form-control:focus {
   background-color: #fff;
 }
 
-.form-control::placeholder,
+.auth-inner .form-control::placeholder,
 input.register-form-control::placeholder {
   color: #9ca3af;
   font-weight: 400;
@@ -286,7 +269,7 @@ input.register-form-control::placeholder {
   transform: translateY(-1px) !important;
 }
 
-.divider {
+.auth-inner .divider {
   display: flex;
   align-items: center;
   text-align: center;
@@ -296,14 +279,14 @@ input.register-form-control::placeholder {
   font-weight: 400;
 }
 
-.divider::before,
-.divider::after {
+.auth-inner .divider::before,
+.auth-inner .divider::after {
   content: "";
   flex: 1;
   border-bottom: 1px solid #e1e5e9;
 }
 
-.divider span {
+.auth-inner .divider span {
   padding: 0 15px;
 }
 

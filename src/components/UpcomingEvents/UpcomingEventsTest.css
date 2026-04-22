@@ -5,7 +5,7 @@
 */
 
 /* Remove all margins and padding to eliminate white gaps */
-body {
+body.events-page {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -21,26 +21,14 @@ body.events-page::before {
   background-repeat: no-repeat;
 }
 
-.App {
+body.events-page .App {
   margin: 0;
   padding: 0;
   width: 100%;
   overflow-x: hidden;
 }
 
-:root {
-  --color-purple-dark: #4525a2;
-  --color-purple-medium: #6677ca;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
-  --border-radius-lg: 20px;
-  --border-radius-md: 15px;
-  --border-radius-sm: 12px;
-  --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
+body.events-page {
   --bg-safe-top: 1rem; /* reduce top padding since we can use space behind navbar */
   --bg-art-bottom: 820px; /* reserved space for bear + moon at bottom */
   --bg-safe-bottom: var(--bg-art-bottom);
@@ -279,7 +267,7 @@ body.events-page::before {
 }
 
 /* Button styles */
-.btn {
+.events-container .btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 500;
@@ -290,7 +278,7 @@ body.events-page::before {
   letter-spacing: 0.3px;
 }
 
-.btn-primary {
+.events-container .btn-primary {
   background: linear-gradient(
     90deg,
     var(--color-purple-dark),
@@ -300,12 +288,12 @@ body.events-page::before {
   box-shadow: 0 4px 12px rgba(69, 37, 162, 0.2);
 }
 
-.btn-primary:hover {
+.events-container .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(69, 37, 162, 0.3);
 }
 
-.btn-primary:active {
+.events-container .btn-primary:active {
   transform: translateY(1px);
 }
 
@@ -370,7 +358,7 @@ body.events-page::before {
 }
 
 /* Loading and empty states */
-.loading-message {
+.events-container .loading-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -382,7 +370,7 @@ body.events-page::before {
   margin: 2.5rem auto;
 }
 
-.empty-message {
+.events-container .empty-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -395,7 +383,7 @@ body.events-page::before {
 }
 
 /* Loading spinner */
-.loading-spinner {
+.events-container .loading-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
@@ -457,7 +445,7 @@ body.events-page::before {
 }
 
 /* Form row for date and time fields */
-.form-row {
+.events-container .form-row {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
@@ -569,7 +557,7 @@ body.events-page header {
 }
 
 /* Page navigation styles - positioned above decorative elements */
-.page-nav-container {
+.events-container .page-nav-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -580,7 +568,7 @@ body.events-page header {
   z-index: 10;
 }
 
-.btn-page-nav {
+.events-container .btn-page-nav {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
@@ -590,19 +578,19 @@ body.events-page header {
   backdrop-filter: blur(10px);
 }
 
-.btn-page-nav:hover:not(:disabled) {
+.events-container .btn-page-nav:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   color: white;
   scale: 1.05;
 }
 
-.btn-page-nav:disabled {
+.events-container .btn-page-nav:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-.page-nav-info {
+.events-container .page-nav-info {
   color: white;
   font-size: 1rem;
   min-width: 120px;
@@ -615,7 +603,7 @@ body.events-page header {
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  :root {
+  body.events-page {
     --bg-art-bottom: 600px;
   }
 
@@ -631,7 +619,7 @@ body.events-page header {
 }
 
 @media (max-width: 768px) {
-  :root {
+  body.events-page {
     --bg-safe-top: calc(2in - 0.4in);
     --bg-art-bottom: 450px;
   }
@@ -669,13 +657,13 @@ body.events-page header {
     right: 0.6rem;
   }
 
-  .loading-message,
-  .empty-message {
+  .events-container .loading-message,
+  .events-container .empty-message {
     padding: 2rem;
     margin: 2rem auto;
   }
 
-  .form-row {
+  .events-container .form-row {
     flex-direction: column;
     gap: 0;
   }
@@ -685,18 +673,18 @@ body.events-page header {
     background-position: center 85%;
   }
 
-  .page-nav-container {
+  .events-container .page-nav-container {
     flex-direction: column;
     gap: 1rem;
   }
 
-  .page-nav-info {
+  .events-container .page-nav-info {
     order: -1;
   }
 }
 
 @media (max-width: 480px) {
-  :root {
+  body.events-page {
     --bg-art-bottom: 350px;
   }
 
