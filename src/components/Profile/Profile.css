@@ -129,7 +129,7 @@ body.profile-page::before {
   font-size: 0.9rem;
 }
 
-.divider {
+.profile-container .divider {
   border: none;
   border-bottom: 2px solid #7e7e7e;
   margin: 1rem 0;
@@ -420,23 +420,23 @@ body.profile-page::before {
   width: 100%;
 }
 
-.form-row {
+.edit-profile-container .form-row {
   display: flex;
   gap: 1rem;
 }
 
-.form-row .form-group {
+.edit-profile-container .form-row .edit-profile-container .form-group {
   flex: 1;
 }
 
-.form-group {
+.edit-profile-container .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.form-group label {
+.edit-profile-container .form-group label {
   font-size: 0.95rem;
   font-weight: 600;
   color: #3a3536;
@@ -444,7 +444,7 @@ body.profile-page::before {
   text-align: left;
 }
 
-.input-container {
+.edit-profile-container .input-container {
   position: relative;
   width: 100%;
   height: 3rem;
@@ -452,10 +452,10 @@ body.profile-page::before {
   align-items: center;
 }
 
-.form-group input[type="text"],
-.form-group input[type="file"],
-.form-group input[type="number"],
-.form-group select {
+.edit-profile-container .form-group input[type="text"],
+.edit-profile-container .form-group input[type="file"],
+.edit-profile-container .form-group input[type="number"],
+.edit-profile-container .form-group select {
   padding: 0.75rem 1rem;
   padding-right: 2.5rem;
   border: 1px solid #d9d9d9;
@@ -469,17 +469,17 @@ body.profile-page::before {
   margin: 0;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="number"],
-.form-group textarea:focus,
-.form-group select:focus {
+.edit-profile-container .form-group input[type="text"]:focus,
+.edit-profile-container .form-group input[type="number"],
+.edit-profile-container .form-group textarea:focus,
+.edit-profile-container .form-group select:focus {
   border-color: #b48fef;
   background-color: white;
   outline: none;
   box-shadow: 0 0 0 2px rgba(180, 143, 239, 0.1);
 }
 
-.form-group input.disabled-input {
+.edit-profile-container .form-group input.disabled-input {
   background-color: #d9d9d9b2;
   color: #00000080;
   cursor: not-allowed;
@@ -487,13 +487,13 @@ body.profile-page::before {
   border-radius: var(--border-radius-lg);
 }
 
-.form-group input.input-error,
-.form-group select.input-error {
+.edit-profile-container .form-group input.input-error,
+.edit-profile-container .form-group select.input-error {
   background-color: #fdaeae !important;
   border: 1px solid #e13a3a !important;
 }
 
-.input-error-icon {
+.edit-profile-container .input-error-icon {
   position: absolute;
   right: 0.75rem;
   color: #e13a3a;
@@ -598,7 +598,7 @@ body.profile-page::before {
 }
 
 /* Button Styling */
-.button-group {
+.edit-profile-container .button-group {
   display: flex;
   gap: 1rem;
   margin-top: 2rem;
@@ -607,7 +607,7 @@ body.profile-page::before {
   width: 100%;
 }
 
-.btn {
+.edit-profile-container .btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 50px;
@@ -619,24 +619,24 @@ body.profile-page::before {
   text-align: center;
 }
 
-.btn-primary {
+.edit-profile-container .btn-primary {
   background: #895fd8;
   color: white;
   box-shadow: 0 4px 15px rgba(69, 37, 162, 0.3);
 }
 
-.btn-primary:hover {
+.edit-profile-container .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 7px 20px rgba(69, 37, 162, 0.4);
 }
 
-.btn-secondary {
+.edit-profile-container .btn-secondary {
   background-color: #f8f9fa;
   color: var(--color-purple-dark);
   border: 1px solid var(--color-purple-dark);
 }
 
-.btn-secondary:hover {
+.edit-profile-container .btn-secondary:hover {
   background-color: rgba(69, 37, 162, 0.05);
   transform: translateY(-2px);
 }
@@ -653,7 +653,7 @@ body.profile-page::before {
   justify-content: center;
 }
 
-.loading-spinner {
+.profile-container .loading-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
@@ -708,11 +708,11 @@ body.profile-page::before {
     justify-content: center;
   }
 
-  .button-group {
+  .edit-profile-container .button-group {
     flex-direction: column;
   }
 
-  .btn {
+  .edit-profile-container .btn {
     width: 100%;
   }
 
@@ -733,11 +733,11 @@ body.profile-page::before {
     gap: 2rem;
   }
 
-  .form-row {
+  .edit-profile-container .form-row {
     flex-direction: column;
   }
 
-  .button-group {
+  .edit-profile-container .button-group {
     flex-direction: column;
   }
 
@@ -749,8 +749,8 @@ body.profile-page::before {
 
 /* Remove up down arrows from input type number */
 /* Chrome, Safari, Edge, Opera */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+.edit-profile-container input[type="number"]::-webkit-outer-spin-button,
+.edit-profile-container input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }

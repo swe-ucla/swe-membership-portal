@@ -5,7 +5,7 @@
 */
 
 /* Remove all margins and padding to eliminate white gaps */
-body {
+body.events-page {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -45,7 +45,7 @@ body.events-page::before {
   background-attachment: local;
 }
 
-.App {
+body.events-page .App {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -324,7 +324,7 @@ body.events-page::before {
 }
 
 /* Button styles */
-.btn {
+.events-container .events-container .btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 500;
@@ -335,7 +335,7 @@ body.events-page::before {
   letter-spacing: 0.3px;
 }
 
-.btn-primary {
+.events-container .events-container .btn-primary {
   background: linear-gradient(
     90deg,
     var(--color-purple-dark),
@@ -345,12 +345,12 @@ body.events-page::before {
   box-shadow: 0 4px 12px rgba(69, 37, 162, 0.2);
 }
 
-.btn-primary:hover {
+.events-container .events-container .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(69, 37, 162, 0.3);
 }
 
-.btn-primary:active {
+.events-container .events-container .btn-primary:active {
   transform: translateY(1px);
 }
 
@@ -448,7 +448,7 @@ body.events-page::before {
 }
 
 /* Loading and empty states */
-.loading-message {
+.events-container .events-container .loading-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -460,7 +460,7 @@ body.events-page::before {
   margin: 2.5rem auto;
 }
 
-.empty-message {
+.events-container .events-container .empty-message {
   text-align: center;
   padding: 2.5rem;
   font-size: 1.2rem;
@@ -473,7 +473,7 @@ body.events-page::before {
 }
 
 /* Loading spinner */
-.loading-spinner {
+.events-container .events-container .loading-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid rgba(69, 37, 162, 0.2);
@@ -535,18 +535,18 @@ body.events-page::before {
 }
 
 /* Form row for date and time fields */
-.form-row {
+.events-container .events-container .form-row {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.form-col {
+.events-container .events-container .form-col {
   flex: 1;
 }
 
 /* Time input styling */
-input[type="time"] {
+.events-container .events-container input[type="time"] {
   width: 100%;
   padding: 10px 12px;
   border: 2px solid #e0e0fe;
@@ -558,7 +558,7 @@ input[type="time"] {
   color: var(--color-purple-dark);
 }
 
-input[type="time"]:focus {
+.events-container .events-container input[type="time"]:focus {
   outline: none;
   border-color: var(--color-purple-medium);
   box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.1);
@@ -601,13 +601,13 @@ input[type="time"]:focus {
     right: 0.6rem;
   }
 
-  .loading-message,
-  .empty-message {
+  .events-container .loading-message,
+  .events-container .events-container .empty-message {
     padding: 2rem;
     margin: 2rem auto;
   }
 
-  .form-row {
+  .events-container .events-container .form-row {
     flex-direction: column;
     gap: 0;
   }
@@ -704,7 +704,7 @@ input[type="time"]:focus {
 }
 
 /* Page navigation styles */
-.page-nav-container {
+.events-container .events-container .page-nav-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -713,7 +713,7 @@ input[type="time"]:focus {
   padding: 1rem;
 }
 
-.btn-page-nav {
+.events-container .events-container .btn-page-nav {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
@@ -722,19 +722,19 @@ input[type="time"]:focus {
   border-radius: var(--border-radius-md);
 }
 
-.btn-page-nav:hover:not(:disabled) {
+.events-container .events-container .btn-page-nav:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
   color: white;
   scale: 1.05;
 }
 
-.btn-page-nav:disabled {
+.events-container .events-container .btn-page-nav:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-.page-nav-info {
+.events-container .events-container .page-nav-info {
   color: white;
   font-size: 1rem;
   min-width: 120px;
@@ -743,18 +743,18 @@ input[type="time"]:focus {
 
 /* Responsive page-nav */
 @media (max-width: 768px) {
-  .page-nav-container {
+  .events-container .events-container .page-nav-container {
     flex-direction: column;
     gap: 1rem;
   }
 
-  .page-nav-info {
+  .events-container .events-container .page-nav-info {
     order: -1;
   }
 }
 
 /* Sign In Popup Styles */
-.popup-overlay {
+.events-container .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -767,7 +767,7 @@ input[type="time"]:focus {
   z-index: 1000;
 }
 
-.popup-content {
+.events-container .popup-content {
   background: white;
   padding: 1rem 2rem 2rem;
   margin-top: 0;
@@ -779,23 +779,23 @@ input[type="time"]:focus {
   /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);*/
 }
 
-.popup-content h3 {
+.events-container .popup-content h3 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
   color: #333;
 }
-.popup-content .form-group {
+.events-container .popup-content .form-group {
   margin-bottom: 1.5rem;
 }
 
-.popup-content label {
+.events-container .popup-content label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
   color: #333;
 }
 
-.popup-content .form-control {
+.events-container .popup-content .form-control {
   /*width: 70%;  narrower than before (try 70% or even 60%) */
   /*max-width: 250px;  prevents it from getting too wide on large screens */
   padding: 0.5rem 0.75rem;
@@ -807,41 +807,41 @@ input[type="time"]:focus {
   display: block;
 }
 
-.popup-content .form-control:focus {
+.events-container .popup-content .form-control:focus {
   outline: none;
   border-color: var(--color-purple-dark);
 }
 
-.popup-buttons {
+.events-container .popup-buttons {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.popup-buttons .btn {
+.popup-buttons .events-container .events-container .btn {
   flex: 0;
   width: auto;
   min-width: 100px;
   text-align: center;
 }
 
-.btn-secondary {
+.events-container .btn-secondary {
   background: #f5f5f5;
   color: #666;
   border: 1px solid #ddd;
 }
 
-.btn-secondary:hover {
+.events-container .btn-secondary:hover {
   background: #e9e9e9;
 }
 /* Center the input row */
-.popup-content .form-group {
+.events-container .popup-content .form-group {
   display: flex;
   justify-content: center;
 }
 
 /* Make the field narrower and prevent overflow */
-.popup-content .form-group .form-control {
+.events-container .popup-content .form-group .form-control {
   width: 100%;
   /*max-width: 320px;*/
   min-width: 0;
@@ -855,7 +855,7 @@ input[type="time"]:focus {
 
 /* If a global rule still wins, add !important */
 /* Center the button group as a unit */
-.popup-buttons {
+.events-container .popup-buttons {
   display: flex;
   gap: 1rem;
   width: fit-content;
@@ -865,13 +865,13 @@ input[type="time"]:focus {
 }
 
 /* Fixed equal width buttons */
-.popup-buttons .btn {
+.popup-buttons .events-container .events-container .btn {
   flex: 0 0 140px;
   text-align: center;
   margin: 0 !important;
 }
 
 /* Override any auto-margins on secondary button */
-.popup-buttons .btn-secondary {
+.popup-buttons .events-container .btn-secondary {
   margin-left: 0 !important;
 }

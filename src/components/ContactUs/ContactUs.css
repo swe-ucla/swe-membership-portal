@@ -70,12 +70,12 @@ body.contact-page {
   font-size: 2.5rem;
 }
 
-.form-group {
+.contact-form .form-group {
   margin-bottom: 24px;
 }
 
 /* Fixed form control styling with proper outline */
-.form-control {
+.contact-form .form-control {
   width: 100%;
   /* padding: 15px;*/
   color: var(--text-color);
@@ -88,21 +88,21 @@ body.contact-page {
   font-family: inherit;
 }
 
-.form-control::placeholder {
+.contact-form .form-control::placeholder {
   color: #a9a8a9;
 }
 
-.form-control:focus {
+.contact-form .form-control:focus {
   border-color: var(--color-purple-medium);
   background-color: white;
   outline: none;
   box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.2);
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group select,
-.form-group textarea {
+.contact-form .form-group input[type="text"],
+.contact-form .form-group input[type="email"],
+.contact-form .form-group select,
+.contact-form .form-group textarea {
   width: 100%;
   /*padding: 15px;*/
   color: var(--text-color);
@@ -117,18 +117,18 @@ body.contact-page {
   resize: none;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.contact-form .form-group input[type="text"]:focus,
+.contact-form .form-group input[type="email"]:focus,
+.contact-form .form-group select:focus,
+.contact-form .form-group textarea:focus {
   border-color: var(--color-purple-medium);
   background-color: white;
   outline: none;
   box-shadow: 0 0 0 3px rgba(69, 37, 162, 0.2);
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
+.contact-form .form-group input::placeholder,
+.contact-form .form-group textarea::placeholder {
   color: #a9a8a9;
 }
 
