@@ -28,19 +28,7 @@ body.events-page .App {
   overflow-x: hidden;
 }
 
-:root {
-  --color-purple-dark: #4525a2;
-  --color-purple-medium: #6677ca;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
-  --border-radius-lg: 20px;
-  --border-radius-md: 15px;
-  --border-radius-sm: 12px;
-  --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
+body.events-page {
   --bg-safe-top: 1rem; /* reduce top padding since we can use space behind navbar */
   --bg-art-bottom: 820px; /* reserved space for bear + moon at bottom */
   --bg-safe-bottom: var(--bg-art-bottom);
@@ -615,7 +603,7 @@ body.events-page header {
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  :root {
+  body.events-page {
     --bg-art-bottom: 600px;
   }
 
@@ -631,7 +619,7 @@ body.events-page header {
 }
 
 @media (max-width: 768px) {
-  :root {
+  body.events-page {
     --bg-safe-top: calc(2in - 0.4in);
     --bg-art-bottom: 450px;
   }
@@ -696,7 +684,7 @@ body.events-page header {
 }
 
 @media (max-width: 480px) {
-  :root {
+  body.events-page {
     --bg-art-bottom: 350px;
   }
 

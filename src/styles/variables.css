@@ -1,6 +1,6 @@
 /* Global CSS Variables */
 :root {
-  /* Colors */
+  /* Base palette (legacy-compatible) */
   --color-purple-dark: #4525A2;
   --color-purple-medium: #6677CA;
   --color-purple-light: #A6A7E3;
@@ -12,10 +12,36 @@
   --text-color: #333;
   --light-text: #fff;
 
+  /* Semantic color tokens (preferred) */
+  --color-brand-primary: var(--color-purple-dark);
+  --color-brand-secondary: var(--color-purple-medium);
+  --color-brand-tertiary: var(--color-purple-light);
+  --color-accent-primary: var(--color-pink);
+  --color-accent-secondary: var(--color-pink-dark);
+  --color-accent-soft: var(--color-pink-light);
+
+  --color-surface-page: var(--color-background);
+  --color-surface-card: var(--color-card);
+  --color-surface-elevated: #ffffff;
+
+  --color-text-primary: var(--text-color);
+  --color-text-inverse: var(--light-text);
+  --color-text-muted: #666;
+
+  --color-border-default: #d9d9d9;
+  --color-border-strong: var(--color-brand-secondary);
+
+  --color-state-success: #2ed573;
+  --color-state-danger: #e13a3a;
+  --color-state-warning: #f5c422;
+  --color-state-info: var(--color-brand-secondary);
+
   /* Gradients */
   --primary-gradient: linear-gradient(135deg, var(--color-purple-dark) 0%, var(--color-purple-medium) 100%);
   --secondary-gradient: linear-gradient(135deg, var(--color-purple-medium) 0%, var(--color-pink) 100%);
   --accent-color: var(--color-purple-medium);
+  --gradient-brand: var(--primary-gradient);
+  --gradient-accent: var(--secondary-gradient);
 
   /* Border Radius */
   --border-radius-lg: 24px;

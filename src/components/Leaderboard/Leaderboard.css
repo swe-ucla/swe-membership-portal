@@ -1,26 +1,13 @@
 /* Leaderboard.css with modern purple theme */
-:root {
-  --color-purple-dark: #4525a2;
+.leaderboard-background-container {
   --color-purple-medium: #895fd8;
-  --color-purple-light: #a6a7e3;
-  --color-pink: #e85f7a;
-  --color-pink-dark: #890c50;
-  --color-background: #f5f7fa;
   --color-gold: #ffd700;
   --color-silver: #c0c0c0;
   --color-bronze: #cd7f32;
-  --border-radius-lg: 20px;
-  --border-radius-md: 15px;
-  --border-radius-sm: 12px;
-  --box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
   --box-shadow-glow: 0 0 20px rgba(137, 95, 216, 0.3);
   --box-shadow-medal: 0 4px 15px rgba(0, 0, 0, 0.2);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-/*TODO: fix fit + sizing for responsive UI*/
-.leaderboard-background-container {
+  /*TODO: fix fit + sizing for responsive UI*/
   background-image: url("/src/assets/page-backgrounds/leaderboard-background.svg");
   background-size: cover;
   background-position: center;
