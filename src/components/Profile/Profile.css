@@ -3,7 +3,7 @@
 /* TODO: check which one is right */
 /* Background layering for profile page */
 body.profile-page {
-  background-image: url("/public/assets/makerspace-background.svg");
+  background-image: url("/src/assets/page-backgrounds/makerspace-background.svg");
   background-repeat: repeat;
   position: relative;
   background-size: 50% auto;

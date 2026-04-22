@@ -1,5 +1,4 @@
 import React from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaUsers } from "react-icons/fa";
 import "./EventDetailsPopup.css";
 
 const EventDetailsPopup = ({ isOpen, onClose, event, isAdmin = false }) => {

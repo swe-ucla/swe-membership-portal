@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { db, auth } from "../firebase";
 import {
   collection,
   getDocs,
   query,
   orderBy,
-  limit,
   doc,
   updateDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
+
 import goldMedal from "../../assets/leaderboard-gold-medal.svg";
 import silverMedal from "../../assets/leaderboard-silver-medal.svg";
 import bronzeMedal from "../../assets/leaderboard-bronze-medal.svg";
@@ -22,10 +22,8 @@ function Leaderboard() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
-  const rankLimit = 8;
-
   // Fetch authenticated user
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login");
@@ -33,10 +31,10 @@ function Leaderboard() {
         setCurrentUser(user);
       }
     });
-  };
+  }, [navigate]);
 
   // Fetch users ordered by SWE points
-  const fetchLeaderboardData = async () => {
+  const fetchLeaderboardData = useCallback(async () => {
     try {
       setLoading(true);
       const usersRef = collection(db, "Users");
@@ -105,24 +103,31 @@ function Leaderboard() {
       }
 
       // Get top users
-      const topUsers = rankedUsersList.slice(0, rankLimit);
+      // Render top 6 + your rank, else top 8 if within top 8
+      let topUsers;
+      if (currentUserData && currentUserData.rank <= 8) {
+        topUsers = usersList.slice(0, 8);
+      } else {
+        // Otherwise, show top 6
+        topUsers = usersList.slice(0, 6);
+      }
       setUsers(topUsers);
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [fetchUserData]);
 
   useEffect(() => {
     if (currentUser) {
       fetchLeaderboardData();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchLeaderboardData]);
 
   // Render medal or rank number
   const renderRank = (rank) => {
@@ -193,7 +198,7 @@ function Leaderboard() {
             </div>
             <div className="leaderboard-header-divider"></div>
 
-            {/* Render top 10 users */}
+            {/* Render top 6-8 users */}
             {users.map((user) => renderUserRow(user))}
 
             {/* Show current user's position if not within displayed users */}

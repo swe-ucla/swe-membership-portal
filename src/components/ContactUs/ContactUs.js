@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import emailjs from "emailjs-com";
-import styles from "./ContactUs.css";
+import "./ContactUs.css";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -113,18 +113,24 @@ const ContactSection = () => {
               <a
                 href="mailto:webmaster.swe.ucla@gmail.com"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <MailOutlineIcon style={{ fontSize: 30 }} />
               </a>
               <a
                 href="https://www.instagram.com/swe.ucla/?hl=en"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <InstagramIcon style={{ fontSize: 30 }} />
               </a>
               <a
                 href="https://www.linkedin.com/company/swe-ucla/"
                 className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <LinkedInIcon style={{ fontSize: 30 }} />
               </a>

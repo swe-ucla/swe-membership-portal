@@ -13,7 +13,8 @@ import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const BEAR_BANNER = process.env.PUBLIC_URL + "/assets/onboarding-banner.svg";
+import bearBanner from "../../assets/onboarding-banner.svg";
+import sweLogo from "../../assets/purple-swe-logo.svg";
 
 const adminEmails = [
   "ewi.swe.ucla@gmail.com",
@@ -205,7 +206,7 @@ function Onboarding() {
         <div>
           <div style={{ textAlign: "center", marginBottom: "20px" }}>
             <img
-              src={process.env.PUBLIC_URL + "/assets/purple-swe-logo.svg"}
+              src={sweLogo}
               alt="SWE Logo"
               style={{ height: "80px" }}
             />
@@ -216,9 +217,13 @@ function Onboarding() {
                 <h3>Welcome Back!</h3>
                 <p className="forgot-password text-right">
                   Don't have an account yet?{" "}
-                  <a href="#" onClick={() => setForm("register")}>
+                  <button
+                    type="button"
+                    className="btn btn-link p-0"
+                    onClick={() => setForm("register")}
+                  >
                     Sign up now
-                  </a>
+                  </button>
                 </p>
                 {errorMessage && !isGoogleSignIn && (
                   <div className="alert alert-danger" role="alert">
@@ -260,9 +265,13 @@ function Onboarding() {
                     <div className="input-error">{passwordError}</div>
                   )}
                   <div className="forgot-password-right">
-                    <a href="#" onClick={toggleResetForm}>
+                    <button
+                      type="button"
+                      className="btn btn-link p-0"
+                      onClick={toggleResetForm}
+                    >
                       Forgot password?
-                    </a>
+                    </button>
                   </div>
                 </div>
                 <div className="d-grid">
@@ -282,11 +291,16 @@ function Onboarding() {
             {form === "register" && (
               <form onSubmit={handleRegister}>
                 <h3>Create your account</h3>
+                <p className="forgot-password">Please sign up with your UCLA email!</p>
                 <p className="forgot-password text-right">
                   Already registered?{" "}
-                  <a href="#" onClick={() => setForm("login")}>
+                  <button
+                    type="button"
+                    className="btn btn-link p-0"
+                    onClick={() => setForm("login")}
+                  >
                     Login
-                  </a>
+                  </button>
                 </p>
                 <div className="mb-3">
                   <input
@@ -392,9 +406,13 @@ function Onboarding() {
                     </div>
                     <div className="back-to-login">
                       Back to{" "}
-                      <a href="#" onClick={() => setForm("login")}>
+                      <button
+                        type="button"
+                        className="btn btn-link p-0"
+                        onClick={() => setForm("login")}
+                      >
                         Login
-                      </a>
+                      </button>
                     </div>
                   </form>
                 ) : (
@@ -414,13 +432,13 @@ function Onboarding() {
                       </p>
                     </div>
                     <div className="d-grid mt-3">
-                      <a
-                        href="#"
+                      <button
+                        type="button"
                         onClick={() => setForm("login")}
                         className="btn btn-primary"
                       >
                         Back to Login
-                      </a>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -430,7 +448,7 @@ function Onboarding() {
         </div>
       </div>
       <div className="onboarding-right-panel">
-        <img src={BEAR_BANNER} alt="Bear Banner" className="bear-banner-img" />
+        <img src={bearBanner} alt="Bear Banner" className="bear-banner-img" />
       </div>
     </div>
   );

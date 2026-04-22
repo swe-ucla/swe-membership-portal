@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { db, auth } from "../firebase";
 import {
   collection,
@@ -16,15 +16,17 @@ import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
+
 import Popup from "../Popup/Popup";
 import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 import SignInQuestions from "./SignInQuestions";
+
+import placeholderImage from "../../assets/placeholder-image.png";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(true);
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
@@ -49,12 +51,13 @@ function UpcomingEvents() {
     responses: {},
   });
 
+
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 9;
   const eventsContainerRef = useRef(null);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         navigate("/login");
@@ -77,9 +80,9 @@ function UpcomingEvents() {
         }
       }
     });
-  };
+  }, [navigate]);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
       const eventsRef = collection(db, "events");
@@ -131,7 +134,7 @@ function UpcomingEvents() {
       console.error("Error fetching events:", error);
     }
     setLoading(false);
-  };
+  }, []);
 
   const isToday = (eventDate) => {
     const today = new Date();
@@ -226,7 +229,6 @@ function UpcomingEvents() {
 
       if (userSnap.exists() && eventSnap.exists()) {
         const userData = userSnap.data();
-        const eventData = eventSnap.data();
 
         // Remove from both RSVP and attended events
         const updatedRsvp = (userData.rsvpEvents || []).filter(
@@ -287,6 +289,28 @@ function UpcomingEvents() {
     return now >= signInOpens && now <= eventEndTime;
   };
 
+  const getHoursLeftToSignIn = (event) => {
+    const now = new Date();
+    const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    
+    const eventEndTime = new Date(
+      eventDate.getTime() +
+        (parseInt(event.endTime.split(":")[0]) * 60 +
+          parseInt(event.endTime.split(":")[1]) -
+          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+          parseInt(event.startTime?.split(":")[1] || "0")) *
+          60000
+    );
+    
+    const diffInMs = eventEndTime - now;
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInMinutes = Math.ceil((diffInMs % 3600000) / 60000);
+    
+    return diffInHours >= 1
+      ? `${diffInHours} Hour${diffInHours !== 1 ? "s" : ""} Left to Sign In`
+      : `${diffInMinutes} Minute${diffInMinutes !== 1 ? "s" : ""} Left to Sign In`;
+  };
+
   const isRSVPOpen = (event) => {
     if (!event.date || !event.signInOpensHoursBefore) return false;
     const eventDate = event.date?.toDate
@@ -345,10 +369,32 @@ function UpcomingEvents() {
     setEventDetailsPopup({ isOpen: false, event: null });
   };
 
+  const hasMissingRequiredResponses = (questions = [], responses = {}) => {
+    return questions.some((q, index) => {
+      if (!q.required) return false;
+      const response = responses[index];
+
+      if (q.type === "checkboxes") {
+        return !Array.isArray(response) || response.length === 0;
+      }
+
+      return !response || (typeof response === "string" && response.trim() === "");
+    });
+  };
+
   const handleSignInSubmit = async () => {
     console.log("handleSignInSubmit triggered");
     const { event, code, responses } = signInPopup;
     if (!event || !code) return;
+
+    if (hasMissingRequiredResponses(event.questions || [], responses || {})) {
+      setPopup({
+        isOpen: true,
+        message: "Please answer all required questions",
+        toast: true,
+      });
+      return;
+    }
 
     if (code.toUpperCase() === event.attendanceCode) {
       try {
@@ -371,10 +417,7 @@ function UpcomingEvents() {
             return;
           }
 
-          const wasRSVPd = rsvpEvents.includes(event.id);
-          const updatedRsvpEvents = wasRSVPd
-            ? rsvpEvents.filter((id) => id !== event.id)
-            : rsvpEvents;
+          const updatedRsvpEvents = rsvpEvents;
 
           // Update user document
           const userUpdateData = {
@@ -382,8 +425,6 @@ function UpcomingEvents() {
             swePoints: currentPoints + (Number(event.points) || 0),
             [`eventResponses.${event.id}`]: responses || {},
           };
-          if (wasRSVPd) userUpdateData.rsvpEvents = arrayRemove(event.id);
-
           await updateDoc(userRef, userUpdateData);
 
           // Update event document
@@ -394,8 +435,6 @@ function UpcomingEvents() {
               [userId]: responses || {},
             },
           };
-          if (wasRSVPd) eventUpdateData.rsvpAttendees = arrayRemove(userId);
-
           await updateDoc(eventRef, eventUpdateData);
 
           setIsSignedIn([...attendedEvents, event.id]);
@@ -462,7 +501,7 @@ function UpcomingEvents() {
     return () => {
       document.body.classList.remove("events-page");
     };
-  }, []);
+  }, [fetchEvents, fetchUserData]);
 
   useEffect(() => {
     if (selectedCommittee === "") {
@@ -517,8 +556,7 @@ function UpcomingEvents() {
                       src={
                         event.photo
                           ? event.photo
-                          : process.env.PUBLIC_URL +
-                            "/assets/placeholder-image.png"
+                          : placeholderImage
                       }
                       alt={event.name + " event"}
                     />
@@ -529,6 +567,10 @@ function UpcomingEvents() {
 
                 {isToday(event.date) && !hasEventPassed(event) && (
                   <div className="today-badge">HAPPENING TODAY</div>
+                )}
+
+                {!hasEventPassed(event) && isSignInOpen(event) && (
+                  <div className="sign-in-hours-badge">{getHoursLeftToSignIn(event)}</div>
                 )}
 
                 <div className="event-title-row">
@@ -564,7 +606,7 @@ function UpcomingEvents() {
                     {isSignInOpen(event) ? (
                       // Sign-in period is open
                       hasUserSignedIn(event.id) ? (
-                        <button
+                        <button 
                           onClick={showAlreadySignedInMessage}
                           className="btn btn-signed-in-badge"
                         >
@@ -708,7 +750,7 @@ function UpcomingEvents() {
                   onChange={(e) =>
                     setSignInPopup((prev) => ({
                       ...prev,
-                      code: e.target.value,
+                      code: e.target.value.toUpperCase(),
                     }))
                   }
                   placeholder="Enter 6-letter code"

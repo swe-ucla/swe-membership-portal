@@ -49,7 +49,7 @@
 
 /* Background layering for add event page */
 body.add-event-page {
-  background-image: url("/public/assets/makerspace-background.svg");
+  background-image: url("/src/assets/page-backgrounds/makerspace-background.svg");
   background-repeat: repeat;
   position: relative;
   background-size: 100% auto;

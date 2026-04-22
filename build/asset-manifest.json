@@ -1,23 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.3f384430.css",
-    "main.js": "/static/js/main.76d01479.js",
+    "main.css": "/static/css/main.63fdb4d4.css",
+    "main.js": "/static/js/main.047f883f.js",
     "static/js/453.fbdb98a2.chunk.js": "/static/js/453.fbdb98a2.chunk.js",
     "static/media/material-symbols-rounded.woff2": "/static/media/material-symbols-rounded.7e6c57567e2ab620ec78.woff2",
+    "static/media/onboarding-banner.svg": "/static/media/onboarding-banner.3b46129d30cc3aa0c4770150491564a1.svg",
     "static/media/makerspace-background.svg": "/static/media/makerspace-background.61fa05d5b003bab21ded.svg",
-    "static/media/contact_us_background.svg": "/static/media/contact_us_background.164b325e073c6fdac36f.svg",
+    "static/media/contact-us-background.svg": "/static/media/contact-us-background.164b325e073c6fdac36f.svg",
     "static/media/leaderboard-background.svg": "/static/media/leaderboard-background.b45c525cbdb17a90828f.svg",
+    "static/media/purple-swe-logo.svg": "/static/media/purple-swe-logo.08f014e4e97c2681198db706b3662eef.svg",
     "static/media/eventspage-background.svg": "/static/media/eventspage-background.dea1ef4468579ac84ab3.svg",
     "static/media/leaderboard-bronze-medal.svg": "/static/media/leaderboard-bronze-medal.53a859d0d9bf60f7787e430f409bc541.svg",
     "static/media/leaderboard-silver-medal.svg": "/static/media/leaderboard-silver-medal.4d9b23fd2b1f19dd9750036f729bcbe2.svg",
     "static/media/leaderboard-gold-medal.svg": "/static/media/leaderboard-gold-medal.e20a08488ab4133aad197194d18bb6f3.svg",
     "index.html": "/index.html",
-    "main.3f384430.css.map": "/static/css/main.3f384430.css.map",
-    "main.76d01479.js.map": "/static/js/main.76d01479.js.map",
+    "static/media/bear-face-icon.svg": "/static/media/bear-face-icon.d78d8b303a1d3660cc83dcdff093ff94.svg",
+    "main.63fdb4d4.css.map": "/static/css/main.63fdb4d4.css.map",
+    "main.047f883f.js.map": "/static/js/main.047f883f.js.map",
     "453.fbdb98a2.chunk.js.map": "/static/js/453.fbdb98a2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3f384430.css",
-    "static/js/main.76d01479.js"
+    "static/css/main.63fdb4d4.css",
+    "static/js/main.047f883f.js"
   ]
 }
