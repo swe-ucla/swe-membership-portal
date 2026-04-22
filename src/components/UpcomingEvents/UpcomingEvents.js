@@ -417,7 +417,6 @@ function UpcomingEvents() {
             return;
           }
 
-          const wasRSVPd = rsvpEvents.includes(event.id);
           const updatedRsvpEvents = rsvpEvents;
 
           // Update user document
