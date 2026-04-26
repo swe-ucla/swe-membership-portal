@@ -60,7 +60,7 @@ function Onboarding() {
     });
 
     return () => unsub();
-  }, []);
+  }, [navigate]);
 
   // Login logic
   const handleLogin = async (e) => {
