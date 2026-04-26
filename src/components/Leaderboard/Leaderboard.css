@@ -137,6 +137,19 @@
   opacity: 1;
 }
 
+/* Override leaderboard-row styles for the ellipsis */
+.leaderboard-row.ellipsis-row {
+  pointer-events: none;      
+  cursor: default;          
+  transform: none !important; 
+  background: #f8f9fa !important; 
+  box-shadow: none !important;    
+}
+
+.leaderboard-row.ellipsis-row::before {
+  content: none !important;
+}
+
 .leaderboard-row:hover {
   background: linear-gradient(135deg, rgba(180, 143, 239, 0.15), rgba(255, 215, 0, 0.1));
   transform: translateY(-2px) scale(1.02);
