@@ -17,6 +17,7 @@ body.contact-page {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 2.5rem;
+  padding-top: 16rem; /* push content below the sign at full width */
   background: none;
   position: relative;
 }
@@ -26,7 +27,6 @@ body.contact-page {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-top: 10rem;
   margin-left: 30rem;
 }
 
@@ -194,6 +194,9 @@ body.contact-page {
 @media (max-width: 1086px) {
   .contact-form {
     margin-right: 10rem;
+  }
+  .contact-container {
+    padding-top: 12rem;
   }
 }
 
