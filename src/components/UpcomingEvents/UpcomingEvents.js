@@ -768,7 +768,6 @@ function UpcomingEvents() {
                   }))
                 }
               />
-              console.log("questions passed to SignInQuestions:", questions);
               <div className="popup-buttons">
                 <button
                   className="btn btn-primary"
