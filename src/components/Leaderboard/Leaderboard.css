@@ -110,15 +110,15 @@
   left: 100%;
 }
 
+
 .ellipsis-row {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background-color: transparent !important; 
+  border-bottom: none !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.75rem 1rem;
-  min-height: 50px;
-  /* margin: 0.5rem 0; */
+  padding: 0.25rem 0; 
+  min-height: 30px;
 }
 
 .ellipsis-container {
@@ -129,12 +129,24 @@
 }
 
 .ellipsis {
-  color: #6c757d;
+  color: #a0a0a0; 
   font-size: 1.4rem;
   font-weight: 600;
   text-align: center;
-  letter-spacing: 0.1em;
-  opacity: 1;
+  letter-spacing: 0.2em; 
+}
+
+.leaderboard-row.ellipsis-row {
+  pointer-events: none;      
+  cursor: default;          
+  transform: none !important; 
+  background: transparent !important; 
+  box-shadow: none !important;    
+  border: none !important;
+}
+
+.leaderboard-row.ellipsis-row::before {
+  content: none !important;
 }
 
 .leaderboard-row:hover {
