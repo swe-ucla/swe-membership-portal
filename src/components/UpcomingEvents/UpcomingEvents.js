@@ -11,6 +11,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  increment,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
@@ -251,9 +252,14 @@ function UpcomingEvents() {
         });
 
         // Remove from event doc
+        const eventData = eventSnap.data();
+        const wasInRsvp = (eventData.rsvpAttendees || []).includes(userId);
+        const wasInAttendees = (eventData.attendees || []).includes(userId);
         await updateDoc(eventRef, {
           attendees: arrayRemove(userId),
           rsvpAttendees: arrayRemove(userId),
+          ...(wasInRsvp && { rsvpCount: increment(-1) }),
+          ...(wasInAttendees && { attendeeCount: increment(-1) }),
         });
 
         setRsvpEvents(updatedRsvp);
@@ -351,6 +357,7 @@ function UpcomingEvents() {
       // Add user to event's rsvpAttendees
       await updateDoc(eventRef, {
         rsvpAttendees: arrayUnion(userId),
+        rsvpCount: increment(1),
       });
 
       setRsvpEvents((prev) => [...prev, eventId]);
@@ -430,6 +437,7 @@ function UpcomingEvents() {
           // Update event document
           const eventUpdateData = {
             attendees: arrayUnion(userId),
+            attendeeCount: increment(1),
             responses: {
               ...(event.responses || {}),
               [userId]: responses || {},
