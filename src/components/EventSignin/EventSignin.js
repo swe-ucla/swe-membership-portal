@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, increment } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import Popup from "../Popup/Popup";
@@ -84,6 +84,7 @@ const EventSignin = () => {
         const eventRef = doc(db, "events", eventID);
         await updateDoc(eventRef, {
           attendees: arrayUnion(user.uid),
+          attendeeCount: increment(1),
           [`responses.${user.uid}`]: responses
         });
 
