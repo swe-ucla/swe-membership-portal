@@ -32,8 +32,8 @@ body.manage-events-page::before {
 }
 
 .manage-events-container {
-  max-width: 1200px;
-  margin: 2rem auto;
+  max-width: 100%;
+  margin: 2rem;
   padding: 2.5rem;
   background: #ffffff;
   position: relative;
