@@ -1,48 +1,22 @@
 /* UpcomingEvents.css - uses shared variables from styles/variables.css */
 
-/* Background layering 
-   - SVG stars + bear/moon live on ::after so it spans the whole scrollable area
-*/
+/* Bear on .events-container::after; gradient on ::before ends flush with top of bear strip.
+   Purple gap below cards = padding between in-flow content and SVG (grows with layout). */
 
-/* Remove all margins and padding to eliminate white gaps */
 body.events-page {
+  --events-bear-strip-h: calc(100vw * 1063 / 1280);
+  /* Space below lowest event card row (and above bear); gradient fills this band */
+  --events-gap-below-cards: clamp(1.25rem, 4vw, 2rem);
+  --events-star-lg: clamp(8px, 0.75vw, 12px);
+  --events-star-sm: clamp(6px, 0.65vw, 11px);
+  /* Extra painting area above panel so top star halos aren’t clipped */
+  --events-gradient-overscan-top: 36px;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-
-/* Apply background only when events page is active */
-body.events-page {
-  background-image: url("/src/assets/page-backgrounds/eventspage-background.svg");
-  background-repeat: no-repeat;
+  min-height: 100vh;
   position: relative;
-
-  background-size: cover;
-  background-position: center;
-  margin: none;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0.000000001px solid white; /*fill the container*/
-}
-
-/* Decorative elements that grow with content */
-body.events-page::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100vw auto; /* Change this line */
-  pointer-events: none;
-  z-index: -1;
-  min-height: 100vh; /* Change this to viewport height instead of 100% */
-  background-attachment: local;
+  background-color: #24165d;
 }
 
 body.events-page .App {
@@ -52,39 +26,139 @@ body.events-page .App {
   overflow-x: hidden;
 }
 
-body.events-page {
-  --bg-safe-top: 2in; /* keep stars visible at top */
-  --bg-art-bottom: 700px; /* reserved space for bear + moon at bottom */
-  --bg-safe-bottom: var(--bg-art-bottom);
-}
-
 .events-container {
-  min-height: calc(
-    100vh + 1440px
-  ); /* Ensure container extends enough to show bear image on all pages */
+  min-height: 0;
+  overflow: visible;
   padding: 1.5rem;
-  /* transparent so SVG shows; gradient is drawn via ::before */
+  padding-top: 0;
+  padding-bottom: calc(
+    var(--events-gap-below-cards) + var(--events-bear-strip-h)
+  );
   background-color: transparent !important;
   color: white;
-  /* push cards down so stars show; keep them above bottom art */
-  padding-top: 0;
-  /*padding-bottom: calc(var(--bg-safe-bottom));*/
-  position: relative; /* anchor ::before/::after layers */
-  /* Force full viewport width and remove gaps */
+  position: relative;
   width: 100vw;
   margin-top: 3rem;
   margin-left: calc(-50vw + 50%);
   box-sizing: border-box;
 }
 
-/* Remove container background since it's now on body */
-.events-container::after {
-  display: none;
+/* Full-bleed gradient height = all content + gap band; bottom edge = top of bear SVG */
+.events-container::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  top: calc(0px - var(--events-gradient-overscan-top));
+  bottom: var(--events-bear-strip-h);
+  width: 100%;
+  border-radius: 0;
+  pointer-events: none;
+  box-sizing: border-box;
+  /* Stars — roomier layout (wider % spread) + modestly larger than previous pass */
+  background-image: radial-gradient(
+      circle var(--events-star-lg) at 20% calc(14px + 0.8%),
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.32) 42%,
+      rgba(255, 255, 255, 0.08) 68%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-lg) at 3.5% 27%,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.28) 46%,
+      rgba(255, 255, 255, 0.07) 70%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-sm) at 45% 17%,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.26) 44%,
+      rgba(255, 255, 255, 0.06) 72%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-lg) at 81% 13%,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.3) 45%,
+      rgba(255, 255, 255, 0.08) 69%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-sm) at 30% 39%,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.27) 48%,
+      rgba(255, 255, 255, 0.07) 71%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-lg) at 54% 52%,
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0.3) 43%,
+      rgba(255, 255, 255, 0.07) 70%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-sm) at 67% 29%,
+      rgba(255, 255, 255, 0.68) 0%,
+      rgba(255, 255, 255, 0.24) 44%,
+      rgba(255, 255, 255, 0.06) 72%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-lg) at 88% 41%,
+      rgba(255, 255, 255, 0.76) 0%,
+      rgba(255, 255, 255, 0.27) 45%,
+      rgba(255, 255, 255, 0.07) 71%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-sm) at 76% 61%,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.22) 46%,
+      rgba(255, 255, 255, 0.05) 72%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle var(--events-star-sm) at 38% 63%,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.25) 44%,
+      rgba(255, 255, 255, 0.06) 72%,
+      transparent 100%
+    ),
+    linear-gradient(
+      180deg,
+      #24165d 0%,
+      #2a1c6a 22%,
+      #321f79 42%,
+      #3a2488 58%,
+      #482a9a 78%,
+      #5736aa 100%
+    );
+  background-repeat: no-repeat;
+  /* Stars fixed to viewport so % positions don’t shift when the panel grows; gradient scrolls */
+  background-attachment: fixed, fixed, fixed, fixed, fixed, fixed, fixed, fixed,
+    fixed, fixed, scroll;
 }
 
-/* Remove gradient overlay */
-.events-container::before {
-  display: none;
+.events-container::after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--events-bear-strip-h);
+  overflow: hidden;
+  pointer-events: none;
+  background-image: url("/src/assets/page-backgrounds/eventspage-background-cropped.svg");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: 100vw auto;
 }
 
 /* Ensure all page content (cards, header, etc.) is above the bg layers */
@@ -555,7 +629,9 @@ body.events-page {
 
 @media (max-width: 768px) {
   .events-container {
-    padding: 1rem;
+    padding: 1rem 1rem
+      calc(var(--events-gap-below-cards) + var(--events-bear-strip-h));
+    padding-top: 0;
     margin-top: 3rem; /* slightly closer on phones */
   }
 
