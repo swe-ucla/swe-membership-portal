@@ -100,7 +100,7 @@ function Profile() {
                   {userDetails.profilePicture ? (
                     <img
                       src={userDetails.profilePicture}
-                      alt="Profile"
+                      alt="Profile picture"
                       className="profile-picture"
                     />
                   ) : (
