@@ -191,23 +191,32 @@ body.contact-page {
   opacity: 0.8;
 }
 
-@media (max-width: 1086px) {
-  .contact-form {
-    margin-right: 10rem;
+@media (max-width: 768px) {
+  .contact-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    align-items: center;
   }
+
+  .contact-form {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    width: 100%;
+    max-width: 650px;
+  }
+
   .contact-container {
-    padding-top: 12rem;
+    padding: 1.5rem;
+    padding-top: 10rem;
+  }
+
+  .contact-form h1 {
+    text-align: center;
   }
 }
 
-@media (max-width: 820px) {
-  .contact-form {
-    margin-right: 18rem;
-  }
-}
-
-@media (max-width: 690px) {
-  .contact-form {
-    margin-right: 33rem;
+@media (max-width: 480px) {
+  .contact-form h1 {
+    font-size: 1.7rem;
   }
 }
