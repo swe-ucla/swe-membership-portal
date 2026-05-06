@@ -693,3 +693,121 @@ body.profile-page::before {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Profile picture crop modal (react-easy-crop) */
+.profile-crop-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(58, 53, 54, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.profile-crop-modal {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: var(--border-radius-lg, 12px);
+  box-shadow: 0 12px 40px rgba(69, 37, 162, 0.2);
+  padding: 1.25rem 1.25rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.profile-crop-modal-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #3a3536;
+  text-align: center;
+}
+
+.profile-crop-modal-hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.profile-crop-stage {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: var(--border-radius-md, 8px);
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.profile-crop-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.profile-crop-zoom-icon {
+  color: #895fd8;
+  flex-shrink: 0;
+}
+
+.profile-crop-zoom-slider {
+  flex: 1;
+  height: 6px;
+  accent-color: #b48fef;
+  cursor: pointer;
+}
+
+.profile-crop-error {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: #c62828;
+  text-align: center;
+}
+
+.profile-crop-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  justify-content: stretch;
+}
+
+.profile-crop-actions .btn {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  border-radius: var(--border-radius-md, 8px);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-crop-btn-cancel {
+  background: #f0eef5;
+  color: #3a3536;
+  box-shadow: 0 3px 0 #d8d4e0;
+}
+
+.profile-crop-btn-cancel:hover:not(:disabled) {
+  background: #e4e0ec;
+}
+
+.profile-crop-btn-apply {
+  background: #b48fef;
+  color: #fff;
+  box-shadow: 0 4px 0 #895fd8;
+}
+
+.profile-crop-btn-apply:hover:not(:disabled) {
+  background: #895fd8;
+  box-shadow: 0 4px 0 #7d55ca;
+}
+
+.profile-crop-actions .btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
