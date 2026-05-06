@@ -176,7 +176,7 @@ body.profile-page::before {
 }
 
 .profile-major,
-.profile-year {
+.profile-year, .profile-committee {
   font-size: 1rem;
   color: #444;
   font-weight: 500;
@@ -199,9 +199,10 @@ body.profile-page::before {
   vertical-align: middle;
 }
 
-.year-icon {
+.year-icon, .committee-icon {
   color: #b48fef;
 }
+
 
 /* Profile Details */
 .profile-statistics-cards {

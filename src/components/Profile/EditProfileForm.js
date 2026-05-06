@@ -55,6 +55,17 @@ const yearOptions = [
   { label: "Other", value: "Other", disabled: false },
 ];
 
+const committeeOptions = [
+  "Evening with Industry",
+  "Dev",
+  "Technical",
+  "Lobbying",
+  "Outreach",
+  "Internal Affairs",
+  "Advocacy",
+  "Mentorship",
+  "General"
+]
 const EditProfileForm = ({ userDetails, onUpdate }) => {
   const [formData, setFormData] = useState(() => {
     const saved = localStorage.getItem("editProfileForm");
@@ -75,6 +86,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       memberId: userDetails?.memberId || "",
       bio: userDetails?.bio || "",
       swePoints: userDetails?.swePoints || 0,
+      committee: userDetails?.committee || "",
+      linkedin: userDetails?.linkedin || ""
     };
   });
 
@@ -115,6 +128,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         memberId: userDetails?.memberId || "",
         bio: userDetails?.bio || "",
         swePoints: userDetails?.swePoints || 0,
+        committee: userDetails?.committee || "",
+        linkedin: userDetails?.linkedin || ""
       });
       setBioWordCount(
         userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
@@ -134,6 +149,14 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     }
     localStorage.setItem("editProfileForm", JSON.stringify(formData));
   }, [formData]);
+
+  const isValidLinkedIn = (url) => {
+    if (!url || !url.trim()) return true; // optional field
+    return (
+      url.startsWith("https://linkedin.com/") ||
+      url.startsWith("https://www.linkedin.com/")
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -243,10 +266,15 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
+      committee: validateField("Committee", formData.committee),
       // Removed memberId validation since it's now optional
       otherMajor:
         formData.major === "Other" && !formData.otherMajor.trim()
           ? "Please specify your major."
+          : "",
+      linkedin:
+        formData.linkedin && !isValidLinkedIn(formData.linkedin)
+          ? "Please enter a valid LinkedIn URL"
           : "",
     };
 
@@ -518,6 +546,44 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                     <MaterialSymbol icon="error" size={20} className="input-error-icon" />
                   )}
                 </div>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label>Committee</label>
+              <div className="input-container">
+                <select
+                  name="committee"
+                  value={formData.committee}
+                  onChange={handleChange}
+                  className={errors.committee ? "input-error" : ""}
+                >
+                  {committeeOptions.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.major && (
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                )}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>LinkedIn</label>
+              <div className="input-container">
+                <input
+                  type="text"
+                  name="linkedin"
+                  placeholder="https://linkedin.com/in/yourname"
+                  value={formData.linkedin}
+                  onChange={handleChange}
+                  className={errors.linkedin ? "input-error" : ""}
+                />
+              </div>
+              {errors.linkedin && (
+                <MaterialSymbol icon="error" size={24} className="input-error-icon" />
               )}
             </div>
 
