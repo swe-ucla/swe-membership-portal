@@ -157,13 +157,13 @@ function UpcomingEvents() {
       : new Date(event.date);
     const eventEndTime = event.endTime
       ? new Date(
-          eventDate.getTime() +
-            (parseInt(event.endTime.split(":")[0]) * 60 +
-              parseInt(event.endTime.split(":")[1]) -
-              parseInt(event.startTime?.split(":")[0] || "0") * 60 -
-              parseInt(event.startTime?.split(":")[1] || "0")) *
-              60000
-        )
+        eventDate.getTime() +
+        (parseInt(event.endTime.split(":")[0]) * 60 +
+          parseInt(event.endTime.split(":")[1]) -
+          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+          parseInt(event.startTime?.split(":")[1] || "0")) *
+        60000
+      )
       : new Date(eventDate.getTime() + 2 * 3600000);
     return now > eventEndTime;
   };
@@ -186,6 +186,33 @@ function UpcomingEvents() {
     const date = new Date();
     date.setHours(Number(hour), Number(minute));
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  };
+
+  const buildGoogleCalendarUrl = (event) => {
+    const baseDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+    const pad = (n) => String(n).padStart(2, "0");
+
+    const toGCalDate = (date, timeStr) => {
+      const d = new Date(date);
+      if (timeStr) {
+        const [h, m] = timeStr.split(":");
+        d.setHours(Number(h), Number(m), 0, 0);
+      }
+      return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+    };
+
+    const start = toGCalDate(baseDate, event.startTime);
+    const end = toGCalDate(baseDate, event.endTime || event.startTime);
+
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: event.name || "",
+      dates: `${start}/${end}`,
+      details: event.description || "",
+      location: event.location || "",
+    });
+
+    return `https://calendar.google.com/calendar/render?${params}`;
   };
 
   const showAlreadySignedInMessage = () => {
@@ -283,13 +310,13 @@ function UpcomingEvents() {
     // Calculate event end time (use endTime if available, otherwise assume 2 hours duration)
     const eventEndTime = event.endTime
       ? new Date(
-          eventDate.getTime() +
-            (parseInt(event.endTime.split(":")[0]) * 60 +
-              parseInt(event.endTime.split(":")[1]) -
-              parseInt(event.startTime?.split(":")[0] || "0") * 60 -
-              parseInt(event.startTime?.split(":")[1] || "0")) *
-              60000
-        )
+        eventDate.getTime() +
+        (parseInt(event.endTime.split(":")[0]) * 60 +
+          parseInt(event.endTime.split(":")[1]) -
+          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+          parseInt(event.startTime?.split(":")[1] || "0")) *
+        60000
+      )
       : new Date(eventDate.getTime() + 2 * 3600000); // Default 2 hours if no end time
 
     return now >= signInOpens && now <= eventEndTime;
@@ -298,20 +325,20 @@ function UpcomingEvents() {
   const getHoursLeftToSignIn = (event) => {
     const now = new Date();
     const eventDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
-    
+
     const eventEndTime = new Date(
       eventDate.getTime() +
-        (parseInt(event.endTime.split(":")[0]) * 60 +
-          parseInt(event.endTime.split(":")[1]) -
-          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
-          parseInt(event.startTime?.split(":")[1] || "0")) *
-          60000
+      (parseInt(event.endTime.split(":")[0]) * 60 +
+        parseInt(event.endTime.split(":")[1]) -
+        parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+        parseInt(event.startTime?.split(":")[1] || "0")) *
+      60000
     );
-    
+
     const diffInMs = eventEndTime - now;
     const diffInHours = Math.floor(diffInMs / 3600000);
     const diffInMinutes = Math.ceil((diffInMs % 3600000) / 60000);
-    
+
     return diffInHours >= 1
       ? `${diffInHours} Hour${diffInHours !== 1 ? "s" : ""} Left to Sign In`
       : `${diffInMinutes} Minute${diffInMinutes !== 1 ? "s" : ""} Left to Sign In`;
@@ -554,9 +581,8 @@ function UpcomingEvents() {
             {currentEvents.map((event) => (
               <div
                 key={event.id}
-                className={`event-card ${
-                  isToday(event.date) ? "today-event" : ""
-                }`}
+                className={`event-card ${isToday(event.date) ? "today-event" : ""
+                  }`}
               >
                 <div className="event-card-photo-area">
                   <div className="event-card-photo">
@@ -595,11 +621,11 @@ function UpcomingEvents() {
                           {" | "}
                           {event.startTime && event.endTime
                             ? `${formatTime(event.startTime)} - ${formatTime(
-                                event.endTime
-                              )}`
+                              event.endTime
+                            )}`
                             : event.startTime
-                            ? `${formatTime(event.startTime)}`
-                            : ""}
+                              ? `${formatTime(event.startTime)}`
+                              : ""}
                         </>
                       )}
                     </div>
@@ -614,7 +640,7 @@ function UpcomingEvents() {
                     {isSignInOpen(event) ? (
                       // Sign-in period is open
                       hasUserSignedIn(event.id) ? (
-                        <button 
+                        <button
                           onClick={showAlreadySignedInMessage}
                           className="btn btn-signed-in-badge"
                         >
@@ -646,35 +672,44 @@ function UpcomingEvents() {
                         </button>
                       )
                     ) : // Event is in the future but registration is closed, or event is past
-                    isUserRegistered(event.id) ? (
-                      <button
-                        onClick={() =>
-                          handleCancelRegistration(
-                            event.id,
-                            hasUserSignedIn(event.id) ? event.points || 0 : 0
-                          )
-                        }
-                        className="btn btn-cancel-rsvp"
-                      >
-                        Cancel{" "}
-                        {hasUserSignedIn(event.id) ? "Registration" : "RSVP"}
-                      </button>
-                    ) : (
-                      <span>
-                        {new Date() >
-                        (event.date?.toDate
-                          ? event.date.toDate()
-                          : new Date(event.date))
-                          ? "Event has passed"
-                          : "Registration closed"}
-                      </span>
-                    )}
+                      isUserRegistered(event.id) ? (
+                        <button
+                          onClick={() =>
+                            handleCancelRegistration(
+                              event.id,
+                              hasUserSignedIn(event.id) ? event.points || 0 : 0
+                            )
+                          }
+                          className="btn btn-cancel-rsvp"
+                        >
+                          Cancel{" "}
+                          {hasUserSignedIn(event.id) ? "Registration" : "RSVP"}
+                        </button>
+                      ) : (
+                        <span>
+                          {new Date() >
+                            (event.date?.toDate
+                              ? event.date.toDate()
+                              : new Date(event.date))
+                            ? "Event has passed"
+                            : "Registration closed"}
+                        </span>
+                      )}
                     <button
                       onClick={() => handleMoreInfo(event)}
                       className="btn btn-more-info"
                     >
                       MORE INFO
                     </button>
+                    <a
+                      href={buildGoogleCalendarUrl(event)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-gcal"
+                      title="Add to Google Calendar"
+                    >
+                      <MaterialSymbol icon="open_in_new" size={24} />
+                    </a>
                   </div>
                 </div>
               </div>
