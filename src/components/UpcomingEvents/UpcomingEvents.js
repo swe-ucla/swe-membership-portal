@@ -708,7 +708,7 @@ function UpcomingEvents() {
                       className="btn btn-gcal"
                       title="Add to Google Calendar"
                     >
-                      <MaterialSymbol icon="open_in_new" size={24} />
+                      <MaterialSymbol icon="calendar_add_on" size={24} />
                     </a>
                   </div>
                 </div>
