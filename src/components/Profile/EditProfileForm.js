@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteUser } from "firebase/auth";
 import Popup from "../Popup/Popup";
+import ProfilePictureCropModal from "./ProfilePictureCropModal";
 import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
@@ -79,6 +80,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   const [errors, setErrors] = useState({});
   const [imageFile, setImageFile] = useState(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState(null);
+  const fileInputRef = useRef(null);
   const [bioWordCount, setBioWordCount] = useState(
     userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
   );
@@ -117,6 +121,12 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       );
     }
   }, [userDetails]);
+
+  useEffect(() => {
+    return () => {
+      if (cropImageSrc) URL.revokeObjectURL(cropImageSrc);
+    };
+  }, [cropImageSrc]);
 
   useEffect(() => {
     if (formData.profilePicture && formData.profilePicture.startsWith('data:')) {
@@ -161,33 +171,55 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     }
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      const file = e.target.files[0];
+  const closeCropModal = useCallback(() => {
+    if (cropImageSrc) URL.revokeObjectURL(cropImageSrc);
+    setCropImageSrc(null);
+    setCropModalOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [cropImageSrc]);
+
+  const handleCropApply = useCallback(
+    async (blob) => {
+      if (cropImageSrc) URL.revokeObjectURL(cropImageSrc);
+      setCropImageSrc(null);
+      setCropModalOpen(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+
+      const file = new File([blob], "profile-photo.jpg", {
+        type: "image/jpeg",
+      });
       setImageFile(file);
-      
-      // Create a preview URL for immediate display
+
       const reader = new FileReader();
       reader.onload = (event) => {
-        const previewUrl = event.target.result;
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          profilePicture: previewUrl
+          profilePicture: event.target.result,
         }));
-        
-        // Force a re-render by updating state
-        setTimeout(() => {
-          setFormData(prev => ({
-            ...prev,
-            profilePicture: previewUrl
-          }));
-        }, 100);
       };
-      reader.onerror = (error) => {
-        console.error("FileReader error:", error);
-      };
+      reader.onerror = (err) => console.error("FileReader error:", err);
       reader.readAsDataURL(file);
+    },
+    [cropImageSrc]
+  );
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setPopup({
+        isOpen: true,
+        message: "Please choose an image file.",
+        toast: true,
+        confirm: false,
+        onConfirm: null,
+      });
+      e.target.value = "";
+      return;
     }
+    const url = URL.createObjectURL(file);
+    setCropImageSrc(url);
+    setCropModalOpen(true);
   };
 
   const validateField = (name, value) => {
@@ -321,6 +353,13 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
   return (
     <>
+      {cropModalOpen && cropImageSrc ? (
+        <ProfilePictureCropModal
+          imageSrc={cropImageSrc}
+          onCancel={closeCropModal}
+          onApply={handleCropApply}
+        />
+      ) : null}
       <Popup
         isOpen={popup.isOpen}
         onClose={handlePopupClose}
@@ -339,7 +378,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         <div className="edit-profile-main-section">
           <div className="edit-profile-top-row">
             <div className="edit-profile-picture-section">
-              <div className="edit-profile-picture-container" onClick={() => document.getElementById('profile-picture-input').click()}>
+              <div
+                className="edit-profile-picture-container"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 {formData.profilePicture ? (
                   <img
                     src={formData.profilePicture}
@@ -355,12 +397,14 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                   <MaterialSymbol icon="edit" size={20} />
                 </div>
               </div>
-              <input 
-                type="file" 
-                accept="image/*" 
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
                 onChange={handleFileChange}
                 className="edit-picture-input"
                 id="profile-picture-input"
+                aria-label="Upload profile picture"
               />
             </div>
 
