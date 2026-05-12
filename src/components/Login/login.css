@@ -357,9 +357,21 @@ input.register-form-control::placeholder {
   left: -40px;
 }
 
+/*Tablet + IPad*/
+@media (min-width: 768px) and (max-width: 1336px) {
+  .auth-inner {
+      padding: 30px 25px;
+      margin: 20px;
+    }
+
+    .auth-inner h3 {
+      font-size: 1.6rem;
+    }
+}
+
+/*Mobile*/
 @media (max-width: 576px) {
   .auth-inner {
-    width: 90%;
     padding: 30px 25px;
     margin: 20px;
   }
@@ -368,4 +380,3 @@ input.register-form-control::placeholder {
     font-size: 1.5rem;
   }
 }
-

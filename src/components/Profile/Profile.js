@@ -135,14 +135,6 @@ function Profile() {
                       />
                       {userDetails.year}
                     </p>
-                    <p className="profile-committee">
-                      <MaterialSymbol
-                        icon="group"
-                        size={28}
-                        className="committee-icon"
-                      />
-                      {userDetails.committee}
-                    </p>
                     
                   </div>
                   <div className="profile-button-column">

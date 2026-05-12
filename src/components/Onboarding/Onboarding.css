@@ -92,7 +92,7 @@
   display: block;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1030px) {
   .onboarding-split-layout {
     flex-direction: column;
   }
