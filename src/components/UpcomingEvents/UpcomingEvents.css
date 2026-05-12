@@ -31,9 +31,7 @@ body.events-page .App {
   overflow: visible;
   padding: 1.5rem;
   padding-top: 0;
-  padding-bottom: calc(
-    var(--events-gap-below-cards) + var(--events-bear-strip-h)
-  );
+  padding-bottom: calc(var(--events-gap-below-cards) + var(--events-bear-strip-h));
   background-color: transparent !important;
   color: white;
   position: relative;
@@ -58,85 +56,63 @@ body.events-page .App {
   pointer-events: none;
   box-sizing: border-box;
   /* Stars — roomier layout (wider % spread) + modestly larger than previous pass */
-  background-image: radial-gradient(
-      circle var(--events-star-lg) at 20% calc(14px + 0.8%),
+  background-image: radial-gradient(circle var(--events-star-lg) at 20% calc(14px + 0.8%),
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0.32) 42%,
       rgba(255, 255, 255, 0.08) 68%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-lg) at 3.5% 27%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-lg) at 3.5% 27%,
       rgba(255, 255, 255, 0.78) 0%,
       rgba(255, 255, 255, 0.28) 46%,
       rgba(255, 255, 255, 0.07) 70%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-sm) at 45% 17%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-sm) at 45% 17%,
       rgba(255, 255, 255, 0.72) 0%,
       rgba(255, 255, 255, 0.26) 44%,
       rgba(255, 255, 255, 0.06) 72%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-lg) at 81% 13%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-lg) at 81% 13%,
       rgba(255, 255, 255, 0.8) 0%,
       rgba(255, 255, 255, 0.3) 45%,
       rgba(255, 255, 255, 0.08) 69%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-sm) at 30% 39%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-sm) at 30% 39%,
       rgba(255, 255, 255, 0.75) 0%,
       rgba(255, 255, 255, 0.27) 48%,
       rgba(255, 255, 255, 0.07) 71%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-lg) at 54% 52%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-lg) at 54% 52%,
       rgba(255, 255, 255, 0.82) 0%,
       rgba(255, 255, 255, 0.3) 43%,
       rgba(255, 255, 255, 0.07) 70%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-sm) at 67% 29%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-sm) at 67% 29%,
       rgba(255, 255, 255, 0.68) 0%,
       rgba(255, 255, 255, 0.24) 44%,
       rgba(255, 255, 255, 0.06) 72%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-lg) at 88% 41%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-lg) at 88% 41%,
       rgba(255, 255, 255, 0.76) 0%,
       rgba(255, 255, 255, 0.27) 45%,
       rgba(255, 255, 255, 0.07) 71%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-sm) at 76% 61%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-sm) at 76% 61%,
       rgba(255, 255, 255, 0.65) 0%,
       rgba(255, 255, 255, 0.22) 46%,
       rgba(255, 255, 255, 0.05) 72%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle var(--events-star-sm) at 38% 63%,
+      transparent 100%),
+    radial-gradient(circle var(--events-star-sm) at 38% 63%,
       rgba(255, 255, 255, 0.72) 0%,
       rgba(255, 255, 255, 0.25) 44%,
       rgba(255, 255, 255, 0.06) 72%,
-      transparent 100%
-    ),
-    linear-gradient(
-      180deg,
+      transparent 100%),
+    linear-gradient(180deg,
       #24165d 0%,
       #2a1c6a 22%,
       #321f79 42%,
       #3a2488 58%,
       #482a9a 78%,
-      #5736aa 100%
-    );
+      #5736aa 100%);
   background-repeat: no-repeat;
   /* Stars fixed to viewport so % positions don’t shift when the panel grows; gradient scrolls */
   background-attachment: fixed, fixed, fixed, fixed, fixed, fixed, fixed, fixed,
@@ -162,7 +138,7 @@ body.events-page .App {
 }
 
 /* Ensure all page content (cards, header, etc.) is above the bg layers */
-.events-container > * {
+.events-container>* {
   position: relative;
   z-index: 2;
 }
@@ -247,7 +223,7 @@ body.events-page .App {
 }
 
 .event-card-content {
-  padding: 0rem 0rem 0.6rem 1.2rem;
+  padding: 0rem 1.2rem 0.6rem 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -282,7 +258,8 @@ body.events-page .App {
   padding: 0.3rem 0.6rem;
   border-radius: var(--border-radius-lg);
   font-size: 0.9rem;
-  z-index: 5; /* Ensure it's above other elements */
+  z-index: 5;
+  /* Ensure it's above other elements */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -295,7 +272,8 @@ body.events-page .App {
   padding: 0.3rem 0.6rem;
   border-radius: var(--border-radius-lg);
   font-size: 0.9rem;
-  z-index: 5; /* Ensure it's above other elements */
+  z-index: 5;
+  /* Ensure it's above other elements */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -308,7 +286,8 @@ body.events-page .App {
   padding: 0.3rem 0.6rem;
   border-radius: var(--border-radius-lg);
   font-size: 0.9rem;
-  z-index: 5; /* Ensure it's above other elements */
+  z-index: 5;
+  /* Ensure it's above other elements */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -357,8 +336,9 @@ body.events-page .App {
   display: flex;
   justify-content: left;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap; /* for small screens */
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  font-size: 0.8rem;
 }
 
 .event-buttons-row {
@@ -398,11 +378,9 @@ body.events-page .App {
 }
 
 .events-container .events-container .btn-primary {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg,
+      var(--color-purple-dark),
+      var(--color-pink));
   color: white;
   box-shadow: 0 4px 12px rgba(69, 37, 162, 0.2);
 }
@@ -477,6 +455,28 @@ body.events-page .App {
   background-color: transparent;
 }
 
+.btn-gcal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 1.5px solid white;
+  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  padding: 0.3rem 1.4rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  width: fit-content;
+  min-width: 0;
+}
+
+.btn-gcal:hover {
+  scale: 1.05;
+  border: 2px solid white;
+  color: white;
+  background-color: transparent;
+}
+
 .btn-event-danger {
   color: var(--color-pink);
   border: 2px solid var(--color-pink);
@@ -486,11 +486,9 @@ body.events-page .App {
 }
 
 .btn-add-event {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple-dark),
-    var(--color-pink)
-  );
+  background: linear-gradient(90deg,
+      var(--color-purple-dark),
+      var(--color-pink));
   color: white;
   border: none;
   padding: 10px 20px;
@@ -553,11 +551,9 @@ body.events-page .App {
 
 /* Alternative header layout if using flexbox structure */
 .event-header {
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-dark),
-    var(--color-purple-medium)
-  );
+  background: linear-gradient(135deg,
+      var(--color-purple-dark),
+      var(--color-purple-medium));
   color: white;
   padding: 1rem;
   position: relative;
@@ -629,10 +625,10 @@ body.events-page .App {
 
 @media (max-width: 768px) {
   .events-container {
-    padding: 1rem 1rem
-      calc(var(--events-gap-below-cards) + var(--events-bear-strip-h));
+    padding: 1rem 1rem calc(var(--events-gap-below-cards) + var(--events-bear-strip-h));
     padding-top: 0;
-    margin-top: 3rem; /* slightly closer on phones */
+    margin-top: 3rem;
+    /* slightly closer on phones */
   }
 
   .events-title {
@@ -651,7 +647,8 @@ body.events-page .App {
   .event-card h4 {
     font-size: 1.3rem;
     padding: 0.8rem;
-    padding-right: 100px; /* Slightly smaller padding for mobile */
+    padding-right: 100px;
+    /* Slightly smaller padding for mobile */
   }
 
   .event-card-content {
@@ -848,6 +845,7 @@ body.events-page .App {
   font-size: 1.5rem;
   color: #333;
 }
+
 .events-container .popup-content .form-group {
   margin-bottom: 1.5rem;
 }
@@ -867,7 +865,8 @@ body.events-page .App {
   border-radius: 8px;
   font-size: 1rem;
   box-sizing: border-box;
-  margin: 0 auto; /* keeps it centered */
+  margin: 0 auto;
+  /* keeps it centered */
   display: block;
 }
 
@@ -898,6 +897,7 @@ body.events-page .App {
 .events-container .btn-secondary:hover {
   background: #e9e9e9;
 }
+
 /* Center the input row */
 .events-container .popup-content .form-group {
   display: flex;
