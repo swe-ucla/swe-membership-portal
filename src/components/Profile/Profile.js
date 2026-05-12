@@ -135,6 +135,7 @@ function Profile() {
                       />
                       {userDetails.year}
                     </p>
+                    
                   </div>
                   <div className="profile-button-column">
                     <button
