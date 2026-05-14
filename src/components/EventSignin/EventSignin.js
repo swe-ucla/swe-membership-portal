@@ -3,6 +3,7 @@ import { doc, getDoc, updateDoc, arrayUnion, increment } from "firebase/firestor
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import Popup from "../Popup/Popup";
+import "./EventSignin.css";
 
 const EventSignin = () => {
   const { eventID } = useParams();
@@ -144,7 +145,7 @@ const EventSignin = () => {
               Attendance recorded successfully! Redirecting...
             </div>
           ) : (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="event-signin-form">
                             {/* Attendance Code Section */}
               <div className="form-group">
                 <label>Enter Attendance Code:</label>

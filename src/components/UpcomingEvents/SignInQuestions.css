@@ -1,3 +1,29 @@
+.sign-in-questions,
+.sign-in-questions * {
+  text-align: left;
+}
+
+.sign-in-questions .question {
+  margin-bottom: 1rem;
+}
+
+.sign-in-questions .question > label {
+  display: block;
+}
+
+.sign-in-questions .question > div > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.sign-in-questions .question > div > div > label {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
 .sign-in-questions-dropdown,
 .sign-in-questions-text {
   width: 100%;
@@ -17,15 +43,23 @@
 
 .sign-in-questions-mcq {
   display: flex;
-  gap: 1rem;
-  align-items: baseline;
+  gap: 0.5rem;
+  align-items: center;
   justify-content: flex-start;
 }
 
 .sign-in-question-tf {
   display: flex;
   gap: 1rem;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.sign-in-question-tf > label {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0;
+  font-weight: 400;
 }
 
 .sign-in-question-checkbox {
