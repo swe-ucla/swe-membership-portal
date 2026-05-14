@@ -1,0 +1,19 @@
+.event-signin-form,
+.event-signin-form *,
+.event-signin-form h1,
+.event-signin-form h2,
+.event-signin-form h3,
+.event-signin-form h4,
+.event-signin-form .form-group,
+.event-signin-form .form-check,
+.event-signin-form .form-label,
+.event-signin-form .form-check-label,
+.event-signin-form label,
+.event-signin-form div,
+.event-signin-form p {
+  text-align: left;
+}
+
+.event-signin-form .form-check-label {
+  display: inline-block;
+}

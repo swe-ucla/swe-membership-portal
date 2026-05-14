@@ -11,6 +11,7 @@ import {
 import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { QRCodeCanvas } from "qrcode.react";
 import Popup from "../Popup/Popup";
 import "./ManageEvents.css";
 
@@ -35,6 +36,19 @@ const ManageEvents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 12;
   const eventsContainerRef = useRef(null);
+  const [qrEvent, setQrEvent] = useState(null);
+  const qrCanvasRef = useRef(null);
+
+  const buildEventSigninUrl = (eventId) =>
+    `${window.location.origin}/eventsignin/${eventId}`;
+
+  const downloadQrCode = (event) => {
+    const canvas = qrCanvasRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    canvas.toBlob((blob) => {
+      if (blob) saveAs(blob, `${event.name}-QR.png`);
+    });
+  };
 
   const handlePopupClose = useCallback(() => {
     setPopup({
@@ -622,6 +636,25 @@ const ManageEvents = () => {
                       </svg>
                       Export CSV
                     </button>
+                    <button
+                      className="btn-qr"
+                      onClick={() => setQrEvent(event)}
+                      title="Show QR Code"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                      >
+                        <path
+                          d="M0 0h7v7H0V0zm1.5 1.5v4h4v-4h-4zM9 0h7v7H9V0zm1.5 1.5v4h4v-4h-4zM0 9h7v7H0V9zm1.5 1.5v4h4v-4h-4zM9 9h2v2H9V9zm3 0h2v2h-2V9zm-3 3h2v2H9v-2zm3 3h2v1h-2v-1zm2-3h2v2h-2v-2zm0 3h2v1h-2v-1z"
+                          fill="white"
+                        />
+                      </svg>
+                      Show QR
+                    </button>
                   </div>
                   <div className="actions-bottom">
                     <button
@@ -812,6 +845,38 @@ const ManageEvents = () => {
         onConfirm={popup.onConfirm}
         onClose={handlePopupClose}
       />
+
+      {qrEvent && (
+        <div className="qr-modal-overlay" onClick={() => setQrEvent(null)}>
+          <div className="qr-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="qr-modal-close"
+              onClick={() => setQrEvent(null)}
+            >
+              ×
+            </button>
+            <h3 className="qr-modal-title">{qrEvent.name}</h3>
+            <p className="qr-modal-subtitle">
+              Scan to sign in to this event
+            </p>
+            <div className="qr-modal-canvas" ref={qrCanvasRef}>
+              <QRCodeCanvas
+                value={buildEventSigninUrl(qrEvent.id)}
+                size={256}
+                level="M"
+                includeMargin
+              />
+            </div>
+            <p className="qr-modal-url">{buildEventSigninUrl(qrEvent.id)}</p>
+            <button
+              className="qr-modal-download"
+              onClick={() => downloadQrCode(qrEvent)}
+            >
+              Download PNG
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
