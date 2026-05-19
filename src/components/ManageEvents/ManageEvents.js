@@ -13,6 +13,12 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { QRCodeCanvas } from "qrcode.react";
 import Popup from "../Popup/Popup";
+import {
+  EVENT_TYPES,
+  COMMITTEES,
+  getEventType,
+  getCommittee,
+} from "../../constants/eventTypes";
 import "./ManageEvents.css";
 
 const ManageEvents = () => {
@@ -23,6 +29,7 @@ const ManageEvents = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [eventTypeFilter, setEventTypeFilter] = useState("All Event Types");
   const [committeeFilter, setCommitteeFilter] = useState("All Committees");
   const [popup, setPopup] = useState({
     isOpen: false,
@@ -128,39 +135,18 @@ const ManageEvents = () => {
     fetchEvents();
   }, [user, isAdmin]);
 
-  // Extract all unique committees
-  /*
-  const committees = [
-    "All Committees",
-    ...Array.from(
-      new Set(
-        [...pastEvents, ...upcomingEvents]
-          .map((e) =>
-            typeof e.createdBy === "string" ? e.createdBy.trim() : e.createdBy
-          )
-          .filter(Boolean)
-      )
-    ).sort(),
-  ];
-  */
+  const eventTypeOptions = ["All Event Types", ...EVENT_TYPES];
+  const committeeOptions = ["All Committees", ...COMMITTEES];
 
-  const committees = [
-    "All Committees",
-    "Advocacy",
-    "Dev",
-    "Evening with Industry",
-    "General",
-    "Internal Affairs",
-    "Lobbying",
-    "Mentorship",
-    "Outreach",
-    "Technical",
-  ];
-
-  // Apply committee filter
   const filterEvents = (events) => {
-    if (committeeFilter === "All Committees") return events;
-    return events.filter((e) => e.createdBy === committeeFilter);
+    let result = events;
+    if (eventTypeFilter !== "All Event Types") {
+      result = result.filter((e) => getEventType(e) === eventTypeFilter);
+    }
+    if (committeeFilter !== "All Committees") {
+      result = result.filter((e) => getCommittee(e) === committeeFilter);
+    }
+    return result;
   };
 
   const filteredUpcoming = filterEvents(upcomingEvents);
@@ -529,6 +515,7 @@ const ManageEvents = () => {
             <tr>
               <th>Event Name</th>
               <th>Date</th>
+              <th>Event type</th>
               <th>Committee</th>
               <th>Location</th>
               <th>Attendance Code</th>
@@ -550,7 +537,8 @@ const ManageEvents = () => {
                     hour12: true,
                   })}
                 </td>
-                <td>{event.createdBy}</td>
+                <td>{getEventType(event)}</td>
+                <td>{getCommittee(event)}</td>
                 <td>{event.location}</td>
                 <td>{event.attendanceCode || "N/A"}</td>
                 <td>{event.rsvpAttendees ? event.rsvpAttendees.length : 0}</td>
@@ -807,18 +795,33 @@ const ManageEvents = () => {
               Past ({pastEvents.length})
             </button>
           </div>
-          <div className="committee-filter-admin">
-            <select
-              value={committeeFilter}
-              onChange={(e) => setCommitteeFilter(e.target.value)}
-              className="form-select-admin"
-            >
-              {committees.map((committee) => (
-                <option key={committee} value={committee}>
-                  {committee}
-                </option>
-              ))}
-            </select>
+          <div className="admin-filters">
+            <div className="event-type-filter-admin">
+              <select
+                value={eventTypeFilter}
+                onChange={(e) => setEventTypeFilter(e.target.value)}
+                className="form-select-admin"
+              >
+                {eventTypeOptions.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="committee-filter-admin">
+              <select
+                value={committeeFilter}
+                onChange={(e) => setCommitteeFilter(e.target.value)}
+                className="form-select-admin"
+              >
+                {committeeOptions.map((committee) => (
+                  <option key={committee} value={committee}>
+                    {committee}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

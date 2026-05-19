@@ -5,6 +5,7 @@ import { saveAs } from "file-saver";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Popup from "../Popup/Popup";
+import { getEventType, getCommittee } from "../../constants/eventTypes";
 
 const PastEvents = () => {
   const [pastEvents, setPastEvents] = useState([]);
@@ -207,6 +208,7 @@ const PastEvents = () => {
             <tr>
               <th>Title</th>
               <th>Date</th>
+              <th>Event type</th>
               <th>Committee</th>
               <th>RSVP'd</th>
               <th>Attendees</th>
@@ -218,7 +220,8 @@ const PastEvents = () => {
               <tr key={event.id}>
                 <td>{event.name}</td>
                 <td>{event.date.toDate().toLocaleDateString()}</td>
-                <td>{event.createdBy}</td>
+                <td>{getEventType(event)}</td>
+                <td>{getCommittee(event)}</td>
                 <td>{event.rsvpCount ?? (event.rsvpAttendees ? event.rsvpAttendees.length : 0)}</td>
                 <td>{event.attendeeCount ?? (event.attendees ? event.attendees.length : 0)}</td>
                 <td>

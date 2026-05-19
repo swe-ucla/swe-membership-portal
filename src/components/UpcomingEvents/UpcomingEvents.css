@@ -147,15 +147,26 @@ body.events-page .App {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   max-width: 1200px;
   margin: 0 auto 1.5rem;
 }
 
+.events-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-type-filter,
 .committee-filter {
   display: flex;
   align-items: center;
 }
 
+.event-type-filter .form-select,
 .committee-filter .form-select {
   padding: 0.5rem 1rem;
   border: 1.5px solid white;
@@ -173,12 +184,14 @@ body.events-page .App {
   padding-right: 2.5rem;
 }
 
+.event-type-filter .form-select:focus,
 .committee-filter .form-select:focus {
   outline: none;
   border-color: white;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 
+.event-type-filter .form-select option,
 .committee-filter .form-select option {
   background: var(--color-purple-dark);
   color: white;
