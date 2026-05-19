@@ -4,6 +4,7 @@ export const EVENT_TYPES = [
   "Academic",
   "Community and Outreach",
   "Advocacy and Leadership",
+  "Social",
 ];
 
 /** Supports legacy events that only have `createdBy` (committee name). */
