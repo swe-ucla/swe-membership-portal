@@ -23,6 +23,7 @@ import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 import SignInQuestions from "./SignInQuestions";
 
 import placeholderImage from "../../assets/placeholder-image.png";
+import { EVENT_TYPES, getEventType } from "../../constants/eventTypes";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -39,8 +40,7 @@ function UpcomingEvents() {
     confirm: false,
     onConfirm: null,
   });
-  const [selectedCommittee, setSelectedCommittee] = useState("");
-  const [committees, setCommittees] = useState([]);
+  const [selectedEventType, setSelectedEventType] = useState("");
   const [eventDetailsPopup, setEventDetailsPopup] = useState({
     isOpen: false,
     event: null,
@@ -124,13 +124,6 @@ function UpcomingEvents() {
       setEvents(futureEvents);
       setFilteredEvents(futureEvents);
 
-      // Extract unique committees
-      const uniqueCommittees = [
-        ...new Set(
-          futureEvents.map((event) => event.createdBy).filter(Boolean)
-        ),
-      ];
-      setCommittees(uniqueCommittees);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
@@ -539,32 +532,32 @@ function UpcomingEvents() {
   }, [fetchEvents, fetchUserData]);
 
   useEffect(() => {
-    if (selectedCommittee === "") {
+    if (selectedEventType === "") {
       setFilteredEvents(events);
     } else {
       setFilteredEvents(
-        events.filter((event) => event.createdBy === selectedCommittee)
+        events.filter((event) => getEventType(event) === selectedEventType)
       );
     }
     // Reset to first page when filtering changes
     setCurrentPage(1);
-  }, [selectedCommittee, events]);
+  }, [selectedEventType, events]);
 
   return (
     <>
       <div className="events-container" ref={eventsContainerRef}>
         <div className="events-header">
           <h2 className="events-title">Upcoming Events</h2>
-          <div className="committee-filter">
+          <div className="event-type-filter">
             <select
-              value={selectedCommittee}
-              onChange={(e) => setSelectedCommittee(e.target.value)}
+              value={selectedEventType}
+              onChange={(e) => setSelectedEventType(e.target.value)}
               className="form-select"
             >
-              <option value="">All Committees</option>
-              {committees.map((committee) => (
-                <option key={committee} value={committee}>
-                  {committee}
+              <option value="">All Event Types</option>
+              {EVENT_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
                 </option>
               ))}
             </select>

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { QRCodeCanvas } from "qrcode.react";
 import Popup from "../Popup/Popup";
+import { EVENT_TYPES, getEventType } from "../../constants/eventTypes";
 import "./ManageEvents.css";
 
 const ManageEvents = () => {
@@ -23,7 +24,7 @@ const ManageEvents = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [committeeFilter, setCommitteeFilter] = useState("All Committees");
+  const [eventTypeFilter, setEventTypeFilter] = useState("All event types");
   const [popup, setPopup] = useState({
     isOpen: false,
     message: "",
@@ -128,39 +129,11 @@ const ManageEvents = () => {
     fetchEvents();
   }, [user, isAdmin]);
 
-  // Extract all unique committees
-  /*
-  const committees = [
-    "All Committees",
-    ...Array.from(
-      new Set(
-        [...pastEvents, ...upcomingEvents]
-          .map((e) =>
-            typeof e.createdBy === "string" ? e.createdBy.trim() : e.createdBy
-          )
-          .filter(Boolean)
-      )
-    ).sort(),
-  ];
-  */
+  const eventTypeOptions = ["All event types", ...EVENT_TYPES];
 
-  const committees = [
-    "All Committees",
-    "Advocacy",
-    "Dev",
-    "Evening with Industry",
-    "General",
-    "Internal Affairs",
-    "Lobbying",
-    "Mentorship",
-    "Outreach",
-    "Technical",
-  ];
-
-  // Apply committee filter
   const filterEvents = (events) => {
-    if (committeeFilter === "All Committees") return events;
-    return events.filter((e) => e.createdBy === committeeFilter);
+    if (eventTypeFilter === "All event types") return events;
+    return events.filter((e) => getEventType(e) === eventTypeFilter);
   };
 
   const filteredUpcoming = filterEvents(upcomingEvents);
@@ -529,7 +502,7 @@ const ManageEvents = () => {
             <tr>
               <th>Event Name</th>
               <th>Date</th>
-              <th>Committee</th>
+              <th>Event type</th>
               <th>Location</th>
               <th>Attendance Code</th>
               <th>RSVP'd</th>
@@ -550,7 +523,7 @@ const ManageEvents = () => {
                     hour12: true,
                   })}
                 </td>
-                <td>{event.createdBy}</td>
+                <td>{getEventType(event)}</td>
                 <td>{event.location}</td>
                 <td>{event.attendanceCode || "N/A"}</td>
                 <td>{event.rsvpAttendees ? event.rsvpAttendees.length : 0}</td>
@@ -807,15 +780,15 @@ const ManageEvents = () => {
               Past ({pastEvents.length})
             </button>
           </div>
-          <div className="committee-filter-admin">
+          <div className="event-type-filter-admin">
             <select
-              value={committeeFilter}
-              onChange={(e) => setCommitteeFilter(e.target.value)}
+              value={eventTypeFilter}
+              onChange={(e) => setEventTypeFilter(e.target.value)}
               className="form-select-admin"
             >
-              {committees.map((committee) => (
-                <option key={committee} value={committee}>
-                  {committee}
+              {eventTypeOptions.map((type) => (
+                <option key={type} value={type}>
+                  {type}
                 </option>
               ))}
             </select>

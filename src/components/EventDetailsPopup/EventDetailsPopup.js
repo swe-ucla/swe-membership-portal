@@ -1,4 +1,5 @@
 import React from "react";
+import { getEventType } from "../../constants/eventTypes";
 import "./EventDetailsPopup.css";
 
 const EventDetailsPopup = ({ isOpen, onClose, event, isAdmin = false }) => {
@@ -113,9 +114,7 @@ const EventDetailsPopup = ({ isOpen, onClose, event, isAdmin = false }) => {
                   fillOpacity="0.7"
                 />
               </svg>
-              <span className="event-info-text">
-                {event.createdBy} Committee
-              </span>
+              <span className="event-info-text">{getEventType(event)}</span>
             </div>
           </div>
           {event.attendanceCode && isAdmin && (

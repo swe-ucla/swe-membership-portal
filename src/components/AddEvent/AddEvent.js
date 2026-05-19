@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import Popup from "../Popup/Popup";
+import { EVENT_TYPES, getEventType } from "../../constants/eventTypes";
 import "./AddEvent.css";
 
 // Add Cloudinary constants
@@ -45,7 +46,7 @@ function AddEvent() {
     startTime: "",
     endTime: "",
     location: "",
-    committee: "",
+    eventType: "",
     description: "",
     attendanceCode: "",
     points: 1,
@@ -63,18 +64,6 @@ function AddEvent() {
   const [loading, setLoading] = useState(true);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [errors, setErrors] = useState({});
-
-  const committees = [
-    "Evening with Industry",
-    "Dev",
-    "Technical",
-    "Lobbying",
-    "Outreach",
-    "Internal Affairs",
-    "Advocacy",
-    "Mentorship",
-    "General",
-  ];
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -114,7 +103,7 @@ function AddEvent() {
           startTime: data.startTime || extractedStartTime,
           endTime: data.endTime || extractedEndTime,
           location: data.location || "",
-          committee: data.createdBy || "",
+          eventType: getEventType(data),
           author: data.createdByUser || "",
           description: data.description || "",
           attendanceCode: data.attendanceCode || "",
@@ -188,7 +177,7 @@ function AddEvent() {
           startTime: parsedData.startTime || "",
           endTime: parsedData.endTime || "",
           location: parsedData.location || "",
-          committee: parsedData.createdBy || "",
+          eventType: getEventType(parsedData),
           author: parsedData.createdByUser || "",
           description: parsedData.description || "",
           attendanceCode: parsedData.attendanceCode || "",
@@ -368,7 +357,7 @@ function AddEvent() {
     if (!eventData.endTime) newErrors.endTime = "This field is required";
     if (!eventData.location.trim())
       newErrors.location = "This field is required";
-    if (!eventData.committee) newErrors.committee = "This field is required";
+    if (!eventData.eventType) newErrors.eventType = "This field is required";
     if (!eventData.description.trim())
       newErrors.description = "This field is required";
     if (!eventData.points || eventData.points < 1)
@@ -450,7 +439,7 @@ function AddEvent() {
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           location: eventData.location,
-          createdBy: eventData.committee,
+          eventType: eventData.eventType,
           createdByUser: auth.currentUser.uid,
           description: eventData.description,
           attendanceCode: attendanceCode,
@@ -480,7 +469,7 @@ function AddEvent() {
           startTime: eventData.startTime,
           endTime: eventData.endTime,
           location: eventData.location,
-          createdBy: eventData.committee,
+          eventType: eventData.eventType,
           createdByUser: auth.currentUser.uid,
           description: eventData.description,
           createdAt: new Date().toISOString(),
@@ -508,7 +497,7 @@ function AddEvent() {
         startTime: "",
         endTime: "",
         location: "",
-        committee: "",
+        eventType: "",
         description: "",
         attendanceCode: "",
         points: 1,
@@ -723,23 +712,23 @@ function AddEvent() {
         </div>
 
         <div className="event-form-group">
-          <label className="form-label">Committee:</label>
+          <label className="form-label">Event type:</label>
           <select
-            name="committee"
+            name="eventType"
             className="add-event-select"
-            value={eventData.committee}
+            value={eventData.eventType}
             onChange={handleInputChange}
           >
             <option value="" disabled>
-              Select a committee
+              Select an event type
             </option>
-            {committees.map((committee, index) => (
-              <option key={index} value={committee}>
-                {committee}
+            {EVENT_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </select>
-          {errors.committee && <p className="error-text">{errors.committee}</p>}
+          {errors.eventType && <p className="error-text">{errors.eventType}</p>}
         </div>
 
         <div className="slider-section">
