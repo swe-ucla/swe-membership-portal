@@ -147,8 +147,17 @@ body.events-page .App {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   max-width: 1200px;
   margin: 0 auto 1.5rem;
+}
+
+.events-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .event-type-filter,

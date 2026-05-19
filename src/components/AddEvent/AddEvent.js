@@ -4,7 +4,12 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import Popup from "../Popup/Popup";
-import { EVENT_TYPES, getEventType } from "../../constants/eventTypes";
+import {
+  EVENT_TYPES,
+  COMMITTEES,
+  getEventType,
+  getCommittee,
+} from "../../constants/eventTypes";
 import "./AddEvent.css";
 
 // Add Cloudinary constants
@@ -47,6 +52,7 @@ function AddEvent() {
     endTime: "",
     location: "",
     eventType: "",
+    committee: "",
     description: "",
     attendanceCode: "",
     points: 1,
@@ -104,6 +110,7 @@ function AddEvent() {
           endTime: data.endTime || extractedEndTime,
           location: data.location || "",
           eventType: getEventType(data),
+          committee: getCommittee(data),
           author: data.createdByUser || "",
           description: data.description || "",
           attendanceCode: data.attendanceCode || "",
@@ -178,6 +185,7 @@ function AddEvent() {
           endTime: parsedData.endTime || "",
           location: parsedData.location || "",
           eventType: getEventType(parsedData),
+          committee: getCommittee(parsedData),
           author: parsedData.createdByUser || "",
           description: parsedData.description || "",
           attendanceCode: parsedData.attendanceCode || "",
@@ -358,6 +366,7 @@ function AddEvent() {
     if (!eventData.location.trim())
       newErrors.location = "This field is required";
     if (!eventData.eventType) newErrors.eventType = "This field is required";
+    if (!eventData.committee) newErrors.committee = "This field is required";
     if (!eventData.description.trim())
       newErrors.description = "This field is required";
     if (!eventData.points || eventData.points < 1)
@@ -440,6 +449,7 @@ function AddEvent() {
           endTime: eventData.endTime,
           location: eventData.location,
           eventType: eventData.eventType,
+          createdBy: eventData.committee,
           createdByUser: auth.currentUser.uid,
           description: eventData.description,
           attendanceCode: attendanceCode,
@@ -470,6 +480,7 @@ function AddEvent() {
           endTime: eventData.endTime,
           location: eventData.location,
           eventType: eventData.eventType,
+          createdBy: eventData.committee,
           createdByUser: auth.currentUser.uid,
           description: eventData.description,
           createdAt: new Date().toISOString(),
@@ -498,6 +509,7 @@ function AddEvent() {
         endTime: "",
         location: "",
         eventType: "",
+        committee: "",
         description: "",
         attendanceCode: "",
         points: 1,
@@ -729,6 +741,26 @@ function AddEvent() {
             ))}
           </select>
           {errors.eventType && <p className="error-text">{errors.eventType}</p>}
+        </div>
+
+        <div className="event-form-group">
+          <label className="form-label">Committee:</label>
+          <select
+            name="committee"
+            className="add-event-select"
+            value={eventData.committee}
+            onChange={handleInputChange}
+          >
+            <option value="" disabled>
+              Select a committee
+            </option>
+            {COMMITTEES.map((committee) => (
+              <option key={committee} value={committee}>
+                {committee}
+              </option>
+            ))}
+          </select>
+          {errors.committee && <p className="error-text">{errors.committee}</p>}
         </div>
 
         <div className="slider-section">

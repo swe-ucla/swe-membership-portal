@@ -5,8 +5,21 @@ export const EVENT_TYPES = [
   "Community and Outreach",
   "Advocacy and Leadership",
   "Social",
+  "Other",
 ];
 
-/** Supports legacy events that only have `createdBy` (committee name). */
-export const getEventType = (event) =>
-  event?.eventType || event?.createdBy || "";
+export const COMMITTEES = [
+  "Evening with Industry",
+  "Dev",
+  "Technical",
+  "Lobbying",
+  "Outreach",
+  "Internal Affairs",
+  "Advocacy",
+  "Mentorship",
+  "General",
+];
+
+export const getEventType = (event) => event?.eventType || "";
+
+export const getCommittee = (event) => event?.createdBy || "";

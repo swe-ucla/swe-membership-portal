@@ -23,7 +23,12 @@ import EventDetailsPopup from "../EventDetailsPopup/EventDetailsPopup";
 import SignInQuestions from "./SignInQuestions";
 
 import placeholderImage from "../../assets/placeholder-image.png";
-import { EVENT_TYPES, getEventType } from "../../constants/eventTypes";
+import {
+  EVENT_TYPES,
+  COMMITTEES,
+  getEventType,
+  getCommittee,
+} from "../../constants/eventTypes";
 
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
@@ -41,6 +46,7 @@ function UpcomingEvents() {
     onConfirm: null,
   });
   const [selectedEventType, setSelectedEventType] = useState("");
+  const [selectedCommittee, setSelectedCommittee] = useState("");
   const [eventDetailsPopup, setEventDetailsPopup] = useState({
     isOpen: false,
     event: null,
@@ -532,35 +538,55 @@ function UpcomingEvents() {
   }, [fetchEvents, fetchUserData]);
 
   useEffect(() => {
-    if (selectedEventType === "") {
-      setFilteredEvents(events);
-    } else {
-      setFilteredEvents(
-        events.filter((event) => getEventType(event) === selectedEventType)
+    let result = events;
+    if (selectedEventType !== "") {
+      result = result.filter(
+        (event) => getEventType(event) === selectedEventType
       );
     }
-    // Reset to first page when filtering changes
+    if (selectedCommittee !== "") {
+      result = result.filter(
+        (event) => getCommittee(event) === selectedCommittee
+      );
+    }
+    setFilteredEvents(result);
     setCurrentPage(1);
-  }, [selectedEventType, events]);
+  }, [selectedEventType, selectedCommittee, events]);
 
   return (
     <>
       <div className="events-container" ref={eventsContainerRef}>
         <div className="events-header">
           <h2 className="events-title">Upcoming Events</h2>
-          <div className="event-type-filter">
-            <select
-              value={selectedEventType}
-              onChange={(e) => setSelectedEventType(e.target.value)}
-              className="form-select"
-            >
-              <option value="">All Event Types</option>
-              {EVENT_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+          <div className="events-filters">
+            <div className="event-type-filter">
+              <select
+                value={selectedEventType}
+                onChange={(e) => setSelectedEventType(e.target.value)}
+                className="form-select"
+              >
+                <option value="">All Event Types</option>
+                {EVENT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="committee-filter">
+              <select
+                value={selectedCommittee}
+                onChange={(e) => setSelectedCommittee(e.target.value)}
+                className="form-select"
+              >
+                <option value="">All Committees</option>
+                {COMMITTEES.map((committee) => (
+                  <option key={committee} value={committee}>
+                    {committee}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

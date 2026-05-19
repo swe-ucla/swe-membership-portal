@@ -3,7 +3,7 @@ import { doc, getDoc, updateDoc, arrayUnion, increment } from "firebase/firestor
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import Popup from "../Popup/Popup";
-import { getEventType } from "../../constants/eventTypes";
+import { getEventType, getCommittee } from "../../constants/eventTypes";
 import "./EventSignin.css";
 
 const EventSignin = () => {
@@ -139,8 +139,11 @@ const EventSignin = () => {
         <div>
           <p><strong>Title:</strong> {event.name}</p>
           <p><strong>Location:</strong> {event.location}</p>
-          <p><strong>Event type:</strong> {getEventType(event)}</p>
-          
+          <p><strong>Event type:</strong> {getEventType(event) || "—"}</p>
+          {getCommittee(event) && (
+            <p><strong>Committee:</strong> {getCommittee(event)}</p>
+          )}
+
           {success ? (
             <div className="alert alert-success">
               Attendance recorded successfully! Redirecting...

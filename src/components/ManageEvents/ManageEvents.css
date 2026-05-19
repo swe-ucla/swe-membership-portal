@@ -733,6 +733,14 @@ body.manage-events-page::before {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .event-type-filter-admin .form-select-admin,
