@@ -13,6 +13,7 @@ const Popup = ({
   confirmText = "Confirm",
   input = false,
   inputValue = "",
+  className = "",
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [inputText] = useState(inputValue);
@@ -118,9 +119,7 @@ const Popup = ({
       onClick={toast ? undefined : handleClose}
     >
       <div
-        className={`popup ${toast ? "popup-toast" : ""} ${
-          confirm ? "popup-confirm" : ""
-        } ${isFadingOut ? "fade-out" : "fade-in"}`}
+        className={`popup ${toast ? "popup-toast" : ""} ${isFadingOut ? "fade-out" : "fade-in"} ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="popup-header">
