@@ -15,6 +15,37 @@ import "./AddEvent.css";
 // Add Cloudinary constants
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
+// testing calendar 
+const CLUB_CALENDAR_ID = "c_902839ee27acca72eff18efeed20a190c5a468c6c843f2a9a2a1e4388e45c005@group.calendar.google.com";
+
+const buildClubCalendarUrl = (event) => {
+  const baseDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
+  const pad = (n) => String(n).padStart(2, "0");
+
+  const toGCalDate = (date, timeStr) => {
+    const d = new Date(date);
+    if (timeStr) {
+      const [h, m] = timeStr.split(":");
+      d.setHours(Number(h), Number(m), 0, 0);
+    }
+    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  };
+
+   const start = toGCalDate(baseDate, event.startTime);
+  const end = toGCalDate(baseDate, event.endTime || event.startTime);
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.name || "",
+    dates: `${start}/${end}`,
+    details: event.description || "",
+    location: event.location || "",
+    src: CLUB_CALENDAR_ID,
+  });
+
+  return `https://calendar.google.com/calendar/render?${params}`;
+
+};
 
 function AddEvent() {
   const [, setUserDetails] = useState(null);
@@ -493,12 +524,17 @@ function AddEvent() {
 
         setPopup({
           isOpen: true,
-          message: "Event created successfully!",
+          message: "Event created!",
           toast: true,
         });
+
+        setTimeout(() => {
+          window.open(buildClubCalendarUrl(eventData), "_blank");
+        }, 2000);
+
         setTimeout(() => {
           navigate("/manageevents");
-        }, 3000);
+        }, 5000);
       }
 
       // Reset form
