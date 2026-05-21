@@ -16,7 +16,7 @@ import "./AddEvent.css";
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
 // testing calendar 
-const CLUB_CALENDAR_ID = "c_902839ee27acca72eff18efeed20a190c5a468c6c843f2a9a2a1e4388e45c005@group.calendar.google.com";
+const CLUB_CALENDAR_ID = "m980q306mg3rfvuh7jhm43fr5s@group.calendar.google.com";
 
 const buildClubCalendarUrl = (event) => {
   const baseDate = event.date?.toDate ? event.date.toDate() : new Date(event.date);
