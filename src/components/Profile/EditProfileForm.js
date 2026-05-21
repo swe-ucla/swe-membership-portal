@@ -64,8 +64,15 @@ const committeeOptions = [
   "Internal Affairs",
   "Advocacy",
   "Mentorship",
-  "General"
+  "General",
+  "None"
 ]
+
+const familyOptions = [
+  "Eve's Engineers",
+  "None"
+]
+
 const EditProfileForm = ({ userDetails, onUpdate }) => {
   const [formData, setFormData] = useState(() => {
     const saved = localStorage.getItem("editProfileForm");
@@ -87,6 +94,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       bio: userDetails?.bio || "",
       swePoints: userDetails?.swePoints || 0,
       committee: userDetails?.committee || "",
+      family: userDetails?.family || "",
       linkedin: userDetails?.linkedin || ""
     };
   });
@@ -129,6 +137,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         bio: userDetails?.bio || "",
         swePoints: userDetails?.swePoints || 0,
         committee: userDetails?.committee || "",
+        family: userDetails?.family || "",
         linkedin: userDetails?.linkedin || ""
       });
       setBioWordCount(
@@ -266,7 +275,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
-      committee: validateField("Committee", formData.committee),
+
       // Removed memberId validation since it's now optional
       otherMajor:
         formData.major === "Other" && !formData.otherMajor.trim()
@@ -552,19 +561,42 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
             <div className="form-group">
               <label>Committee</label>
               <div className="input-container">
-                <select
-                  name="committee"
-                  value={formData.committee}
-                  onChange={handleChange}
+                <select 
+                  name="committee" 
+                  value={formData.committee} 
+                  onChange={handleChange} 
                   className={errors.committee ? "input-error" : ""}
                 >
+                  <option value="">Select a committee</option>
                   {committeeOptions.map((option, index) => (
+                    <option key={index} value={option}>{
+                      option}
+                    </option>
+                  ))}
+                </select>
+                {errors.committee && (
+                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                )}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Family</label>
+              <div className="input-container">
+                <select 
+                  name="family" 
+                  value={formData.family} 
+                  onChange={handleChange} 
+                  className={errors.family ? "input-error" : ""}
+                >
+                  <option value="">Select a family</option>
+                  {familyOptions.map((option, index) => (
                     <option key={index} value={option}>
                       {option}
                     </option>
                   ))}
                 </select>
-                {errors.major && (
+                {errors.family && (
                   <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                 )}
               </div>

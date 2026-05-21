@@ -175,8 +175,18 @@ body.profile-page::before {
   gap: 0.5rem;
 }
 
+.profile-fields {
+  display: flex;
+  gap: 4rem;
+}
+
+.profile-fields-left, .profile-fields-right {
+  display: flex;
+  flex-direction: column;
+}
+
 .profile-major,
-.profile-year, .profile-committee {
+.profile-year, .profile-committee, .profile-family {
   font-size: 1rem;
   color: #444;
   font-weight: 500;
@@ -199,7 +209,7 @@ body.profile-page::before {
   vertical-align: middle;
 }
 
-.year-icon, .committee-icon {
+.year-icon, .committee-icon, .family-icon {
   color: #b48fef;
 }
 

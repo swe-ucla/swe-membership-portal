@@ -113,28 +113,45 @@ function Profile() {
                     <h2 className="profile-header">
                       {userDetails.firstName} {userDetails.lastName}
                     </h2>
-                    {/* remove member id funcitonality
                     <p className="profile-member-id">
                       Member ID: {userDetails.memberId}
                     </p>
-                    */}
-                    <p className="profile-major">
-                      {/* <MaterialSymbol icon="circle" size={28} />  */}
-                      <img
-                        src={bearFaceIcon}
-                        alt="Bear Icon"
-                        className="major-icon"
-                      />
-                      {userDetails.major}
-                    </p>
-                    <p className="profile-year">
-                      <MaterialSymbol
-                        icon="school"
-                        size={28}
-                        className="year-icon"
-                      />
-                      {userDetails.year}
-                    </p>
+                    
+                    <div className="profile-fields">
+                      <div className="profile-fields-left">
+                        <p className="profile-major">
+                          {/* <MaterialSymbol icon="circle" size={28} />  */}
+                          <img
+                            src={bearFaceIcon}
+                            alt="Bear Icon"
+                            className="major-icon"
+                          />
+                          {userDetails.major}
+                        </p>
+                        <p className="profile-year">
+                          <MaterialSymbol
+                            icon="school"
+                            size={28}
+                            className="year-icon"
+                          />
+                          {userDetails.year}
+                        </p>
+                      </div>
+                      <div className="profile-fields-right">
+                        {userDetails.committee && userDetails.committee !== "None" && (
+                          <p className="profile-committee">
+                            <MaterialSymbol icon="diversity_3" size={28} className="committee-icon" />
+                            {userDetails.committee}
+                          </p>
+                        )}
+                        {userDetails.family && userDetails.family !== "None" && (
+                          <p className="profile-family">
+                            <MaterialSymbol icon="house" size={28} className="family-icon" />
+                            {userDetails.family}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                     
                   </div>
                   <div className="profile-button-column">
