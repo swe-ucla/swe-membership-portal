@@ -8,6 +8,8 @@ import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
 
 import bearFaceIcon from "../../assets/bear-face-icon.svg";
+import linkedInLogo from "../../assets/linkedin-logo.png";
+import instagramLogo from "../../assets/instagram-logo.png"
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -21,6 +23,8 @@ function Profile() {
         navigate("/login");
         return;
       }
+
+      localStorage.removeItem("editProfileForm"); 
 
       try {
         const docRef = doc(db, "Users", user.uid);
@@ -51,6 +55,7 @@ function Profile() {
         console.log("Logging out user:", auth.currentUser.uid);
       }
 
+      localStorage.removeItem("editProfileForm");
       await auth.signOut();
       console.log("User logged out successfully!");
 
@@ -138,13 +143,13 @@ function Profile() {
                         </p>
                       </div>
                       <div className="profile-fields-right">
-                        {userDetails.committee && userDetails.committee !== "None" && (
+                        {userDetails.committee && (
                           <p className="profile-committee">
                             <MaterialSymbol icon="diversity_3" size={28} className="committee-icon" />
                             {userDetails.committee}
                           </p>
                         )}
-                        {userDetails.family && userDetails.family !== "None" && (
+                        {userDetails.family && (
                           <p className="profile-family">
                             <MaterialSymbol icon="house" size={28} className="family-icon" />
                             {userDetails.family}
@@ -171,7 +176,7 @@ function Profile() {
                   <MaterialSymbol
                     icon="error"
                     size={20}
-                    className="alert-icon"
+                    className="alert-icoxfn"
                   />
                   <span>Your profile is missing information!</span>
                 </div>
@@ -179,29 +184,59 @@ function Profile() {
 
               <hr className="divider" />
 
-              <h2 className="profile-header">My Stats</h2>
-              <div className="profile-statistics-cards">
-                <div className="stat-card">
-                  <MaterialSymbol
-                    icon="stars"
-                    size={28}
-                    className="stat-icon"
-                  />
-                  <span className="stat-value">
-                    {Number(userDetails.swePoints) || 0} SWE Points
-                  </span>
+              <div className="profile-stats-section">
+                <div className="profile-statistics">
+                  <h2 className="profile-header">Statistics</h2>
+                  <div className="profile-statistics-cards">
+                    <div className="stat-card">
+                      <MaterialSymbol
+                        icon="stars"
+                        size={38}
+                        className="stat-icon"
+                      />
+                      <span className="stat-value">
+                        {Number(userDetails.swePoints) || 0} SWE Points
+                      </span>
+                    </div>
+                    <div className="stat-card">
+                      <MaterialSymbol
+                        icon="social_leaderboard"
+                        size={38}
+                        className="stat-icon"
+                      />
+                      <span className="stat-value">
+                        Rank #{Number(userDetails.rank) || 0}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="stat-card">
-                  <MaterialSymbol
-                    icon="social_leaderboard"
-                    size={28}
-                    className="stat-icon"
-                  />
-                  <span className="stat-value">
-                    Rank #{Number(userDetails.rank) || 0}
-                  </span>
+
+                <div className="profile-bio">
+                  <h2 className="profile-header">Bio</h2>
+                  <div className="bio-box">
+                    <span className={`bio-text ${!userDetails.bio ? "bio-empty" : ""}`}>
+                      {userDetails.bio || "No bio yet."}
+                    </span>
+                  </div>
+                </div>
+            
+                <div className="profile-socials">
+                  <h2 className="profile-header">Socials</h2>
+                  <div className="social-icons">
+                    {userDetails.linkedin && (
+                      <a href={userDetails.linkedin} target="_blank" rel="noreferrer">
+                        <img className="social-logos" src={linkedInLogo} alt="LinkedIn" />
+                      </a>
+                    )}
+                    {userDetails.instagram && (
+                      <a href={userDetails.instagram} target="_blank" rel="noreferrer">
+                        <img className="social-logos" src={instagramLogo} alt="Instagram" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
+              
 
               <div className="button-group">
                 <button className="btn logout-btn" onClick={handleLogout}>
