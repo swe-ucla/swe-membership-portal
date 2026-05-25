@@ -8,8 +8,9 @@ import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
 
 import bearFaceIcon from "../../assets/bear-face-icon.svg";
-import linkedInLogo from "../../assets/linkedin-logo.png";
-import instagramLogo from "../../assets/instagram-logo.png"
+
+const linkedInLogo = "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png";
+const instagramLogo = "https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png";
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
