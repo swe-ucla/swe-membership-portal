@@ -1,91 +1,69 @@
 .popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: transparent;
+  display: flex !important;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
+  z-index: 10000 !important;
 }
 
 .fade-in {
-  animation: fadeInOverlay 0.3s ease-out forwards;
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-@keyframes fadeInOverlay {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .fade-out {
-  animation: fadeOutOverlay 0.3s ease-in forwards;
+  animation: fadeOut 0.3s ease-in forwards;
 }
 
-@keyframes fadeOutOverlay {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 .popup {
   background: white;
-
   border-radius: var(--border-radius-md);
-
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-
   max-width: 450px;
-  width: 100%;
+  width: 90%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
   text-align: center;
   padding: 0;
+  font-family: "Manrope", sans-serif;
 }
 
-.popup-toast {
-  animation: fadeIn 0.3s ease-out;
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.popup-wide {
+  max-width: 700px;
+  width: 80%;
+  text-align: left;
+  overflow-y: auto;
+  max-height: 90vh;
+  padding: 15px 24px 40px 34px;
 }
 
 .popup-header {
   display: flex;
   justify-content: flex-end;
-  /*padding: 8px 12px 0 12px;*/
+  padding: 8px 8px 0 8px;
 }
 
 .popup-close {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 0.95rem;
-  color: var(--color-purple-dark);
   width: 30px;
   height: 30px;
-  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,22 +75,48 @@
   background-color: #f0f0f0;
 }
 
+.popup-title {
+  margin: 0 0 4px 0;
+  color: #000;
+  font-family: Gabarito;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: normal;
+}
+
 .popup-content {
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.popup-wide .popup-content {
+  align-items: flex-start;
+  padding: 0;
+  margin-top: 24px;
 }
 
 .popup-message {
-  margin: 0 0 24px 0;
+  margin: 0 0 20px 0;
+  padding: 0 24px;
   line-height: 1.5;
   font-weight: 500;
   font-size: 1.1rem;
   color: #333;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .popup-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
+  width: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .popup-btn {
@@ -137,7 +141,6 @@
 
 .popup-btn-confirm {
   background-color: #fc5e5e;
-
   box-shadow: 0 4px 0px #e13a3a;
   color: white;
   font-size: 0.9rem;
@@ -145,4 +148,11 @@
 
 .popup-btn-confirm:hover {
   background-color: #e13a3a;
+}
+
+@media (max-width: 600px) {
+  .popup-wide {
+    width: 95%;
+    max-height: 85vh;
+  }
 }
