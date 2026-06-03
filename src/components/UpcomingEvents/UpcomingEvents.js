@@ -687,7 +687,7 @@ function UpcomingEvents() {
                           onClick={() => handleRSVP(event.id)}
                           className="btn btn-event"
                         >
-                          RSVP
+                          RESERVE
                         </button>
                       )
                     ) : // Event is in the future but registration is closed, or event is past
@@ -736,6 +736,7 @@ function UpcomingEvents() {
           </div>
         ) : (
           <div className="empty-message">
+            <MaterialSymbol icon="event_busy" size={44} />
             <p>No upcoming events.</p>
           </div>
         )}

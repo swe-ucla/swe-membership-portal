@@ -316,9 +316,8 @@ function Onboarding() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className="register-form-control"
+                    className="form-control"
                     placeholder="First name"
-                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setFname(e.target.value)}
                     required
                   />
@@ -326,9 +325,8 @@ function Onboarding() {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className="register-form-control"
+                    className="form-control"
                     placeholder="Last name"
-                    style={{ marginBottom: "0px" }}
                     onChange={(e) => setLname(e.target.value)}
                   />
                 </div>

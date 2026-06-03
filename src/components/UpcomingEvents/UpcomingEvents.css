@@ -522,38 +522,56 @@ body.events-page .App {
 
 /* Loading and empty states */
 .events-container .loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   text-align: center;
-  padding: 2.5rem;
-  font-size: 1.2rem;
-  color: #555;
-  background: white;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--box-shadow);
+  padding: 3rem 2rem;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
   max-width: 600px;
-  margin: 2.5rem auto;
+  margin: 3rem auto;
+}
+
+.events-container .loading-message p {
+  margin: 0;
 }
 
 .events-container .empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
   text-align: center;
-  padding: 2.5rem;
-  font-size: 1.2rem;
-  color: #555;
-  background: white;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--box-shadow);
+  padding: 3rem 2rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
   max-width: 600px;
-  margin: 2.5rem auto;
+  margin: 3rem auto;
+}
+
+.events-container .empty-message p {
+  margin: 0;
+}
+
+.events-container .empty-message .material-symbols-rounded {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 2.75rem;
 }
 
 /* Loading spinner */
 .events-container .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(69, 37, 162, 0.2);
+  border: 4px solid rgba(255, 255, 255, 0.25);
   border-radius: 50%;
-  border-top-color: var(--color-purple-dark);
+  border-top-color: rgba(255, 255, 255, 0.9);
   animation: spin 1s ease-in-out infinite;
-  margin: 2rem auto;
+  margin: 0;
 }
 
 @keyframes spin {

@@ -38,7 +38,7 @@ body.manage-events-page::before {
   background: #ffffff;
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: var(--border-radius-lg);
   background: #fff;
   box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.1);
 }
