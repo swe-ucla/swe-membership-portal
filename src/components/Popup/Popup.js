@@ -5,6 +5,8 @@ const Popup = ({
   isOpen,
   onClose,
   message,
+  title,
+  children,
   toast = false,
   duration = 999999,
   confirm = false,
@@ -19,7 +21,6 @@ const Popup = ({
   const [inputText] = useState(inputValue);
   const onCloseRef = useRef(onClose);
   const timersRef = useRef({ fadeOutTimer: null, closeTimer: null });
-  const popupRef = useRef(null);
 
   // Update the ref when onClose changes
   useEffect(() => {
@@ -64,19 +65,6 @@ const Popup = ({
     }
   }, [isOpen]);
 
-  // Auto-scroll popup into view when it opens
-  useEffect(() => {
-    if (isOpen && popupRef.current) {
-      // Small delay to ensure the popup is rendered
-      setTimeout(() => {
-        popupRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "center",
-        });
-      }, 100);
-    }
-  }, [isOpen]);
 
   // Cleanup timers on unmount
   useEffect(() => {
@@ -114,7 +102,6 @@ const Popup = ({
 
   return (
     <div
-      ref={popupRef}
       className={`popup-overlay ${isFadingOut ? "fade-out" : "fade-in"}`}
       onClick={toast ? undefined : handleClose}
     >
@@ -124,28 +111,38 @@ const Popup = ({
       >
         <div className="popup-header">
           <button className="popup-close" onClick={handleClose}>
-            ×
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"
+                fill="#1F1F1F"
+              />
+            </svg>
           </button>
         </div>
+        {title && <h2 className="popup-title">{title}</h2>}
         <div className="popup-content">
-          <p className="popup-message">{message}</p>
-          {confirm && (
-            <div className="popup-actions">
-              {/*
-              <button
-                className="popup-btn popup-btn-cancel"
-                onClick={handleClose}
-              >
-                {cancelText}
-              </button>
-              */}
-              <button
-                className="popup-btn popup-btn-confirm"
-                onClick={handleConfirm}
-              >
-                {confirmText}
-              </button>
-            </div>
+          {children ? (
+            children
+          ) : (
+            <>
+              <p className="popup-message">{message}</p>
+              {confirm && (
+                <div className="popup-actions">
+                  <button
+                    className="popup-btn popup-btn-confirm"
+                    onClick={handleConfirm}
+                  >
+                    {confirmText}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
