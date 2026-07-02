@@ -132,169 +132,313 @@ const EventSignin = () => {
   };
 
   return (
-    <>
-      <div className="container mt-4">
-      <h1>Event Signin</h1>
-      {event ? (
-        <div>
-          <p><strong>Title:</strong> {event.name}</p>
-          <p><strong>Location:</strong> {event.location}</p>
-          <p><strong>Event type:</strong> {getEventType(event) || "—"}</p>
-          {getCommittee(event) && (
-            <p><strong>Committee:</strong> {getCommittee(event)}</p>
-          )}
+    <div className="event-signin-page">
+      <header className="event-signin-header">
+        {event ? (
+          <>
+            <h1>{event.name}</h1>
+            <p className="event-location">
+              Location: {event.location}
+            </p>
 
-          {success ? (
-            <div className="alert alert-success">
-              Attendance recorded successfully! Redirecting...
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="event-signin-form">
-                            {/* Attendance Code Section */}
-              <div className="form-group">
-                <label>Enter Attendance Code:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter 6-letter code"
-                  maxLength={6}
-                  required
-                />
-              
-              {/* Questions Section */}
-              {sortedQuestions.length > 0 && (
-                <div className="mb-4">
-                  <h3>Event Questions</h3>
-                  {sortedQuestions.map((question, index) => (
-                      <div key={index} className="mb-3">
-                        <label className="form-label">
-                          {question.text}
-                          {question.required && <span className="text-danger">*</span>}
-                        </label>
+            {getCommittee(event) && (
+              <p className="event-committee">
+                Hosted by: {getCommittee(event)}
+              </p>
+            )}
+          </>
+        ) : (
+          <p>Loading event...</p>
+        )}
+      </header>
 
-                        {question.type === "shortAnswer" && (
-                          <input
-                            type="text"
-                            className="form-control"
-                            value={responses[index] || ""}
-                            onChange={(e) => handleResponseChange(index, e.target.value)}
-                            required={question.required}
-                          />
-                        )}
+      <main className="event-signin-content">
+        {event && (
+          <>
+            {success ? (
+              <div className="alert alert-success event-message">
+                Attendance recorded successfully! Redirecting...
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="event-signin-form"
+              >
+                <section className="attendance-code-card">
+                  <label
+                    htmlFor="attendance-code"
+                    className="attendance-code-label"
+                  >
+                    Enter Attendance Code:
+                  </label>
 
-                        {question.type === "multipleChoice" && (
-                          <div>
-                            {question.options.map((option, i) => (
-                              <div className="form-check" key={i}>
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`question-${index}`}
-                                  value={option}
-                                  checked={responses[index] === option}
-                                  onChange={() => handleResponseChange(index, option)}
-                                  required={question.required}
-                                />
-                                <label className="form-check-label">{option}</label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                  <input
+                    id="attendance-code"
+                    type="text"
+                    className="form-control"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    maxLength={6}
+                    required
+                  />
+                </section>
 
-                        {question.type === "checkboxes" && (
-                          <div>
-                            {question.options.map((option, i) => (
-                              <div className="form-check" key={i}>
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  name={`question-${index}-${i}`}
-                                  value={option}
-                                  checked={Array.isArray(responses[index]) && responses[index].includes(option)}
-                                  onChange={(e) => {
-                                    const checked = e.target.checked;
-                                    setResponses((prev) => {
-                                      const current = Array.isArray(prev[index]) ? [...prev[index]] : [];
-                                      if (checked) {
-                                        return { ...prev, [index]: [...current, option] };
-                                      } else {
+                {sortedQuestions.length > 0 && (
+                  <section className="event-questions-card">
+                    <h2>Event Questions</h2>
+
+                    <div className="event-question-list">
+                      {sortedQuestions.map((question, index) => (
+                        <div
+                          key={index}
+                          className="event-question"
+                        >
+                          <label className="form-label">
+                            {question.text}
+                            {question.required && (
+                              <span className="text-danger">*</span>
+                            )}
+                          </label>
+
+                          {question.caption && (
+                            <p className="question-caption">
+                              {question.caption}
+                            </p>
+                          )}
+
+                          {question.type === "shortAnswer" && (
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={responses[index] || ""}
+                              onChange={(e) =>
+                                handleResponseChange(
+                                  index,
+                                  e.target.value
+                                )
+                              }
+                              required={question.required}
+                            />
+                          )}
+
+                          {question.type === "multipleChoice" && (
+                            <div className="question-options">
+                              {question.options.map((option, i) => (
+                                <div className="form-check" key={i}>
+                                  <input
+                                    id={`question-${index}-${i}`}
+                                    type="radio"
+                                    className="form-check-input"
+                                    name={`question-${index}`}
+                                    value={option}
+                                    checked={
+                                      responses[index] === option
+                                    }
+                                    onChange={() =>
+                                      handleResponseChange(
+                                        index,
+                                        option
+                                      )
+                                    }
+                                    required={question.required}
+                                  />
+
+                                  <label
+                                    htmlFor={`question-${index}-${i}`}
+                                    className="form-check-label"
+                                  >
+                                    {option}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {question.type === "checkboxes" && (
+                            <div className="question-options">
+                              {question.options.map((option, i) => (
+                                <div className="form-check" key={i}>
+                                  <input
+                                    id={`question-${index}-${i}`}
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    name={`question-${index}-${i}`}
+                                    value={option}
+                                    checked={
+                                      Array.isArray(
+                                        responses[index]
+                                      ) &&
+                                      responses[index].includes(
+                                        option
+                                      )
+                                    }
+                                    onChange={(e) => {
+                                      const checked =
+                                        e.target.checked;
+
+                                      setResponses((prev) => {
+                                        const current =
+                                          Array.isArray(
+                                            prev[index]
+                                          )
+                                            ? [...prev[index]]
+                                            : [];
+
                                         return {
                                           ...prev,
-                                          [index]: current.filter((item) => item !== option),
+                                          [index]: checked
+                                            ? [...current, option]
+                                            : current.filter(
+                                                (item) =>
+                                                  item !== option
+                                              ),
                                         };
+                                      });
+                                    }}
+                                  />
+
+                                  <label
+                                    htmlFor={`question-${index}-${i}`}
+                                    className="form-check-label"
+                                  >
+                                    {option}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {question.type === "trueFalse" && (
+                            <div className="question-options">
+                              {["True", "False"].map(
+                                (option, i) => (
+                                  <div
+                                    className="form-check"
+                                    key={option}
+                                  >
+                                    <input
+                                      id={`question-${index}-${i}`}
+                                      type="radio"
+                                      className="form-check-input"
+                                      name={`question-${index}`}
+                                      value={option}
+                                      checked={
+                                        responses[index] ===
+                                        option
                                       }
-                                    });
-                                  }}
-                                />
-                                <label className="form-check-label">{option}</label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                                      onChange={() =>
+                                        handleResponseChange(
+                                          index,
+                                          option
+                                        )
+                                      }
+                                      required={
+                                        question.required
+                                      }
+                                    />
 
-                        {question.type === "trueFalse" && (
-                          <div>
-                            {["True", "False"].map((option, i) => (
-                              <div className="form-check" key={i}>
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`question-${index}`}
-                                  value={option}
-                                  checked={responses[index] === option}
-                                  onChange={() => handleResponseChange(index, option)}
-                                  required={question.required}
-                                />
-                                <label className="form-check-label">{option}</label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                                    <label
+                                      htmlFor={`question-${index}-${i}`}
+                                      className="form-check-label"
+                                    >
+                                      {option}
+                                    </label>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
 
-                        {question.type === "dropdown" && (
-                          <select
-                            className="form-select"
-                            value={responses[index] || ""}
-                            onChange={(e) => handleResponseChange(index, e.target.value)}
-                            required={question.required}
-                          >
-                            <option value="" disabled>Select an option</option>
-                            {question.options.map((option, i) => (
-                              <option key={i} value={option}>{option}</option>
-                            ))}
-                          </select>
-                        )}
-                        
+                          {question.type === "dropdown" && (
+                            <select
+                              className="form-select"
+                              value={responses[index] || ""}
+                              onChange={(e) =>
+                                handleResponseChange(
+                                  index,
+                                  e.target.value
+                                )
+                              }
+                              required={question.required}
+                            >
+                              <option value="" disabled>
+                                Select an option
+                              </option>
+
+                              {question.options.map(
+                                (option, i) => (
+                                  <option
+                                    key={i}
+                                    value={option}
+                                  >
+                                    {option}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {error && (
+                      <div className="alert alert-danger">
+                        {error}
                       </div>
-                  ))}
+                    )}
 
-                </div>
-              )}
-              </div>
+                    <div className="signin-button-row">
+                      <button
+                        type="submit"
+                        className="signin-button"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  </section>
+                )}
 
+                {sortedQuestions.length === 0 && (
+                  <>
+                    {error && (
+                      <div className="alert alert-danger">
+                        {error}
+                      </div>
+                    )}
 
-              {error && <div className="alert alert-danger">{error}</div>}
-              <button type="submit" className="btn btn-primary mt-3">
-                Sign In
-              </button>
-            </form>
-          )}
-        </div>
-      ) : (
-        <p>Loading event...</p>
-      )}
+                    <div className="signin-button-row">
+                      <button
+                        type="submit"
+                        className="signin-button"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  </>
+                )}
+              </form>
+            )}
+          </>
+        )}
+      </main>
+
       <Popup
         isOpen={popup.isOpen}
         message={popup.message}
         toast={popup.toast}
         confirm={popup.confirm}
         onConfirm={popup.onConfirm}
-        onClose={() => setPopup({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null })}
+        onClose={() =>
+          setPopup({
+            isOpen: false,
+            message: "",
+            toast: false,
+            confirm: false,
+            onConfirm: null,
+          })
+        }
       />
     </div>
-    </>
   );
 };
 
