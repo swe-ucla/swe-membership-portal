@@ -3,7 +3,7 @@ import { doc, getDoc, updateDoc, arrayUnion, increment } from "firebase/firestor
 import { auth, db } from "../firebase";
 import { useParams, useNavigate } from "react-router-dom";
 import Popup from "../Popup/Popup";
-import { getEventType, getCommittee } from "../../constants/eventTypes";
+import { getCommittee } from "../../constants/eventTypes";
 import "./EventSignin.css";
 
 const EventSignin = () => {
