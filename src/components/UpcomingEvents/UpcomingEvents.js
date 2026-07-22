@@ -12,7 +12,6 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
-  deleteDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import "./UpcomingEvents.css";
@@ -35,7 +34,6 @@ function UpcomingEvents() {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(true);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
   const [rsvpEvents, setRsvpEvents] = useState([]);
@@ -470,7 +468,7 @@ function UpcomingEvents() {
           const userData = userSnap.data();
           const currentPoints = Number(userData.swePoints) || 0;
           const attendedEvents = userData.attendedEvents || [];
-          const rsvpEvents = userData.rsvpEvents || [];
+          // const rsvpEvents = userData.rsvpEvents || [];
 
           if (attendedEvents.includes(event.id)) {
             showAlreadySignedInMessage();
