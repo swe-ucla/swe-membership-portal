@@ -660,7 +660,7 @@ const ManageEvents = () => {
                             deleteEvent(event);
                             setOpenDropdownId(null);
                           }}
-                          disabled={deleteLoading || (event.rsvpAttendees?.length > 0) || (event.attendees?.length > 0)}
+                          disabled={deleteLoading}
                         >
                           {deleteLoading ? "Deleting..." : "Delete Event"}
                         </button>
