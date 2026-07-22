@@ -637,12 +637,12 @@ function UpcomingEvents() {
 
                 <div className="event-points-badge">{event.points} pts</div>
 
-                {isToday(event.date) && !hasEventPassed(event) && (
-                  <div className="today-badge">HAPPENING TODAY</div>
-                )}
-
                 {!hasEventPassed(event) && isSignInOpen(event) && (
                   <div className="sign-in-hours-badge">{getHoursLeftToSignIn(event)}</div>
+                )}
+
+                {isToday(event.date) && !hasEventPassed(event) && !isSignInOpen(event) && (
+                  <div className="today-badge">Happening Today</div>
                 )}
 
                 <div className="event-title-row">

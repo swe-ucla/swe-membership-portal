@@ -293,7 +293,7 @@ body.events-page .App {
 
 .sign-in-hours-badge {
   position: absolute;
-  top: 3rem;
+  top: 0.8rem;
   left: 0.8rem;
   background: var(--color-purple-light);
   color: white;
