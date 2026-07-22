@@ -23,7 +23,7 @@
 
 .event-details-popup {
     border-radius: var(--border-radius-md);
-    background: #FFF;
+    background: white;
 
     /* width: 691px; */
     height: fit-content;

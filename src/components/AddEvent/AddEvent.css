@@ -3,8 +3,8 @@
   width: 24px;
   height: 24px;
   border: 0.5px solid var(--color-purple-medium);
-  border-radius: 0.59375rem;
-  background: #fff;
+  border-radius: var(--border-radius-md);
+  background: white;
   cursor: pointer;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -18,8 +18,8 @@
   width: 24px;
   height: 24px;
   border: 0.5px solid var(--color-purple-medium);
-  border-radius: 0.59375rem;
-  background: #fff;
+  border-radius: var(--border-radius-md);
+  background: white;
   cursor: pointer;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -27,24 +27,6 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-}
-/* AddEvent.css - Matching the modern purple theme */
-
-/* CSS Variables specific to AddEvent component */
-.add-event-page {
-  --add-event-purple-dark: #4525a2;
-  --add-event-purple-medium: #6677ca;
-  --add-event-purple-light: #a6a7e3;
-  --add-event-pink: #e85f7a;
-  --add-event-pink-light: #ffb7c5;
-  --add-event-pink-dark: #890c50;
-  --add-event-background: #f5f7fa;
-  --add-event-card: rgba(255, 255, 255, 0.9);
-  --add-event-border-radius-lg: 24px;
-  --add-event-border-radius-md: 16px;
-  --add-event-border-radius-sm: 12px;
-  --add-event-box-shadow: 0 10px 30px rgba(69, 37, 162, 0.15);
-  --add-event-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* Background layering for add event page */
@@ -83,8 +65,8 @@ body.add-event-page::before {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2.5rem;
-  background: #fff;
-  border-radius: 0.625rem;
+  background: white;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
@@ -124,7 +106,7 @@ body.add-event-page::before {
 .add-event-form .add-event-select {
   width: 100%;
   padding: 12px 15px;
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   border: 1px solid #d9d9d9;
   background: rgba(217, 217, 217, 0.32);
   font-size: 1rem;
@@ -216,7 +198,7 @@ body.add-event-page::before {
   position: relative;
   border: 2px dashed var(--color-purple-light);
   background: rgba(217, 217, 217, 0.32);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   color: rgba(0, 0, 0, 0.25);
   text-align: center;
   font-family: Manrope;
@@ -230,7 +212,7 @@ body.add-event-page::before {
 .photo-preview {
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: visible;
   position: relative;
   border: 2px dashed var(--color-purple-light);
@@ -311,7 +293,7 @@ body.add-event-page::before {
 .add-event-form .time-fields input[type="time"],
 .add-event-form .time-fields input[type="date"] {
   height: 2.5625rem;
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   border: 1px solid #d9d9d9;
   background: rgba(217, 217, 217, 0.32);
   padding: 0.5rem 0.6875rem;
@@ -374,8 +356,8 @@ body.add-event-page::before {
   width: 24px;
   height: 24px;
   border: 0.5px solid var(--color-purple-medium);
-  border-radius: 0.59375rem;
-  background: #fff;
+  border-radius: var(--border-radius-md);
+  background: white;
   cursor: pointer;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -389,8 +371,8 @@ body.add-event-page::before {
   width: 24px;
   height: 24px;
   border: 0.5px solid var(--color-purple-medium);
-  border-radius: 0.59375rem;
-  background: #fff;
+  border-radius: var(--border-radius-md);
+  background: white;
   cursor: pointer;
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -437,11 +419,11 @@ body.add-event-page::before {
   margin-right: 0.75rem;
   width: 36px;
   height: 36px;
-  border: 1.5px solid white;
-  border-radius: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: var(--border-radius-md);
   appearance: none;
-  background-color: white;
-  transition: var(--add-event-transition);
+  background-color: #f3f3f3;
+  transition: var(--transition);
   position: relative;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) inset;
@@ -450,6 +432,7 @@ body.add-event-page::before {
 .add-event-form .form-check-input:checked {
   background-color: white;
   border-color: white;
+  border: 1px solid #d9d9d9;
 }
 
 .add-event-form .form-check-input:checked::after {
@@ -506,10 +489,10 @@ body.add-event-page::before {
 .add-event-form .question-item {
   background-color: white;
   border: 1px solid #e0e0fe;
-  border-radius: var(--add-event-border-radius-sm);
+  border-radius: var(--border-radius-md);
   padding: 1.2rem;
   margin-bottom: 1rem;
-  transition: var(--add-event-transition);
+  transition: var(--transition);
 }
 
 .add-event-form .question-item:hover {
@@ -542,10 +525,10 @@ body.add-event-page::before {
 
 .add-event-form .btn {
   padding: 0.7rem 1.4rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   font-weight: 600;
   cursor: pointer;
-  transition: var(--add-event-transition);
+  transition: var(--transition);
   border: none;
   font-size: 1rem;
   letter-spacing: 0.3px;
@@ -564,7 +547,7 @@ body.add-event-page::before {
 }
 
 .add-event-form .btn-success {
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   background: var(--color-purple-light);
   box-shadow: 0 4px 0 0 var(--color-purple-medium);
   color: white;
@@ -577,7 +560,7 @@ body.add-event-page::before {
   letter-spacing: 0.3px;
   padding: 0.7rem 1.4rem;
   cursor: pointer;
-  transition: var(--add-event-transition);
+  transition: var(--transition);
   border: none;
 }
 
@@ -588,10 +571,7 @@ body.add-event-page::before {
 }
 
 .add-event-form .btn-secondary {
-  /* background-color: #f0f0ff;
-  color: var(--add-event-purple-dark);
-  border: 1px solid var(--add-event-purple-medium); */
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   background: var(--color-purple-light);
   box-shadow: 0 4px 0 0 var(--color-purple-medium);
 
@@ -612,7 +592,7 @@ body.add-event-page::before {
 }
 
 .add-event-form .btn-danger {
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   background: var(--color-red-light);
   box-shadow: 0 4px 0 0 var(--color-red-medium);
   padding: 0.5rem 0.8rem;
@@ -640,7 +620,7 @@ body.add-event-page::before {
 }
 
 .add-event-form .btn-outline-primary {
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   background: rgba(180, 143, 239, 0.57);
   box-shadow: 0 4px 0 0 var(--color-purple-light);
   color: white;
@@ -649,7 +629,7 @@ body.add-event-page::before {
   font-family: Gabarito;
   font-weight: 500;
   text-align: center;
-  transition: var(--add-event-transition);
+  transition: var(--transition);
   text-decoration: none;
   display: inline-block;
   cursor: pointer;
@@ -702,10 +682,10 @@ body.add-event-page::before {
 .add-event-form .unauthorized-message {
   text-align: center;
   padding: 3rem;
-  color: var(--add-event-pink-dark);
+  color: var(--color-red-medium);
   font-size: 1.2rem;
   background: rgba(232, 95, 122, 0.1);
-  border-radius: var(--add-event-border-radius-md);
+  border-radius: var(-border-radius-md);
   margin: 2rem auto;
   max-width: 600px;
 }
@@ -741,7 +721,7 @@ body.add-event-page::before {
 @media (max-width: 480px) {
   .add-event-container {
     padding: 1.2rem;
-    border-radius: var(--add-event-border-radius-md);
+    border-radius: var(--border-radius-md);
   }
 
   .add-event-title {
