@@ -64,8 +64,13 @@ const committeeOptions = [
   "Internal Affairs",
   "Advocacy",
   "Mentorship",
-  "General"
+  "General",
 ]
+
+const familyOptions = [
+  "Placeholder Family",
+]
+
 const EditProfileForm = ({ userDetails, onUpdate }) => {
   const [formData, setFormData] = useState(() => {
     const saved = localStorage.getItem("editProfileForm");
@@ -87,7 +92,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       bio: userDetails?.bio || "",
       swePoints: userDetails?.swePoints || 0,
       committee: userDetails?.committee || "",
-      linkedin: userDetails?.linkedin || ""
+      family: userDetails?.family || "",
+      linkedin: userDetails?.linkedin || "",
+      instagram: userDetails?.instagram || "",
     };
   });
 
@@ -129,7 +136,9 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         bio: userDetails?.bio || "",
         swePoints: userDetails?.swePoints || 0,
         committee: userDetails?.committee || "",
-        linkedin: userDetails?.linkedin || ""
+        family: userDetails?.family || "",
+        linkedin: userDetails?.linkedin || "",
+        instagram: userDetails?.instagram || "",
       });
       setBioWordCount(
         userDetails?.bio ? userDetails.bio.trim().split(/\s+/).length : 0
@@ -155,6 +164,14 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
     return (
       url.startsWith("https://linkedin.com/") ||
       url.startsWith("https://www.linkedin.com/")
+    );
+  };
+
+  const isValidInstagram = (url) => {
+    if (!url || !url.trim()) return true; // optional field
+    return (
+      url.startsWith("https://instagram.com/") ||
+      url.startsWith("https://www.instagram.com/")
     );
   };
 
@@ -266,8 +283,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
       major: validateField("Major", formData.major),
-      committee: validateField("Committee", formData.committee),
-      // Removed memberId validation since it's now optional
+
+      // Removed memberId, committee, and family validation since it's now optional
       otherMajor:
         formData.major === "Other" && !formData.otherMajor.trim()
           ? "Please specify your major."
@@ -275,6 +292,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       linkedin:
         formData.linkedin && !isValidLinkedIn(formData.linkedin)
           ? "Please enter a valid LinkedIn URL"
+          : "",
+        instagram:
+          formData.instagram && !isValidInstagram(formData.instagram)
+          ? "Please enter a valid Instagram URL"
           : "",
     };
 
@@ -549,25 +570,69 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
               )}
             </div>
 
+             <div className="form-group">
+                  <label>SWE Member ID</label>
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="memberId"
+                      value={formData.memberId}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
             <div className="form-group">
               <label>Committee</label>
               <div className="input-container">
-                <select
-                  name="committee"
-                  value={formData.committee}
-                  onChange={handleChange}
-                  className={errors.committee ? "input-error" : ""}
+                <select 
+                  name="committee" 
+                  value={formData.committee} 
+                  onChange={handleChange} 
                 >
+                  <option value="">Select a committee</option>
                   {committeeOptions.map((option, index) => (
+                    <option key={index} value={option}>{
+                      option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Family</label>
+              <div className="input-container">
+                <select 
+                  name="family" 
+                  value={formData.family} 
+                  onChange={handleChange} 
+                >
+                  <option value="">Select a family</option>
+                  {familyOptions.map((option, index) => (
                     <option key={index} value={option}>
                       {option}
                     </option>
                   ))}
                 </select>
-                {errors.major && (
-                  <MaterialSymbol icon="error" size={24} className="input-error-icon" />
-                )}
               </div>
+            </div>
+
+            <div className="form-group">
+              <label>Bio</label>
+              <div className="input-container bio-input-container">
+                <textarea
+                  name="bio"
+                  placeholder="Tell people about yourself..."
+                  value={formData.bio}
+                  onChange={handleChange}
+                  className={`bio-textarea${errors.bio ? " bio-textarea-error" : ""}`}
+                  rows={4}
+                />
+              </div>
+              <span className={`bio-word-count${errors.bio ? " bio-word-count-error" : ""}`}>
+                {errors.bio ? errors.bio : `${bioWordCount} / 100 words`}
+              </span>
             </div>
 
             <div className="form-group">
@@ -576,14 +641,35 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                 <input
                   type="text"
                   name="linkedin"
-                  placeholder="https://linkedin.com/in/yourname"
+                  placeholder="https://linkedin.com/in/username"
                   value={formData.linkedin}
                   onChange={handleChange}
                   className={errors.linkedin ? "input-error" : ""}
                 />
               </div>
               {errors.linkedin && (
-                <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                <span className="linkedin-url-error">
+                  {errors.linkedin}
+                </span>
+  )}
+            </div>
+
+             <div className="form-group">
+              <label>Instagram</label>
+              <div className="input-container">
+                <input
+                  type="text"
+                  name="instagram"
+                  placeholder="https://instagram.com/username"
+                  value={formData.instagram}
+                  onChange={handleChange}
+                  className={errors.instagram ? "input-error" : ""}
+                />
+              </div>
+              {errors.instagram && (
+                <span className="instagram-url-error">
+                  {errors.instagram}
+                </span>
               )}
             </div>
 
