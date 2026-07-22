@@ -1,9 +1,13 @@
 /* Global CSS Variables */
 :root {
   /* Base palette (legacy-compatible) */
-  --color-purple-dark: #4525A2;
-  --color-purple-medium: #6677CA;
-  --color-purple-light: #A6A7E3;
+  --color-purple-light: #B48FEF;
+  --color-purple-medium: #895FD8;
+  --color-purple-dark: #6B47C3;
+  --color-red-light: #FC5E5E;
+  --color-red-medium: #e13a3a;
+  --color-red-dark: #c00;
+
   --color-pink: #E85F7A;
   --color-pink-light: #FFB7C5;
   --color-pink-dark: #890C50;
@@ -30,11 +34,6 @@
 
   --color-border-default: #d9d9d9;
   --color-border-strong: var(--color-brand-secondary);
-
-  --color-state-success: #2ed573;
-  --color-state-danger: #e13a3a;
-  --color-state-warning: #f5c422;
-  --color-state-info: var(--color-brand-secondary);
 
   /* Gradients */
   --primary-gradient: linear-gradient(135deg, var(--color-purple-dark) 0%, var(--color-purple-medium) 100%);

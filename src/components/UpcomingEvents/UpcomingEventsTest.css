@@ -269,7 +269,7 @@ body.events-page {
 /* Button styles */
 .events-container .btn {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);

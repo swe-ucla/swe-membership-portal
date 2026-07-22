@@ -637,12 +637,12 @@ function UpcomingEvents() {
 
                 <div className="event-points-badge">{event.points} pts</div>
 
-                {isToday(event.date) && !hasEventPassed(event) && (
-                  <div className="today-badge">HAPPENING TODAY</div>
-                )}
-
                 {!hasEventPassed(event) && isSignInOpen(event) && (
                   <div className="sign-in-hours-badge">{getHoursLeftToSignIn(event)}</div>
+                )}
+
+                {isToday(event.date) && !hasEventPassed(event) && !isSignInOpen(event) && (
+                  <div className="today-badge">Happening Today</div>
                 )}
 
                 <div className="event-title-row">
@@ -682,14 +682,14 @@ function UpcomingEvents() {
                           onClick={showAlreadySignedInMessage}
                           className="btn btn-signed-in-badge"
                         >
-                          SIGNED IN
+                          Signed In
                         </button>
                       ) : (
                         <button
                           onClick={() => handleSignUpClick(event.id)}
                           className="btn btn-sign-in"
                         >
-                          SIGN IN
+                          Sign In
                         </button>
                       )
                     ) : isRSVPOpen(event) ? (
@@ -699,7 +699,7 @@ function UpcomingEvents() {
                           onClick={() => handleCancelRegistration(event.id, 0)}
                           className="btn btn-cancel-rsvp"
                         >
-                          CANCEL RSVP
+                          Cancel RSVP
                         </button>
                       ) : (
                         <button
@@ -737,7 +737,7 @@ function UpcomingEvents() {
                       onClick={() => handleMoreInfo(event)}
                       className="btn btn-more-info"
                     >
-                      MORE INFO
+                      More Info <MaterialSymbol icon="arrow_forward" size={24} />
                     </button>
                     <a
                       href={buildGoogleCalendarUrl(event)}
@@ -755,6 +755,7 @@ function UpcomingEvents() {
           </div>
         ) : (
           <div className="empty-message">
+            <MaterialSymbol icon="event_busy" size={44} />
             <p>No upcoming events.</p>
           </div>
         )}

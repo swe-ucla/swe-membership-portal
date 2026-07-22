@@ -110,9 +110,9 @@
 .attendance-code-card {
   margin-bottom: 32px;
   padding: 16px;
-  background: #fff;
+  background: white;
   border: 2px solid #aa7cff;
-  border-radius: 10px;
+  border-radius: var(--border-radius-sm);
 }
 
 .attendance-code-label {
@@ -126,9 +126,9 @@
 
 .event-questions-card {
   padding: 18px 16px 22px;
-  background: #fff;
+  background: white;
   border: 1px solid #d8d8d8;
-  border-radius: 10px;
+  border-radius: var(--border-radius-sm);
 }
 
 .event-questions-card h2 {
@@ -172,7 +172,7 @@
   padding: 8px 12px;
   background: #f4f4f4;
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: var(--border-radius-sm);
   box-shadow: none;
   color: #222;
   font-size: 15px;
@@ -185,7 +185,7 @@
 
 .event-signin-form .form-control:focus,
 .event-signin-form .form-select:focus {
-  background: #fff;
+  background: white;
   border-color: #9f70ec;
   box-shadow: 0 0 0 3px rgba(159, 112, 236, 0.15);
 }
@@ -237,8 +237,8 @@
   background: #ad81eb;
   border: 0;
   border-bottom: 3px solid #7951bd;
-  border-radius: 10px;
-  color: #fff;
+  border-radius: var(--border-radius-sm);
+  color: white;
   font-size: 13px;
   line-height: 1;
   cursor: pointer;

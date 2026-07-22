@@ -170,7 +170,8 @@ body.events-page .App {
 .committee-filter .form-select {
   padding: 0.5rem 1rem;
   border: 1.5px solid white;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 2.5px 0px white;
   background: transparent;
   color: white;
   font-weight: 600;
@@ -188,7 +189,7 @@ body.events-page .App {
 .committee-filter .form-select:focus {
   outline: none;
   border-color: white;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 0px white;
 }
 
 .event-type-filter .form-select option,
@@ -269,7 +270,7 @@ body.events-page .App {
   background: white;
   color: black;
   padding: 0.3rem 0.6rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-md);
   font-size: 0.9rem;
   z-index: 5;
   /* Ensure it's above other elements */
@@ -283,7 +284,7 @@ body.events-page .App {
   background: var(--color-purple-light);
   color: white;
   padding: 0.3rem 0.6rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-md);
   font-size: 0.9rem;
   z-index: 5;
   /* Ensure it's above other elements */
@@ -292,12 +293,12 @@ body.events-page .App {
 
 .sign-in-hours-badge {
   position: absolute;
-  top: 3rem;
+  top: 0.8rem;
   left: 0.8rem;
   background: var(--color-purple-light);
   color: white;
   padding: 0.3rem 0.6rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-md);
   font-size: 0.9rem;
   z-index: 5;
   /* Ensure it's above other elements */
@@ -372,7 +373,7 @@ body.events-page .App {
 .event-registration-status {
   padding: 0.5rem 0.8rem;
   background: rgba(69, 37, 162, 0.05);
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   border: 2px solid var(--color-purple-dark);
   color: var(--color-purple-dark);
   font-weight: 600;
@@ -381,7 +382,7 @@ body.events-page .App {
 /* Button styles */
 .events-container .btn {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
@@ -417,49 +418,56 @@ body.events-page .App {
   border-radius: var(--border-radius-md);
   padding: 0.3rem 0.8rem;
   color: white;
+  border: 1.5px solid white;
+  box-shadow: 0 2.5px 0px white;
 }
 
-/* Shared hover scale */
+/* Shared hover */
 .btn-event:hover,
 .btn-more-info:hover,
 .btn-gcal:hover,
-.btn-sign-in:hover {
-  scale: 1.05;
+.btn-sign-in:hover,
+.btn-cancel-rsvp:hover {
+  scale: 1.06;
+  color: white;
+  border: 1.5px solid white;
+  background-color: transparent;
 }
 
 .btn-event {
   border: 1.5px solid white;
 }
 
-.btn-event:hover {
-  border: 2px solid #F5C422;
-  background-color: #FAD424;
-  color: white;
+.btn-sign-in,
+.btn-sign-in:hover {
+  background-color: var(--color-purple-light);
+  border: 1.5px solid var(--color-purple-light);
+  box-shadow: 0 4px 0px var(--color-purple-medium);
 }
 
-.btn-sign-in,
-.btn-signed-in-badge {
-  background-color: var(--color-purple-light);
+.btn-signed-in-badge{
+  pointer-events: none;
+  background-color: var(--color-purple-medium);
+  border: 1.5px solid var(--color-purple-medium);
+  box-shadow: 0 4px 0px var(--color-purple-dark);
 }
 
 /* Cancel RSVP button */
 .btn-cancel-rsvp {
-  background-color: #F5C422;
-  border: 2px solid #E4B548;
-}
-
-/* More Info button */
-.btn-more-info {
-  border: 1.5px solid white;
-  background-color: transparent;
-}
-
-.btn-more-info:hover {
-  border: 2px solid white;
+  background-color: var(--color-red-light);
+  border: 1.5px solid var(--color-red-light);
+  box-shadow: 0 4px 0px var(--color-red-medium);
   color: white;
-  background-color: transparent;
 }
 
+.btn-cancel-rsvp:hover {
+  background-color: var(--color-red-medium);
+  border: 1.5px solid var(--color-red-medium);
+  box-shadow: 0 4px 0px var(--color-red-dark);
+}
+
+/* More Info and Google Calendar buttons */
+.btn-more-info,
 .btn-gcal {
   display: flex;
   align-items: center;
@@ -473,15 +481,9 @@ body.events-page .App {
   min-width: 0;
 }
 
-.btn-gcal:hover {
-  border: 2px solid white;
-  color: white;
-  background-color: transparent;
-}
-
 .btn-event-danger {
   color: var(--color-pink);
-  border: 2px solid var(--color-pink);
+  border: 1.5px solid var(--color-pink);
 }
 
 .btn-add-event {
@@ -491,7 +493,7 @@ body.events-page .App {
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -507,28 +509,57 @@ body.events-page .App {
 }
 
 /* Loading and empty states */
-.events-container .loading-message,
-.events-container .empty-message {
+.events-container .loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   text-align: center;
-  padding: 2.5rem;
-  font-size: 1.2rem;
-  color: #555;
-  background: white;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--box-shadow);
+  padding: 3rem 2rem;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
   max-width: 600px;
-  margin: 2.5rem auto;
+  margin: 3rem auto;
+}
+
+.events-container .loading-message p {
+  margin: 0;
+}
+
+.events-container .empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 3rem 2rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  max-width: 600px;
+  margin: 3rem auto;
+}
+
+.events-container .empty-message p {
+  margin: 0;
+}
+
+.events-container .empty-message .material-symbols-rounded {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 2.75rem;
 }
 
 /* Loading spinner */
 .events-container .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(69, 37, 162, 0.2);
+  border: 4px solid rgba(255, 255, 255, 0.25);
   border-radius: 50%;
-  border-top-color: var(--color-purple-dark);
+  border-top-color: rgba(255, 255, 255, 0.9);
   animation: spin 1s ease-in-out infinite;
-  margin: 2rem auto;
+  margin: 0;
 }
 
 @keyframes spin {
@@ -596,7 +627,7 @@ body.events-page .App {
   width: 100%;
   padding: 10px 12px;
   border: 2px solid #e0e0fe;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
   transition: var(--transition);
   margin-bottom: 0.8rem;
@@ -694,7 +725,7 @@ body.events-page .App {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-md);
   position: relative;
 }
 
@@ -820,7 +851,7 @@ body.events-page .App {
   background: white;
   padding: 1rem 2rem 2rem;
   margin-top: 0;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   width: 90%;
   max-width: 500px;
   max-height: 500px;
@@ -854,8 +885,8 @@ body.events-page .App {
   max-width: 320px;
 
   padding: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  border-radius: var(--border-radius-md);
 
   font-size: 1rem;
   box-sizing: border-box;
@@ -882,7 +913,7 @@ body.events-page .App {
 .events-container .btn-secondary {
   background: #f5f5f5;
   color: #666;
-  border: 1px solid #ddd;
+  border: 1.5px solid #ddd;
 }
 
 .events-container .btn-secondary:hover {
@@ -903,8 +934,8 @@ body.events-page .App {
   display: block;
   margin: 0 auto 16px;
   background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  border: 1.5px solid #ddd;
+  border-radius: var(--border-radius-md);
   padding: 0.6rem 0.9rem;
   font-size: 1rem;
   box-sizing: border-box;

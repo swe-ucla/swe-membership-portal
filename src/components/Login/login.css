@@ -107,14 +107,13 @@
   text-decoration: underline;
 }
 
-/* Form inputs */
-.auth-inner .form-control,
-input.register-form-control {
+/* Form inputs (auth pages override Bootstrap loaded after forms.css) */
+.auth-inner .form-control {
   border: 1px solid #d1d5db;
-  border-radius: 15px;
+  border-radius: var(--border-radius-md);
   padding: 16px 24px;
   margin-bottom: 20px;
-  background-color: #fff;
+  background-color: white;
   transition: var(--transition);
   font-size: 0.95rem;
   width: 100%;
@@ -123,16 +122,14 @@ input.register-form-control {
   font-family: inherit;
 }
 
-.auth-inner .form-control:focus,
-input.register-form-control:focus {
+.auth-inner .form-control:focus {
   border-color: var(--color-purple-medium);
   box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1);
   outline: none;
-  background-color: #fff;
+  background-color: white;
 }
 
-.auth-inner .form-control::placeholder,
-input.register-form-control::placeholder {
+.auth-inner .form-control::placeholder {
   color: #9ca3af;
   font-weight: 400;
 }
@@ -248,7 +245,7 @@ input.register-form-control::placeholder {
   padding: 16px 24px !important;
   background: white !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 15px !important;
+  border-radius: var(--border-radius-md) !important;
   cursor: pointer !important;
   transition: var(--transition) !important;
   font-size: 0.95rem !important;
@@ -302,7 +299,7 @@ input.register-form-control::placeholder {
   padding: 16px 24px !important;
   background: white !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 15px !important;
+  border-radius: var(--border-radius-md) !important;
   cursor: pointer !important;
   transition: all 0.3s ease !important;
   font-size: 0.95rem !important;
