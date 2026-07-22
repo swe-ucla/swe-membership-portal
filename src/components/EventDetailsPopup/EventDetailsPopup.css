@@ -22,7 +22,7 @@
 }
 
 .event-details-popup {
-    border-radius: 10px;
+    border-radius: var(--border-radius-md);
     background: #FFF;
 
     /* width: 691px; */
@@ -65,7 +65,7 @@
 
 .event-details-title {
     margin: 0;
-    color: #000;
+    color: black;
     font-family: Gabarito;
     font-size: 24px;
     font-style: normal;
@@ -92,7 +92,7 @@
 }
 
 .event-details-close:hover {
-  background-color: #f0f0f0;
+  background-color: white;
 }
 
 .event-details-content {

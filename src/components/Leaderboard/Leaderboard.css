@@ -1,6 +1,5 @@
 /* Leaderboard.css with modern purple theme */
 .leaderboard-background-container {
-  --color-purple-medium: #895fd8;
   --color-gold: #ffd700;
   --color-silver: #c0c0c0;
   --color-bronze: #cd7f32;
@@ -24,7 +23,7 @@
   margin: 16rem auto 2rem;
   padding: 2rem;
   background-color: white;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-lg);
 }
 
 .leaderboard-title {
@@ -89,7 +88,7 @@
   align-items: center;
   border-bottom: 1px solid #f0f0f0;
   transition: var(--transition-bounce);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   margin: 0.25rem 0;
   position: relative;
   overflow: hidden;

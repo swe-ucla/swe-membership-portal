@@ -35,11 +35,11 @@ body.manage-events-page::before {
   max-width: 100%;
   margin: 2rem;
   padding: 2.5rem;
-  background: #ffffff;
+  background: white;
   position: relative;
   overflow: hidden;
   border-radius: var(--border-radius-lg);
-  background: #fff;
+  background: white;
   box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -87,10 +87,10 @@ body.manage-events-page::before {
 }
 
 .btn-create-event {
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   border: none;
-  background: #b48fef;
-  box-shadow: 0 4px 0 0 #895fd8;
+  background: var(--color-purple-light);
+  box-shadow: 0 4px 0 0 var(--color-purple-medium);
 
   display: flex;
   /* width: 188px;
@@ -101,7 +101,7 @@ body.manage-events-page::before {
   gap: 10px;
   flex-shrink: 0;
 
-  color: #fff;
+  color: white;
   text-align: center;
   font-family: Gabarito;
   font-size: 20px;
@@ -127,7 +127,7 @@ body.manage-events-page::before {
   height: 21px;
   font-weight: bold;
   flex-shrink: 0;
-  fill: #fff;
+  fill: white;
 }
 
 /* Tabs styling */
@@ -143,7 +143,7 @@ body.manage-events-page::before {
   margin-bottom: 2rem;
   position: relative;
   background: #f0f0f0;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   padding: 4px;
   width: fit-content;
   /* margin-left: auto; */
@@ -157,7 +157,7 @@ body.manage-events-page::before {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   background: transparent;
 
   color: rgba(0, 0, 0, 0.5);
@@ -182,8 +182,8 @@ body.manage-events-page::before {
 }
 
 .tab-button.active {
-  background: #b48fef;
-  box-shadow: 0 4px 0 0 #895fd8;
+  background: var(--color-purple-light);
+  box-shadow: 0 4px 0 0 var(--color-purple-medium);
   color: white;
 }
 
@@ -193,8 +193,8 @@ body.manage-events-page::before {
   border-collapse: collapse;
   overflow: hidden;
   flex-shrink: 0;
-  border-radius: 10px;
-  background: #ffffff;
+  border-radius: var(--border-radius-md);
+  background: white;
   /* box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.10); */
 }
 
@@ -307,15 +307,15 @@ body.manage-events-page::before {
 .dot {
   width: 8px;
   height: 8px;
-  background: #895fd8;
+  background: var(--color-purple-medium);
   border-radius: 50%;
   display: block;
   flex-shrink: 0;
 }
 
 .action-dropdown {
-  background: #fff;
-  border-radius: 10px;
+  background: white;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 9999;
   min-width: 190px;
@@ -350,13 +350,13 @@ body.manage-events-page::before {
 }
 
 .dropdown-item-delete {
-  color: #fc5e5e;
+  color: var(--color-red-light);
   border-top: 1px solid #f0f0f0;
 }
 
 .dropdown-item-delete:hover:not(:disabled) {
   background: rgba(217, 217, 217, 0.32);
-  color: #fc5e5e;
+  color: var(--color-red-light);
 }
 
 .qr-modal-overlay {
@@ -374,8 +374,8 @@ body.manage-events-page::before {
 
 .qr-modal {
   position: relative;
-  background: #fff;
-  border-radius: 1rem;
+  background: white;
+  border-radius: var(--border-radius-md);
   padding: 2rem 2.5rem;
   max-width: 90vw;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -415,14 +415,14 @@ body.manage-events-page::before {
 
 .qr-modal-canvas {
   padding: 0.5rem;
-  background: #fff;
+  background: white;
   border-radius: 0.5rem;
 }
 
 .qr-modal-url {
   font-family: Manrope;
   font-size: 0.8rem;
-  color: #895fd8;
+  color: var(--color-purple-medium);
   word-break: break-all;
   text-align: center;
   max-width: 320px;
@@ -430,11 +430,11 @@ body.manage-events-page::before {
 }
 
 .qr-modal-download {
-  background: #b48fef;
-  box-shadow: 0 4px 0 0 #895fd8;
-  color: #fff;
+  background: var(--color-purple-light);
+  box-shadow: 0 4px 0 0 var(--color-purple-medium);
+  color: white;
   border: none;
-  border-radius: 0.625rem;
+  border-radius: var(--border-radius-md);
   padding: 0.5rem 1.25rem;
   font-family: Gabarito;
   font-size: 1rem;
@@ -444,8 +444,8 @@ body.manage-events-page::before {
 }
 
 .qr-modal-download:hover {
-  background: #895fd8;
-  box-shadow: 0 4px 0 0 #7a4fc7;
+  background: var(--color-purple-medium);
+  box-shadow: 0 4px 0 0 var(--color-purple-dark);
   transform: translateY(-1px);
 }
 
@@ -522,7 +522,7 @@ body.manage-events-page::before {
   background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   font-size: 14px;
   font-weight: 500;
   z-index: 9999;
@@ -572,8 +572,8 @@ body.manage-events-page::before {
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
-  border: 1.5px solid #b48fef;
-  border-radius: 8px;
+  border: 1.5px solid var(--color-purple-light);
+  border-radius: var(--border-radius-md);
   background: white;
   color: #231f20;
   font-family: Gabarito;
@@ -603,7 +603,7 @@ body.manage-events-page::before {
   height: 36px;
   padding: 0 6px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   background: transparent;
   color: #231f20;
   font-family: Gabarito;
@@ -711,10 +711,11 @@ body.manage-events-page::before {
 .event-type-filter-admin .form-select-admin,
 .committee-filter-admin .form-select-admin {
   padding: 0.5rem 1rem;
-  border: 1.5px solid #895fd8;
-  border-radius: 8px;
+  border: 1.5px solid var(--color-purple-medium);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 2.5px 0px var(--color-purple-medium);
   background: transparent;
-  color: #895fd8;
+  color: var(--color-purple-medium);
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -730,11 +731,11 @@ body.manage-events-page::before {
 .event-type-filter-admin .form-select-admin:focus,
 .committee-filter-admin .form-select-admin:focus {
   outline: none;
-  border-color: #895fd8;
+  border-color: var(--color-purple-medium);
 }
 
 .event-type-filter-admin .form-select-admin option,
 .committee-filter-admin .form-select-admin option {
-  background: #895fd8;
+  background: var(--color-purple-medium);
   color: white; /* so text is readable */
 }

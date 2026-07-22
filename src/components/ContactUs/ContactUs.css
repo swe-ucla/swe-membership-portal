@@ -10,7 +10,7 @@ body.contact-page {
   background-position: top center;
   height: 1100px;
   background-attachment: scroll;
-  background-color: #b9a8fd;
+  background-color: var(--color-purple-light);
 }
 
 .contact-container {
@@ -52,7 +52,7 @@ body.contact-page {
 
 .social-link:hover {
   color: white;
-  background: #b48fef;
+  background: var(--color-purple-light);
   transform: translateY(-3px);
 }
 
@@ -135,9 +135,9 @@ body.contact-page {
 .contact-form .send-btn {
   color: white;
   border: none;
-  box-shadow: 0 4px 0px #3f2188;
+  box-shadow: 0 4px 0px var(--color-purple-dark);
   border-radius: var(--border-radius-md);
-  background-color: #6d42c0;
+  background-color: var(--color-purple-medium);
   text-align: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
@@ -148,7 +148,7 @@ body.contact-page {
 }
 
 .contact-form .send-btn:hover {
-  background: #3f2188;
+  background: var(--color-purple-dark);
   box-shadow: 0 4px 0px rgb(22, 10, 45);
   color: white;
 }

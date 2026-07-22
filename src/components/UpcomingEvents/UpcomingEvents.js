@@ -682,14 +682,14 @@ function UpcomingEvents() {
                           onClick={showAlreadySignedInMessage}
                           className="btn btn-signed-in-badge"
                         >
-                          SIGNED IN
+                          Signed In
                         </button>
                       ) : (
                         <button
                           onClick={() => handleSignUpClick(event.id)}
                           className="btn btn-sign-in"
                         >
-                          SIGN IN
+                          Sign In
                         </button>
                       )
                     ) : isRSVPOpen(event) ? (
@@ -699,14 +699,14 @@ function UpcomingEvents() {
                           onClick={() => handleCancelRegistration(event.id, 0)}
                           className="btn btn-cancel-rsvp"
                         >
-                          CANCEL RSVP
+                          Cancel RSVP
                         </button>
                       ) : (
                         <button
                           onClick={() => handleRSVP(event.id)}
                           className="btn btn-event"
                         >
-                          RESERVE
+                          RSVP
                         </button>
                       )
                     ) : // Event is in the future but registration is closed, or event is past
@@ -737,7 +737,7 @@ function UpcomingEvents() {
                       onClick={() => handleMoreInfo(event)}
                       className="btn btn-more-info"
                     >
-                      MORE INFO
+                      More Info <MaterialSymbol icon="arrow_forward" size={24} />
                     </button>
                     <a
                       href={buildGoogleCalendarUrl(event)}

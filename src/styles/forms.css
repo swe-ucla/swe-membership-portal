@@ -1,10 +1,10 @@
 /* Shared Form Styles */
 .form-control {
   border: 1px solid #d1d5db;
-  border-radius: 15px;
+  border-radius: var(--border-radius-md);
   padding: 16px 24px;
   margin-bottom: 20px;
-  background-color: #fff;
+  background-color: white;
   transition: var(--transition);
   font-size: 0.95rem;
   width: 100%;
@@ -18,7 +18,7 @@
   border-color: var(--color-purple-medium);
   box-shadow: 0 0 0 3px rgba(102, 119, 202, 0.1);
   outline: none;
-  background-color: #fff;
+  background-color: white;
 }
 
 .form-control::placeholder {
@@ -49,9 +49,9 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e0e0fe;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-size: 0.95rem;
-  background-color: #fff;
+  background-color: white;
   transition: var(--transition);
   box-sizing: border-box;
   font-family: inherit;
