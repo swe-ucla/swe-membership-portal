@@ -14,11 +14,16 @@ const EventSignin = () => {
   const [success, setSuccess] = useState(false);
   const [responses, setResponses] = useState({}); // Store question responses
   const [popup, setPopup] = useState({ isOpen: false, message: "", toast: false, confirm: false, onConfirm: null });
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventDetails = async () => {
-      if (!eventID) return;
+      if (!eventID) {
+        setError("Invalid event link.");
+        setLoading(false);
+        return;
+      }
 
       try {
         const docRef = doc(db, "events", eventID);
@@ -32,11 +37,32 @@ const EventSignin = () => {
       } catch (error) {
         console.error("Error fetching event details:", error);
         setError("Error loading event details");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEventDetails();
   }, [eventID, navigate]);
+
+  useEffect(() => {
+    const savedDraft = sessionStorage.getItem("eventSigninDraft");
+    if (savedDraft) {
+      try {
+        const { code: savedCode, responses: savedResponses } = JSON.parse(savedDraft);
+        if (savedCode) {
+          setCode(savedCode);
+        }
+        if (savedResponses) {
+          setResponses(savedResponses);
+        }
+        sessionStorage.removeItem("eventSigninDraft");
+      } catch (error) {
+        console.error("Error restoring event signin draft:", error);
+        sessionStorage.removeItem("eventSigninDraft");
+      }
+    }
+  }, []);
 
   const sortedQuestions = useMemo(() => {
     if (!event?.questions) return [];
@@ -78,7 +104,17 @@ const EventSignin = () => {
       try {
         const user = auth.currentUser;
         if (!user) {
-          setError("You must be logged in to sign in to an event");
+          const redirectPath = `/eventsignin/${eventID}`;
+          sessionStorage.setItem("eventSigninRedirect", redirectPath);
+          sessionStorage.setItem(
+            "eventSigninDraft",
+            JSON.stringify({
+              code,
+              responses,
+            })
+          );
+
+          navigate("/login");
           return;
         }
 
@@ -130,6 +166,28 @@ const EventSignin = () => {
       setError("Invalid attendance code");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="event-signin-page">
+        <div className="event-signin-content">
+          <p>Loading event...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !event) {
+    return (
+      <div className="event-signin-page">
+        <div className="event-signin-content">
+          <div className="alert alert-danger">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="event-signin-page">

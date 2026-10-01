@@ -52,15 +52,15 @@ function Onboarding() {
   const [isVerificationSent, setIsVerificationSent] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/upcoming");
-      }
-    });
+  // useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       navigate("/upcoming");
+  //     }
+  //   });
 
-    return () => unsub();
-  }, [navigate]);
+  //   return () => unsub();
+  // }, [navigate]);
 
   // Login logic
   const handleLogin = async (e) => {
@@ -90,7 +90,15 @@ function Onboarding() {
         return;
       }
       
-      navigate("/upcoming");
+      // navigate("/upcoming");
+
+      const redirectTo = sessionStorage.getItem("eventSigninRedirect");
+      if (redirectTo) {
+        sessionStorage.removeItem("eventSigninRedirect");
+        navigate(redirectTo, { replace: true });
+      } else {
+        navigate("/upcoming", { replace: true });
+      }
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         setErrorMessage("Invalid email or password.");
