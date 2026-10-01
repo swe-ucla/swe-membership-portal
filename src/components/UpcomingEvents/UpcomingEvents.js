@@ -446,6 +446,26 @@ function UpcomingEvents() {
     const { event, code, responses } = signInPopup;
     if (!event || !code) return;
 
+    if (!isSignInOpen(event)) {
+      setPopup({
+        isOpen: true,
+        message: `Sign-in is not currently open for this event. Sign-in opens ${event.signInOpensHoursBefore} hour${
+          event.signInOpensHoursBefore === 1 ? "" : "s"
+        } before the event starts.`,
+        toast: false,
+        confirm: true,
+        confirmText: "OK",
+        onConfirm: () => {
+          setPopup((prev) => ({
+            ...prev,
+            isOpen: false,
+          }));
+        },
+      });
+
+      return;
+    }
+
     if (hasMissingRequiredResponses(event.questions || [], responses || {})) {
       setPopup({
         isOpen: true,

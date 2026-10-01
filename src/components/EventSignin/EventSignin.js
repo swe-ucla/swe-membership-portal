@@ -78,9 +78,57 @@ const EventSignin = () => {
     }));
   };
 
+  const isSignInOpen = (event) => {
+    if (!event?.date || event.signInOpensHoursBefore == null) {
+      return false;
+    }
+
+    const eventDate = event.date?.toDate
+      ? event.date.toDate()
+      : new Date(event.date);
+
+    const now = new Date();
+
+    const signInOpens = new Date(
+      eventDate.getTime() -
+        Number(event.signInOpensHoursBefore) * 60 * 60 * 1000
+    );
+
+    let eventEndTime;
+
+    if (event.endTime && event.startTime) {
+      const [startHour, startMinute] = event.startTime.split(":").map(Number);
+      const [endHour, endMinute] = event.endTime.split(":").map(Number);
+
+      const durationMinutes =
+        endHour * 60 +
+        endMinute -
+        (startHour * 60 + startMinute);
+
+      eventEndTime = new Date(
+        eventDate.getTime() + durationMinutes * 60 * 1000
+      );
+    } else {
+      eventEndTime = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
+    }
+
+    return now >= signInOpens && now <= eventEndTime;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    // Don't allow sign-in outside the event's sign-in window
+    if (!isSignInOpen(event)) {
+      setError(
+        `Sign-in is not currently open. Sign-in opens ${event.signInOpensHoursBefore} hour${
+          event.signInOpensHoursBefore === 1 ? "" : "s"
+        } before the event starts.`
+      );
+      return;
+    }
     
     // Validate required questions
     const missingRequired = sortedQuestions.some((q, index) => {
@@ -93,8 +141,6 @@ const EventSignin = () => {
     
       return !response || (typeof response === "string" && response.trim() === "");
     });
-    
-
     if (missingRequired) {
       setError("Please answer all required questions");
       return;
@@ -118,15 +164,7 @@ const EventSignin = () => {
           return;
         }
 
-        // Update event attendance in Firebase
-        const eventRef = doc(db, "events", eventID);
-        await updateDoc(eventRef, {
-          attendees: arrayUnion(user.uid),
-          attendeeCount: increment(1),
-          [`responses.${user.uid}`]: responses
-        });
-
-        // Also update user's attended events
+        // Update user's attended events
         const userRef = doc(db, "Users", user.uid);
         const userSnap = await getDoc(userRef);
 
@@ -152,12 +190,18 @@ const EventSignin = () => {
             swePoints: currentPoints + (Number(event.points) || 0),
             // lastEventSignIn: new Date().toISOString(),
           });
-
-          setSuccess(true);
-          setTimeout(() => {
-            navigate("/upcoming");
-          }, 2000);
         }
+
+        // Update event attendance in Firebase
+        const eventRef = doc(db, "events", eventID);
+        await updateDoc(eventRef, {
+          attendees: arrayUnion(user.uid),
+          attendeeCount: increment(1),
+          [`responses.${user.uid}`]: responses
+        });
+
+        setSuccess(true);
+        setTimeout(() => { navigate("/upcoming"); }, 2000);
       } catch (error) {
         console.error("Error recording attendance:", error);
         setError("Failed to record attendance");

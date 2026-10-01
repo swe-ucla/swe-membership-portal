@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Onboarding.css";
 import "../Login/login.css";
 import SignInwithGoogle from "../signInWIthGoogle";
@@ -10,7 +10,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+// import { onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
