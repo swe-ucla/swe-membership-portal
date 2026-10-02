@@ -57,7 +57,13 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
       toast.success("Successfully signed in with Google", {
         position: "top-center",
       });
-      navigate("/profile");
+      const redirectPath = sessionStorage.getItem("eventSigninRedirect");
+      if (redirectPath) {
+        sessionStorage.removeItem("eventSigninRedirect");
+        navigate(redirectPath);
+      } else {
+        navigate("/profile");
+      }
     } catch (error) {
       console.error("Google sign-in error:", error);
       if (error.code === 'auth/popup-closed-by-user') {
@@ -77,7 +83,13 @@ function SignInwithGoogle({ onGoogleSignInStart, onGoogleSignInEnd }) {
               toast.success("Accounts linked successfully!", {
                 position: "top-center",
               });
-              navigate("/profile");
+              const redirectPath = sessionStorage.getItem("eventSigninRedirect");
+              if (redirectPath) {
+                sessionStorage.removeItem("eventSigninRedirect");
+                navigate(redirectPath);
+              } else {
+                navigate("/profile");
+              }
             }
           } catch (linkError) {
             toast.error("Failed to link accounts. Please try again.", {
