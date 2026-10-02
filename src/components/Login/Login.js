@@ -51,7 +51,6 @@ function Login() {
       }
       
       console.log("User logged in Successfully");
-      navigate("/");
     } catch (error) {
       console.log("Full error object:", error);
       console.log("Error code:", error.code);

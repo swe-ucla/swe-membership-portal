@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Onboarding.css";
 import "../Login/login.css";
 import SignInwithGoogle from "../signInWIthGoogle";
@@ -10,7 +10,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+// import { onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -52,15 +52,15 @@ function Onboarding() {
   const [isVerificationSent, setIsVerificationSent] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/upcoming");
-      }
-    });
+  // useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       navigate("/upcoming");
+  //     }
+  //   });
 
-    return () => unsub();
-  }, [navigate]);
+  //   return () => unsub();
+  // }, [navigate]);
 
   // Login logic
   const handleLogin = async (e) => {
@@ -90,7 +90,15 @@ function Onboarding() {
         return;
       }
       
-      navigate("/upcoming");
+      // navigate("/upcoming");
+
+      const redirectTo = sessionStorage.getItem("eventSigninRedirect");
+      if (redirectTo) {
+        sessionStorage.removeItem("eventSigninRedirect");
+        navigate(redirectTo, { replace: true });
+      } else {
+        navigate("/upcoming", { replace: true });
+      }
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         setErrorMessage("Invalid email or password.");
