@@ -79,20 +79,6 @@ const LeaderboardReset = () => {
     setSummary(null);
   };
 
-  const handlePreview = async () => {
-    setIsWorking(true);
-    try {
-      const rows = await fetchResetRows(parseCutoffDate(cutoffValue));
-      setSummary(summarize(rows));
-      downloadCsv(rows, "leaderboard-reset-preview");
-    } catch (error) {
-      console.error("Error previewing leaderboard reset:", error);
-      showMessage("Failed to build the preview. Nothing was changed.");
-    } finally {
-      setIsWorking(false);
-    }
-  };
-
   const performReset = async () => {
     handlePopupClose();
     setIsWorking(true);
@@ -100,7 +86,7 @@ const LeaderboardReset = () => {
     let updated = 0;
     let total = 0;
     try {
-      // Read again so the reset and its backup use the latest points, not the preview's
+      // Read again so the reset and its backup use the latest points, not the confirm popup's
       const rows = await fetchResetRows(parseCutoffDate(cutoffValue));
       total = rows.length;
       downloadCsv(rows, "leaderboard-reset-backup");
@@ -193,13 +179,6 @@ const LeaderboardReset = () => {
       )}
 
       <div className="leaderboard-reset-actions">
-        <button
-          className="leaderboard-reset-preview"
-          onClick={handlePreview}
-          disabled={isWorking}
-        >
-          Download Preview
-        </button>
         <button
           className="leaderboard-reset-submit"
           onClick={handleResetClick}

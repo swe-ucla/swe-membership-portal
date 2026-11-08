@@ -54,7 +54,6 @@
   margin-top: 1.25rem;
 }
 
-.leaderboard-reset-preview,
 .leaderboard-reset-submit {
   padding: 6px 12px;
   border-radius: var(--border-radius-md);
@@ -64,13 +63,6 @@
   cursor: pointer;
 }
 
-.leaderboard-reset-preview {
-  border: 1.5px solid var(--color-purple-medium);
-  box-shadow: 0 2.5px 0 var(--color-purple-medium);
-  background: transparent;
-  color: var(--color-purple-medium);
-}
-
 .leaderboard-reset-submit {
   border: none;
   box-shadow: 0 4px 0 0 var(--color-purple-medium);
@@ -78,7 +70,6 @@
   color: white;
 }
 
-.leaderboard-reset-preview:disabled,
 .leaderboard-reset-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
