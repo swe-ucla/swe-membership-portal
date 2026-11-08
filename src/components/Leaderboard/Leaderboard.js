@@ -9,6 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { isActiveMember } from "../../utils/graduation";
 import "./Leaderboard.css";
 
 import goldMedal from "../../assets/leaderboard-gold-medal.svg";
@@ -46,6 +47,7 @@ function Leaderboard() {
 
       querySnapshot.docs.forEach((doc) => {
         const userData = doc.data();
+        if (!isActiveMember(userData)) return; // Graduated members aren't ranked
         const userKey = `${userData.firstName}-${userData.lastName}`;
 
         // Only add the user if they haven't been added yet or if they have a higher score

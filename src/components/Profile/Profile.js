@@ -3,6 +3,7 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "./EditProfileForm";
+import { isActiveMember } from "../../utils/graduation";
 import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
@@ -141,6 +142,9 @@ function Profile() {
                             className="year-icon"
                           />
                           {userDetails.year}
+                          {userDetails.graduationQuarter &&
+                            userDetails.graduationYear &&
+                            ` (${userDetails.graduationQuarter} ${userDetails.graduationYear})`}
                         </p>
                       </div>
                       <div className="profile-fields-right">
@@ -172,7 +176,10 @@ function Profile() {
                 </div>
               </div>
 
-              {(!userDetails.year || !userDetails.major) && (
+              {(!userDetails.year ||
+                !userDetails.major ||
+                !userDetails.graduationQuarter ||
+                !userDetails.graduationYear) && (
                 <div className="alert-banner">
                   <MaterialSymbol
                     icon="error"
@@ -206,7 +213,9 @@ function Profile() {
                         className="stat-icon"
                       />
                       <span className="stat-value">
-                        Rank #{Number(userDetails.rank) || 0}
+                        {isActiveMember(userDetails)
+                          ? `Rank #${Number(userDetails.rank) || 0}`
+                          : "Not ranked"}
                       </span>
                     </div>
                   </div>
