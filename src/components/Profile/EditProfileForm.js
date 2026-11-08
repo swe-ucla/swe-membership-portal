@@ -7,6 +7,7 @@ import ProfilePictureCropModal from "./ProfilePictureCropModal";
 import "./Profile.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
+import { GRADUATION_QUARTERS, getGraduationYearOptions} from "../../utils/graduation";
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "SWE Membership Portal";
@@ -81,6 +82,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       firstName: userDetails?.firstName || "",
       lastName: userDetails?.lastName || "",
       year: userDetails?.year || "",
+      graduationQuarter: userDetails?.graduationQuarter || "",
+      graduationYear: userDetails?.graduationYear
+        ? String(userDetails.graduationYear)
+        : "",
       major: majorOptions.includes(userDetails?.major)
         ? userDetails?.major
         : "Other",
@@ -90,7 +95,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
           : "",
       memberId: userDetails?.memberId || "",
       bio: userDetails?.bio || "",
-      swePoints: userDetails?.swePoints || 0,
       committee: userDetails?.committee || "",
       family: userDetails?.family || "",
       linkedin: userDetails?.linkedin || "",
@@ -125,6 +129,10 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
         firstName: userDetails?.firstName || "",
         lastName: userDetails?.lastName || "",
         year: userDetails?.year || "",
+        graduationQuarter: userDetails?.graduationQuarter || "",
+        graduationYear: userDetails?.graduationYear
+          ? String(userDetails.graduationYear)
+          : "",
         major: majorOptions.includes(userDetails?.major)
           ? userDetails?.major
           : "Other",
@@ -134,7 +142,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
             : "",
         memberId: userDetails?.memberId || "",
         bio: userDetails?.bio || "",
-        swePoints: userDetails?.swePoints || 0,
         committee: userDetails?.committee || "",
         family: userDetails?.family || "",
         linkedin: userDetails?.linkedin || "",
@@ -263,7 +270,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
   };
 
   const validateField = (name, value) => {
-    return value.trim() ? "" : `${name} is required`;
+    return value?.trim() ? "" : `${name} is required`;
   };
 
   const handleSubmit = async (e) => {
@@ -282,6 +289,11 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
       firstName: validateField("First Name", formData.firstName),
       lastName: validateField("Last Name", formData.lastName),
       year: validateField("Year", formData.year),
+      graduationQuarter: validateField(
+        "Graduation Quarter",
+        formData.graduationQuarter
+      ),
+      graduationYear: validateField("Graduation Year", formData.graduationYear),
       major: validateField("Major", formData.major),
 
       // Removed memberId, committee, and family validation since it's now optional
@@ -312,6 +324,8 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
     try {
       let updatedFormData = { ...formData };
+      delete updatedFormData.swePoints; // Older saved drafts still include points
+      updatedFormData.graduationYear = Number(formData.graduationYear);
 
       if (imageFile) {
         const formDataToUpload = new FormData();
@@ -530,6 +544,58 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
                 {errors.year && (
                   <MaterialSymbol icon="error" size={24} className="input-error-icon" />
                 )}
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Graduation Quarter</label>
+                <div className="input-container">
+                  <select
+                    name="graduationQuarter"
+                    value={formData.graduationQuarter || ""}
+                    onChange={handleChange}
+                    className={errors.graduationQuarter ? "input-error" : ""}
+                  >
+                    <option value="" disabled>
+                      Select a quarter
+                    </option>
+                    {GRADUATION_QUARTERS.map((quarter) => (
+                      <option key={quarter} value={quarter}>
+                        {quarter}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.graduationQuarter && (
+                    <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Graduation Year</label>
+                <div className="input-container">
+                  <select
+                    name="graduationYear"
+                    value={formData.graduationYear || ""}
+                    onChange={handleChange}
+                    className={errors.graduationYear ? "input-error" : ""}
+                  >
+                    <option value="" disabled>
+                      Select a year
+                    </option>
+                    {getGraduationYearOptions(userDetails?.graduationYear).map(
+                      (year) => (
+                        <option key={year} value={String(year)}>
+                          {year}
+                        </option>
+                      )
+                    )}
+                  </select>
+                  {errors.graduationYear && (
+                    <MaterialSymbol icon="error" size={24} className="input-error-icon" />
+                  )}
+                </div>
               </div>
             </div>
 

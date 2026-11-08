@@ -173,7 +173,14 @@ const EventSignin = () => {
           const currentPoints = Number(userData.swePoints) || 0;
           const attendedEvents = userData.attendedEvents || [];
 
-          if (!userData.firstName || !userData.lastName || !userData.year || !userData.major) {
+          if (
+            !userData.firstName ||
+            !userData.lastName ||
+            !userData.year ||
+            !userData.graduationQuarter ||
+            !userData.graduationYear ||
+            !userData.major
+          ) {
             setPopup({ isOpen: true, message: "Please complete your profile before signing in.", toast: false });
             navigate("/profile");
             return;
