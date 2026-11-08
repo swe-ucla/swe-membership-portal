@@ -90,7 +90,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
           : "",
       memberId: userDetails?.memberId || "",
       bio: userDetails?.bio || "",
-      swePoints: userDetails?.swePoints || 0,
       committee: userDetails?.committee || "",
       family: userDetails?.family || "",
       linkedin: userDetails?.linkedin || "",
@@ -134,7 +133,6 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
             : "",
         memberId: userDetails?.memberId || "",
         bio: userDetails?.bio || "",
-        swePoints: userDetails?.swePoints || 0,
         committee: userDetails?.committee || "",
         family: userDetails?.family || "",
         linkedin: userDetails?.linkedin || "",
@@ -312,6 +310,7 @@ const EditProfileForm = ({ userDetails, onUpdate }) => {
 
     try {
       let updatedFormData = { ...formData };
+      delete updatedFormData.swePoints; // Older saved drafts still include points
 
       if (imageFile) {
         const formDataToUpload = new FormData();
