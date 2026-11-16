@@ -21,6 +21,7 @@ import {
   getCommittee,
 } from "../../constants/eventTypes";
 import "./ManageEvents.css";
+import { buildRsvpUrl } from "../../utils/rsvpLink";
 
 const ManageEvents = () => {
   const [pastEvents, setPastEvents] = useState([]);
@@ -210,9 +211,12 @@ const ManageEvents = () => {
       return;
     }
 
-    const questionHeaders = event.questions
-      ? event.questions.map((q) => q.text)
-      : [];
+    const rsvpQuestions = event.rsvpQuestions || [];
+    const signInQuestions = event.questions || [];
+    const questionHeaders = [
+      ...rsvpQuestions.map((q) => `RSVP: ${q.text}`),
+      ...signInQuestions.map((q) => q.text),
+    ];
     const headers = ["Email", "Full Name", "Major", "Year", "RSVP'ed", "Attended", ...questionHeaders];
 
     const escapeCSVValue = (value) => {
@@ -247,10 +251,14 @@ const ManageEvents = () => {
 
     orderedUsers.forEach((user) => {
       const userId = user.id;
-      const responses = event.responses?.[userId] || {};
-      const responseValues = questionHeaders.map((_, index) =>
-        escapeCSVValue(responses[index] || "")
-      );
+      const formatAnswer = (value) =>
+        Array.isArray(value) ? value.join("; ") : value || "";
+      const rsvpResponses = event.rsvpResponses?.[userId] || {};
+      const signInResponses = event.responses?.[userId] || {};
+      const responseValues = [
+        ...rsvpQuestions.map((_, index) => escapeCSVValue(formatAnswer(rsvpResponses[index]))),
+        ...signInQuestions.map((_, index) => escapeCSVValue(formatAnswer(signInResponses[index]))),
+      ];
 
       const didRSVP = rsvpIds.includes(userId);
       const didAttend = attendeeIds.includes(userId);
@@ -279,6 +287,24 @@ const ManageEvents = () => {
     const csvContent = csvRows.join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `${event.name}-All-Users.csv`);
+  };
+
+  const copyRsvpLink = async (event) => {
+    try {
+      await navigator.clipboard.writeText(buildRsvpUrl(event.id));
+      setPopup({
+        isOpen: true,
+        message: "RSVP link copied.",
+        toast: true,
+      });
+    } catch (error) {
+      console.error("Error copying RSVP link:", error);
+      setPopup({
+        isOpen: true,
+        message: "Couldn't copy the RSVP link.",
+        toast: false,
+      });
+    }
   };
 
   const copyEmailsToClipboard = async (event, type = 'attendees') => {
@@ -566,7 +592,7 @@ const ManageEvents = () => {
                         e.stopPropagation();
                         if (openDropdownId !== event.id) {
                           const rect = e.currentTarget.getBoundingClientRect();
-                          const estimatedHeight = 280;
+                          const estimatedHeight = 320;
                           const openUpward = window.innerHeight - rect.bottom < estimatedHeight;
                           setDropdownPosition({
                             top: rect.bottom + 4,
@@ -617,6 +643,15 @@ const ManageEvents = () => {
                           }
                         >
                           Copy Attendee Emails
+                        </button>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => {
+                            copyRsvpLink(event);
+                            setOpenDropdownId(null);
+                          }}
+                        >
+                          Copy RSVP Link
                         </button>
                         <button
                           className="dropdown-item"

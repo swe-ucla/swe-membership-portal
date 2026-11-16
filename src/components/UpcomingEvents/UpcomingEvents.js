@@ -12,8 +12,10 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
+  deleteField,
 } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { buildRsvpPath } from "../../utils/rsvpLink";
 import "./UpcomingEvents.css";
 import { MaterialSymbol } from "react-material-symbols";
 import "react-material-symbols/rounded";
@@ -29,6 +31,43 @@ import {
   getCommittee,
 } from "../../constants/eventTypes";
 
+function hasEventPassed(event) {
+  const now = new Date();
+  const eventDate = event.date?.toDate
+    ? event.date.toDate()
+    : new Date(event.date);
+  const eventEndTime = event.endTime
+    ? new Date(
+      eventDate.getTime() +
+      (parseInt(event.endTime.split(":")[0]) * 60 +
+        parseInt(event.endTime.split(":")[1]) -
+        parseInt(event.startTime?.split(":")[0] || "0") * 60 -
+        parseInt(event.startTime?.split(":")[1] || "0")) *
+      60000
+    )
+    : new Date(eventDate.getTime() + 2 * 3600000);
+  return now > eventEndTime;
+}
+
+function getRsvpClosesAt(event) {
+  if (event.rsvpClosesAt) {
+    return event.rsvpClosesAt.toDate
+      ? event.rsvpClosesAt.toDate()
+      : new Date(event.rsvpClosesAt);
+  }
+  if (!event.date) return null;
+  const eventDate = event.date.toDate ? event.date.toDate() : new Date(event.date);
+  const hours = Number(event.signInOpensHoursBefore) || 1;
+  return new Date(eventDate.getTime() - hours * 3600000);
+}
+
+function isRSVPOpen(event) {
+  if (hasEventPassed(event)) return false;
+  const closesAt = getRsvpClosesAt(event);
+  if (!closesAt || Number.isNaN(closesAt.getTime())) return false;
+  return new Date() < closesAt;
+}
+
 function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -37,6 +76,16 @@ function UpcomingEvents() {
   const navigate = useNavigate();
   const [isSignedIn, setIsSignedIn] = useState([]);
   const [rsvpEvents, setRsvpEvents] = useState([]);
+  const [rsvpResponseMap, setRsvpResponseMap] = useState({});
+  const [userReady, setUserReady] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [rsvpPopup, setRsvpPopup] = useState({
+    isOpen: false,
+    event: null,
+    responses: {},
+    error: "",
+    submitting: false,
+  });
   const [popup, setPopup] = useState({
     isOpen: false,
     message: "",
@@ -67,6 +116,10 @@ function UpcomingEvents() {
   const fetchUserData = useCallback(async () => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
+        const rsvpId = new URLSearchParams(window.location.search).get("rsvp");
+        if (rsvpId) {
+          sessionStorage.setItem("eventSigninRedirect", buildRsvpPath(rsvpId));
+        }
         navigate("/login");
         return;
       }
@@ -78,6 +131,7 @@ function UpcomingEvents() {
         const userData = userSnap.data();
         setIsSignedIn(userData.attendedEvents || []); // store user's signed-in events
         setRsvpEvents(userData.rsvpEvents || []); // store user's RSVP events
+        setRsvpResponseMap(userData.rsvpResponses || {});
 
         if (userData.hasOwnProperty("isAdmin")) {
           setIsAdmin(userData.isAdmin);
@@ -86,6 +140,7 @@ function UpcomingEvents() {
           setIsAdmin(false);
         }
       }
+      setUserReady(true);
     });
   }, [navigate]);
 
@@ -147,24 +202,6 @@ function UpcomingEvents() {
       today.getMonth() === eventDateObj.getMonth() &&
       today.getFullYear() === eventDateObj.getFullYear()
     );
-  };
-
-  const hasEventPassed = (event) => {
-    const now = new Date();
-    const eventDate = event.date?.toDate
-      ? event.date.toDate()
-      : new Date(event.date);
-    const eventEndTime = event.endTime
-      ? new Date(
-        eventDate.getTime() +
-        (parseInt(event.endTime.split(":")[0]) * 60 +
-          parseInt(event.endTime.split(":")[1]) -
-          parseInt(event.startTime?.split(":")[0] || "0") * 60 -
-          parseInt(event.startTime?.split(":")[1] || "0")) *
-        60000
-      )
-      : new Date(eventDate.getTime() + 2 * 3600000);
-    return now > eventEndTime;
   };
 
   const formatDate = (timestamp) => {
@@ -275,6 +312,7 @@ function UpcomingEvents() {
           rsvpEvents: arrayRemove(eventId),
           attendedEvents: arrayRemove(eventId),
           swePoints: updatedSWEPoints,
+          [`rsvpResponses.${eventId}`]: deleteField(),
         });
 
         // Remove from event doc
@@ -284,12 +322,18 @@ function UpcomingEvents() {
         await updateDoc(eventRef, {
           attendees: arrayRemove(userId),
           rsvpAttendees: arrayRemove(userId),
+          [`rsvpResponses.${userId}`]: deleteField(),
           ...(wasInRsvp && { rsvpCount: increment(-1) }),
           ...(wasInAttendees && { attendeeCount: increment(-1) }),
         });
 
         setRsvpEvents(updatedRsvp);
         setIsSignedIn(updatedAttended);
+        setRsvpResponseMap((prev) => {
+          const next = { ...prev };
+          delete next[eventId];
+          return next;
+        });
       }
     } catch (error) {
       console.error("Error canceling registration:", error);
@@ -343,18 +387,6 @@ function UpcomingEvents() {
       : `${diffInMinutes} Minute${diffInMinutes !== 1 ? "s" : ""} Left to Sign In`;
   };
 
-  const isRSVPOpen = (event) => {
-    if (!event.date || !event.signInOpensHoursBefore) return false;
-    const eventDate = event.date?.toDate
-      ? event.date.toDate()
-      : new Date(event.date);
-    const now = new Date();
-    const signInOpens = new Date(
-      eventDate.getTime() - (event.signInOpensHoursBefore || 1) * 3600000
-    ); // Convert hours to milliseconds
-    return now < signInOpens;
-  };
-
   const hasUserRSVPd = (eventId) => {
     return rsvpEvents.includes(eventId);
   };
@@ -367,30 +399,90 @@ function UpcomingEvents() {
     return hasUserRSVPd(eventId) || hasUserSignedIn(eventId);
   };
 
-  const handleRSVP = async (eventId) => {
-    const userId = auth.currentUser?.uid;
-    if (!userId) return;
+  const closeRsvpPopup = () => {
+    setRsvpPopup({
+      isOpen: false,
+      event: null,
+      responses: {},
+      error: "",
+      submitting: false,
+    });
+  };
 
-    const userRef = doc(db, "Users", userId);
-    const eventRef = doc(db, "events", eventId);
+  const openRsvpPopup = useCallback((event, responses) => {
+    const saved = responses || rsvpResponseMap[event.id] || {};
+    setRsvpPopup({
+      isOpen: true,
+      event,
+      responses: { ...saved },
+      error: "",
+      submitting: false,
+    });
+  }, [rsvpResponseMap]);
+
+  const handleRsvpSubmit = async () => {
+    const { event, responses, submitting } = rsvpPopup;
+    if (!event || submitting) return;
+
+    if (hasMissingRequiredResponses(event.rsvpQuestions || [], responses || {})) {
+      setRsvpPopup((prev) => ({
+        ...prev,
+        error: "Please answer all required questions",
+      }));
+      return;
+    }
+
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      sessionStorage.setItem("eventSigninRedirect", buildRsvpPath(event.id));
+      navigate("/login");
+      return;
+    }
+
+    const already = rsvpEvents.includes(event.id);
+    setRsvpPopup((prev) => ({ ...prev, submitting: true, error: "" }));
 
     try {
-      // Add event to user's RSVP list
+      const userRef = doc(db, "Users", userId);
+      const eventRef = doc(db, "events", event.id);
+
+      if (!already) {
+        await updateDoc(userRef, {
+          rsvpEvents: arrayUnion(event.id),
+        });
+        await updateDoc(eventRef, {
+          rsvpAttendees: arrayUnion(userId),
+          rsvpCount: increment(1),
+        });
+        setRsvpEvents((prev) =>
+          prev.includes(event.id) ? prev : [...prev, event.id]
+        );
+      }
+
       await updateDoc(userRef, {
-        rsvpEvents: arrayUnion(eventId),
+        [`rsvpResponses.${event.id}`]: responses || {},
       });
-
-      // Add user to event's rsvpAttendees
       await updateDoc(eventRef, {
-        rsvpAttendees: arrayUnion(userId),
-        rsvpCount: increment(1),
+        [`rsvpResponses.${userId}`]: responses || {},
       });
 
-      setRsvpEvents((prev) => [...prev, eventId]);
-      setPopup({ isOpen: true, message: "RSVP successful!", toast: true });
+      setRsvpResponseMap((prev) => ({
+        ...prev,
+        [event.id]: responses || {},
+      }));
+      closeRsvpPopup();
+      setPopup({
+        isOpen: true,
+        message: already ? "RSVP updated!" : "RSVP successful!",
+        toast: true,
+      });
     } catch (error) {
       console.error("Error RSVPing:", error);
-      setPopup({ isOpen: true, message: "Failed to RSVP.", toast: true });
+      setRsvpPopup((prev) => ({
+        ...prev,
+        submitting: false,
+        error: "Failed to save your RSVP.",
+      }));
     }
   };
 
@@ -576,6 +668,71 @@ function UpcomingEvents() {
     };
   }, [fetchEvents, fetchUserData]);
 
+  const rsvpLinkId = searchParams.get("rsvp");
+
+  useEffect(() => {
+    if (!rsvpLinkId || loading || !userReady) return;
+
+    let cancelled = false;
+
+    const clearRsvpParam = () => {
+      setSearchParams((current) => {
+        const next = new URLSearchParams(current);
+        next.delete("rsvp");
+        return next;
+      }, { replace: true });
+    };
+
+    const showNotice = (message) => {
+      setPopup({
+        isOpen: true,
+        message,
+        toast: false,
+        confirm: true,
+        confirmText: "OK",
+        onConfirm: () => setPopup((prev) => ({ ...prev, isOpen: false })),
+      });
+      clearRsvpParam();
+    };
+
+    const openFromLink = (event) => {
+      if (hasEventPassed(event)) {
+        showNotice("This event has already passed.");
+        return;
+      }
+      if (!isRSVPOpen(event)) {
+        showNotice("RSVP is closed for this event.");
+        return;
+      }
+      openRsvpPopup(event, rsvpResponseMap[event.id]);
+      clearRsvpParam();
+    };
+
+    const listed = events.find((event) => event.id === rsvpLinkId);
+    if (listed) {
+      openFromLink(listed);
+      return;
+    }
+
+    getDoc(doc(db, "events", rsvpLinkId))
+      .then((snap) => {
+        if (cancelled) return;
+        if (!snap.exists()) {
+          showNotice("This RSVP link is invalid.");
+          return;
+        }
+        openFromLink({ id: snap.id, ...snap.data() });
+      })
+      .catch((error) => {
+        console.error("Error opening RSVP link:", error);
+        if (!cancelled) showNotice("Couldn't open this RSVP link.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [rsvpLinkId, loading, userReady, events, rsvpEvents, rsvpResponseMap, setSearchParams, openRsvpPopup]);
+
   useEffect(() => {
     let result = events;
     if (selectedEventType !== "") {
@@ -695,64 +852,61 @@ function UpcomingEvents() {
                   </div>
 
                   <div className="event-card-footer">
-                    {isSignInOpen(event) ? (
-                      // Sign-in period is open
-                      hasUserSignedIn(event.id) ? (
-                        <button
-                          onClick={showAlreadySignedInMessage}
-                          className="btn btn-signed-in-badge"
-                        >
-                          Signed In
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleSignUpClick(event.id)}
-                          className="btn btn-sign-in"
-                        >
-                          Sign In
-                        </button>
-                      )
-                    ) : isRSVPOpen(event) ? (
-                      // RSVP period is open
-                      isUserRegistered(event.id) ? (
-                        <button
-                          onClick={() => handleCancelRegistration(event.id, 0)}
-                          className="btn btn-cancel-rsvp"
-                        >
-                          Cancel RSVP
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleRSVP(event.id)}
-                          className="btn btn-event"
-                        >
-                          RSVP
-                        </button>
-                      )
-                    ) : // Event is in the future but registration is closed, or event is past
-                      isUserRegistered(event.id) ? (
-                        <button
-                          onClick={() =>
-                            handleCancelRegistration(
-                              event.id,
-                              hasUserSignedIn(event.id) ? event.points || 0 : 0
-                            )
-                          }
-                          className="btn btn-cancel-rsvp"
-                        >
-                          Cancel{" "}
-                          {hasUserSignedIn(event.id) ? "Registration" : "RSVP"}
-                        </button>
-                      ) : (
-                        <span>
-                          {new Date() >
-                            (event.date?.toDate
-                              ? event.date.toDate()
-                              : new Date(event.date))
-                            ? "Event has passed"
-                            : "Registration closed"}
-                        </span>
-                      )}
+                    {isSignInOpen(event) && hasUserSignedIn(event.id) ? (
+                      <button
+                        onClick={showAlreadySignedInMessage}
+                        className="btn btn-signed-in-badge"
+                      >
+                        Signed In
+                      </button>
+                    ) : (
+                      <>
+                        {isRSVPOpen(event) && (
+                          <button
+                            onClick={() => openRsvpPopup(event)}
+                            className="btn btn-event"
+                          >
+                            {hasUserRSVPd(event.id) ? "Edit RSVP" : "RSVP"}
+                          </button>
+                        )}
+                        {isRSVPOpen(event) && hasUserRSVPd(event.id) && !isSignInOpen(event) && (
+                          <button
+                            onClick={() => handleCancelRegistration(event.id, 0)}
+                            className="btn btn-cancel-rsvp"
+                          >
+                            Cancel RSVP
+                          </button>
+                        )}
+                        {isSignInOpen(event) && (
+                          <button
+                            onClick={() => handleSignUpClick(event.id)}
+                            className="btn btn-sign-in"
+                          >
+                            Sign In
+                          </button>
+                        )}
+                        {!isRSVPOpen(event) && !isSignInOpen(event) && (
+                          isUserRegistered(event.id) ? (
+                            <button
+                              onClick={() =>
+                                handleCancelRegistration(
+                                  event.id,
+                                  hasUserSignedIn(event.id) ? event.points || 0 : 0
+                                )
+                              }
+                              className="btn btn-cancel-rsvp"
+                            >
+                              Cancel{" "}
+                              {hasUserSignedIn(event.id) ? "Registration" : "RSVP"}
+                            </button>
+                          ) : (
+                            <span>
+                              {hasEventPassed(event) ? "Event has passed" : "RSVP closed"}
+                            </span>
+                          )
+                        )}
+                      </>
+                    )}
                     <button
                       onClick={() => handleMoreInfo(event)}
                       className="btn btn-more-info"
@@ -812,6 +966,7 @@ function UpcomingEvents() {
         message={popup.message}
         toast={popup.toast}
         confirm={popup.confirm}
+        confirmText={popup.confirmText || "Confirm"}
         onConfirm={popup.onConfirm}
         onClose={() =>
           setPopup({
@@ -887,6 +1042,53 @@ function UpcomingEvents() {
               </div>
             )}
           </div>
+        )}
+      </Popup>
+
+      <Popup
+        isOpen={rsvpPopup.isOpen}
+        onClose={closeRsvpPopup}
+        title={rsvpPopup.event?.name}
+        className="popup-wide"
+      >
+        {rsvpPopup.event && (
+          <>
+            <h3 className="signin-popup-title">
+              {rsvpEvents.includes(rsvpPopup.event.id) ? "Update your RSVP" : "RSVP"}
+            </h3>
+            <p className="rsvp-popup-meta">
+              {formatEventDate(rsvpPopup.event.date)}
+              {formatEventTimeRange(rsvpPopup.event)
+                ? ` | ${formatEventTimeRange(rsvpPopup.event)}`
+                : ""}
+              {rsvpPopup.event.location ? ` · ${rsvpPopup.event.location}` : ""}
+            </p>
+            <SignInQuestions
+              questions={rsvpPopup.event.rsvpQuestions || []}
+              responses={rsvpPopup.responses || {}}
+              setResponses={(newResponses) =>
+                setRsvpPopup((prev) => ({
+                  ...prev,
+                  responses: newResponses,
+                  error: "",
+                }))
+              }
+            />
+            {rsvpPopup.error && <p className="signin-error">{rsvpPopup.error}</p>}
+            <div className="popup-buttons">
+              <button
+                className="btn btn-primary"
+                onClick={handleRsvpSubmit}
+                disabled={rsvpPopup.submitting}
+              >
+                {rsvpPopup.submitting
+                  ? "Saving..."
+                  : rsvpEvents.includes(rsvpPopup.event.id)
+                    ? "Update RSVP"
+                    : "RSVP"}
+              </button>
+            </div>
+          </>
         )}
       </Popup>
 

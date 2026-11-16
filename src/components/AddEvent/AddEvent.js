@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { auth, db } from "../firebase";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, deleteField } from "firebase/firestore";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import Popup from "../Popup/Popup";
@@ -11,6 +11,7 @@ import {
   getCommittee,
 } from "../../constants/eventTypes";
 import "./AddEvent.css";
+import { buildRsvpUrl } from "../../utils/rsvpLink";
 
 // Add Cloudinary constants
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgtsekxga/image/upload";
@@ -47,11 +48,188 @@ const buildClubCalendarUrl = (event) => {
 
 };
 
+const emptyQuestionDraft = {
+  text: "",
+  required: true,
+  type: "shortAnswer",
+  options: [""],
+};
+
+function QuestionEditor({ title, hint, questions, onChange, onError }) {
+  const [draft, setDraft] = useState(emptyQuestionDraft);
+
+  const updateOption = (index, value) => {
+    const updatedOptions = [...draft.options];
+    updatedOptions[index] = value;
+    setDraft((prev) => ({ ...prev, options: updatedOptions }));
+  };
+
+  const addQuestion = () => {
+    if (!draft.text.trim()) return;
+
+    const needsOptions = ["multipleChoice", "checkboxes", "dropdown"].includes(draft.type);
+    if (needsOptions && draft.options.every((opt) => opt.trim() === "")) {
+      onError("Please fill in at least one option.");
+      return;
+    }
+
+    onChange([...questions, { ...draft }]);
+    setDraft(emptyQuestionDraft);
+  };
+
+  return (
+    <div className="questions-section">
+      <h3 className="questions-title">{title}</h3>
+      {hint && <p className="questions-hint">{hint}</p>}
+      {questions.map((question, index) => (
+        <div key={index} className="question-item">
+          <div className="question-header">
+            <p className="question-title">
+              <strong>Question {index + 1}:</strong> {question.text}{" "}
+            </p>
+            <div className="question-actions">
+              <button
+                type="button"
+                className="btn btn-danger btn-sm"
+                onClick={() => onChange(questions.filter((_, i) => i !== index))}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              checked={question.required}
+              onChange={() =>
+                onChange(
+                  questions.map((q, i) =>
+                    i === index ? { ...q, required: !q.required } : q
+                  )
+                )
+              }
+            />
+            <label className="form-check-label">Required</label>
+          </div>
+          {question.options && question.type !== "shortAnswer" && (
+            <ul className="mb-0 ps-4 text-start">
+              {question.options
+                .filter((opt) => opt.trim() !== "")
+                .map((opt, i) => (
+                  <li key={i}>{opt}</li>
+                ))}
+            </ul>
+          )}
+        </div>
+      ))}
+
+      <div className="add-question-form">
+        <input
+          type="text"
+          className="add-event-input"
+          placeholder="Enter new question"
+          value={draft.text}
+          onChange={(e) => setDraft((prev) => ({ ...prev, text: e.target.value }))}
+        />
+        <div className="event-form-group">
+          <label>Question Type:</label>
+          <select
+            className="add-event-select"
+            style={{ width: "100%", minWidth: "0", maxWidth: "none" }}
+            value={draft.type}
+            onChange={(e) =>
+              setDraft((prev) => ({
+                ...prev,
+                type: e.target.value,
+                options: [""],
+              }))
+            }
+          >
+            <option value="shortAnswer">Short Answer</option>
+            <option value="multipleChoice">Multiple Choice</option>
+            <option value="checkboxes">Checkboxes</option>
+            <option value="trueFalse">True/False</option>
+            <option value="dropdown">Dropdown</option>
+          </select>
+        </div>
+        {["multipleChoice", "checkboxes", "dropdown"].includes(draft.type) && (
+          <div className="event-form-group">
+            <label>Options:</label>
+            {draft.options.map((option, index) => (
+              <div key={index} className="d-flex align-items-center mb-1">
+                <input
+                  type="text"
+                  className="add-event-input me-2"
+                  placeholder={`Option ${index + 1}`}
+                  value={option}
+                  onChange={(e) => updateOption(index, e.target.value)}
+                />
+                {draft.options.length > 1 && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() =>
+                      setDraft((prev) => ({
+                        ...prev,
+                        options: prev.options.filter((_, i) => i !== index),
+                      }))
+                    }
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-primary"
+              onClick={() =>
+                setDraft((prev) => ({ ...prev, options: [...prev.options, ""] }))
+              }
+              style={{ marginTop: "0.5rem" }}
+            >
+              Add Option
+            </button>
+          </div>
+        )}
+        <div className="form-check" style={{ marginBottom: "0.5rem" }}>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={draft.required}
+            onChange={(e) =>
+              setDraft((prev) => ({ ...prev, required: e.target.checked }))
+            }
+          />
+          <label className="form-check-label">Required</label>
+        </div>
+        <button type="button" className="btn btn-secondary" onClick={addQuestion}>
+          Add Question
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function toDateTimeLocalValue(value) {
+  if (!value) return "";
+  let date;
+  if (value.toDate) date = value.toDate();
+  else if (value.seconds != null) date = new Date(value.seconds * 1000);
+  else if (value._seconds != null) date = new Date(value._seconds * 1000);
+  else date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 function AddEvent() {
   const [, setUserDetails] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [eventId, setEventId] = useState("");
+  const [shareEventId, setShareEventId] = useState("");
   const [popup, setPopup] = useState({
     isOpen: false,
     message: "",
@@ -88,7 +266,9 @@ function AddEvent() {
     attendanceCode: "",
     points: 1,
     questions: [],
+    rsvpQuestions: [],
     signInOpensHoursBefore: 1, // default 1 hour before
+    rsvpClosesAt: "",
     photo: null,
   });
   const [useCustomCode, setUseCustomCode] = useState(false);
@@ -147,7 +327,9 @@ function AddEvent() {
           attendanceCode: data.attendanceCode || "",
           points: data.points || 1,
           questions: data.questions || [],
+          rsvpQuestions: data.rsvpQuestions || [],
           signInOpensHoursBefore: data.signInOpensHoursBefore || 1,
+          rsvpClosesAt: toDateTimeLocalValue(data.rsvpClosesAt),
           photo: data.photo || null,
         });
 
@@ -159,6 +341,7 @@ function AddEvent() {
         }
 
         setUseCustomCode(!!data.attendanceCode);
+        setShareEventId(id);
       } else {
         setPopup({ isOpen: true, message: "Event not found!", toast: true });
         setTimeout(() => navigate("/manageevents"), 3000);
@@ -202,6 +385,7 @@ function AddEvent() {
     if (editId) {
       setIsEditMode(true);
       setEventId(editId);
+      setShareEventId(editId);
 
       // Try to get event data from localStorage first (it was set in ManageEvents.js)
       const storedEventData = localStorage.getItem("editEventData");
@@ -222,6 +406,8 @@ function AddEvent() {
           attendanceCode: parsedData.attendanceCode || "",
           points: parsedData.points || 1,
           questions: parsedData.questions || [],
+          rsvpQuestions: parsedData.rsvpQuestions || [],
+          rsvpClosesAt: toDateTimeLocalValue(parsedData.rsvpClosesAt),
           photo: parsedData.photo || null,
         });
 
@@ -258,6 +444,7 @@ function AddEvent() {
     if (editId) {
       setIsEditMode(true);
       setEventId(editId);
+      setShareEventId(editId);
 
       // Try to get event data from localStorage first (it was set in ManageEvents.js)
       const storedData = localStorage.getItem("editEventData");
@@ -487,6 +674,10 @@ function AddEvent() {
           points: Number(eventData.points),
           signInOpensHoursBefore: eventData.signInOpensHoursBefore,
           questions: eventData.questions,
+          rsvpQuestions: eventData.rsvpQuestions || [],
+          rsvpClosesAt: eventData.rsvpClosesAt
+            ? Timestamp.fromDate(new Date(eventData.rsvpClosesAt))
+            : deleteField(),
           photo: photoURL,
           lastUpdated: new Date().toISOString(),
         });
@@ -519,8 +710,13 @@ function AddEvent() {
           points: Number(eventData.points),
           signInOpensHoursBefore: eventData.signInOpensHoursBefore,
           questions: eventData.questions,
+          rsvpQuestions: eventData.rsvpQuestions || [],
+          ...(eventData.rsvpClosesAt
+            ? { rsvpClosesAt: Timestamp.fromDate(new Date(eventData.rsvpClosesAt)) }
+            : {}),
           photo: photoURL,
         });
+        setShareEventId(newEventId);
 
         setPopup({
           isOpen: true,
@@ -550,7 +746,9 @@ function AddEvent() {
         attendanceCode: "",
         points: 1,
         questions: [],
+        rsvpQuestions: [],
         signInOpensHoursBefore: 1,
+        rsvpClosesAt: "",
         photo: null,
         author: "",
       });
@@ -586,6 +784,25 @@ function AddEvent() {
       ...prev,
       options: prev.options.filter((_, i) => i !== indexToRemove),
     }));
+  };
+
+  const copyRsvpLink = async () => {
+    if (!shareEventId) return;
+    try {
+      await navigator.clipboard.writeText(buildRsvpUrl(shareEventId));
+      setPopup({
+        isOpen: true,
+        message: "RSVP link copied.",
+        toast: true,
+      });
+    } catch (error) {
+      console.error("Error copying RSVP link:", error);
+      setPopup({
+        isOpen: true,
+        message: "Couldn't copy the RSVP link.",
+        toast: true,
+      });
+    }
   };
 
   const handlePhotoChange = (e) => {
@@ -630,6 +847,30 @@ function AddEvent() {
         {isEditMode ? "Edit Event" : "Add Event"}
       </h2>
       <form className="add-event-form" onSubmit={handleSubmit}>
+        <div className="rsvp-link-section">
+          <label className="form-label">RSVP link</label>
+          {shareEventId ? (
+            <div className="rsvp-link-controls">
+              <input
+                type="text"
+                className="add-event-input rsvp-link-input"
+                readOnly
+                value={buildRsvpUrl(shareEventId)}
+                onFocus={(e) => e.target.select()}
+              />
+              <button type="button" className="btn btn-secondary" onClick={copyRsvpLink}>
+                Copy link
+              </button>
+            </div>
+          ) : (
+            <p className="questions-hint">
+              Save the event to get a link. It also shows up on Manage Events.
+            </p>
+          )}
+          <p className="questions-hint">
+            Opening the link signs the member in if needed, then stays on Upcoming Events and opens this event’s RSVP popup.
+          </p>
+        </div>
         <div className="form-layout">
           <div className="photo-section">
             <div className="photo-upload-container">
@@ -855,6 +1096,20 @@ function AddEvent() {
         </div>
 
         <div className="event-form-group">
+          <label className="form-label">RSVP closes:</label>
+          <input
+            type="datetime-local"
+            name="rsvpClosesAt"
+            className="add-event-input"
+            value={eventData.rsvpClosesAt || ""}
+            onChange={handleInputChange}
+          />
+          <p className="questions-hint">
+            Leave this blank to close RSVP when sign-in opens ({eventData.signInOpensHoursBefore} hour(s) before the event).
+          </p>
+        </div>
+
+        <div className="event-form-group">
           <label className="form-label">Description:</label>
           <textarea
             name="description"
@@ -908,6 +1163,18 @@ function AddEvent() {
             </>
           ) : null}
         </div>
+
+        <QuestionEditor
+          title="RSVP Questions"
+          hint="Asked in the RSVP popup. These are separate from the sign-in questions below."
+          questions={eventData.rsvpQuestions || []}
+          onChange={(rsvpQuestions) =>
+            setEventData((prev) => ({ ...prev, rsvpQuestions }))
+          }
+          onError={(message) =>
+            setPopup({ isOpen: true, message, toast: true })
+          }
+        />
 
         <div className="questions-section">
           <h3 className="questions-title">Event Questions</h3>
