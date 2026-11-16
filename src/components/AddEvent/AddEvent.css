@@ -464,6 +464,35 @@ body.add-event-page::before {
   text-align: left;
 }
 
+.rsvp-link-section {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.rsvp-link-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.rsvp-link-controls .rsvp-link-input {
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
+.rsvp-link-controls .btn {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.add-event-form .questions-hint {
+  margin: 0 0 1rem;
+  color: #5c5859;
+  font-family: Manrope;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
 /* Questions section */
 .add-event-form .questions-section {
   margin-top: 2.5rem;

@@ -112,7 +112,12 @@ const PastEvents = () => {
       return;
     }
 
-    const questionHeaders = event.questions ? event.questions.map((q) => q.text) : [];
+    const rsvpQuestions = event.rsvpQuestions || [];
+    const signInQuestions = event.questions || [];
+    const questionHeaders = [
+      ...rsvpQuestions.map((q) => `RSVP: ${q.text}`),
+      ...signInQuestions.map((q) => q.text),
+    ];
     const headers = ["Email", "Full Name", "Major", "Year", "Member ID", "RSVP'ed", "Attended", ...questionHeaders];
 
     const escapeCSVValue = (value) => {
@@ -138,8 +143,14 @@ const PastEvents = () => {
 
     orderedUsers.forEach((user) => {
       const userId = user.id;
-      const responses = event.responses?.[userId] || {};
-      const responseValues = questionHeaders.map((_, index) => escapeCSVValue(responses[index] || ""));
+      const formatAnswer = (value) =>
+        Array.isArray(value) ? value.join("; ") : value || "";
+      const rsvpResponses = event.rsvpResponses?.[userId] || {};
+      const signInResponses = event.responses?.[userId] || {};
+      const responseValues = [
+        ...rsvpQuestions.map((_, index) => escapeCSVValue(formatAnswer(rsvpResponses[index]))),
+        ...signInQuestions.map((_, index) => escapeCSVValue(formatAnswer(signInResponses[index]))),
+      ];
       const row = [
         escapeCSVValue(user.email),
         escapeCSVValue(`${user.firstName || ""} ${user.lastName || ""}`),
