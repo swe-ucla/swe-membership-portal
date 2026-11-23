@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { QRCodeCanvas } from "qrcode.react";
 import Popup from "../Popup/Popup";
+import LeaderboardReset from "./LeaderboardReset";
 import {
   EVENT_TYPES,
   COMMITTEES,
@@ -759,39 +760,51 @@ const ManageEvents = () => {
             >
               Past ({pastEvents.length})
             </button>
+            <button
+              className={`tab-button ${
+                activeTab === "leaderboard" ? "active" : ""
+              }`}
+              onClick={() => setActiveTab("leaderboard")}
+            >
+              Leaderboard
+            </button>
           </div>
-          <div className="admin-filters">
-            <div className="event-type-filter-admin">
-              <select
-                value={eventTypeFilter}
-                onChange={(e) => setEventTypeFilter(e.target.value)}
-                className="form-select-admin"
-              >
-                {eventTypeOptions.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+          {activeTab !== "leaderboard" && (
+            <div className="admin-filters">
+              <div className="event-type-filter-admin">
+                <select
+                  value={eventTypeFilter}
+                  onChange={(e) => setEventTypeFilter(e.target.value)}
+                  className="form-select-admin"
+                >
+                  {eventTypeOptions.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="committee-filter-admin">
+                <select
+                  value={committeeFilter}
+                  onChange={(e) => setCommitteeFilter(e.target.value)}
+                  className="form-select-admin"
+                >
+                  {committeeOptions.map((committee) => (
+                    <option key={committee} value={committee}>
+                      {committee}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="committee-filter-admin">
-              <select
-                value={committeeFilter}
-                onChange={(e) => setCommitteeFilter(e.target.value)}
-                className="form-select-admin"
-              >
-                {committeeOptions.map((committee) => (
-                  <option key={committee} value={committee}>
-                    {committee}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="tab-content">
-          {activeTab === "upcoming" ? (
+          {activeTab === "leaderboard" ? (
+            <LeaderboardReset />
+          ) : activeTab === "upcoming" ? (
             upcomingEvents.length === 0 ? (
               <p className="no-events-message">No upcoming events found.</p>
             ) : (
