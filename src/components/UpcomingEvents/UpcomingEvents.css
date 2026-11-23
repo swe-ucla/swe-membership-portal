@@ -351,7 +351,7 @@ body.events-page .App {
   justify-content: left;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   font-size: 0.8rem;
 }
 
@@ -921,6 +921,13 @@ body.events-page .App {
 }
 
 /* Sign-in popup */
+.rsvp-popup-meta {
+  margin: 0 0 1rem;
+  color: rgba(35, 31, 32, 0.7);
+  text-align: center;
+  width: 100%;
+}
+
 .signin-popup-title {
   font-size: 1.1rem;
   font-weight: 600;
